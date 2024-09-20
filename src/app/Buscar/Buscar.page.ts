@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 
 @Component({
-  selector: 'app-tab2',
+  selector: 'buscar',
   templateUrl: 'Buscar.page.html',
   styleUrls: ['Buscar.page.scss']
 })

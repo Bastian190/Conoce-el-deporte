@@ -1,8 +1,10 @@
 <ion-header [translucent]="true">
   <ion-toolbar>
     <ion-title>
-     Perfil 
-     <ion-icon id="configuracion" name="settings-sharp"></ion-icon>
+     Perfil
+     <ion-button fill="clear" shape="round" [routerLink]="['/tabs/configuracion']" id="configuracion">
+      <ion-icon id="icono1" slot="icon-only" name="settings-sharp"></ion-icon>
+    </ion-button>
     </ion-title>
   </ion-toolbar>
 </ion-header>

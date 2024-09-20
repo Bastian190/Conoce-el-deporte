@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { TabsPage } from './tabs.page';
-
+import { ConfiguracionComponent } from '../componentes/configuracion/configuracion.component';
 const routes: Routes = [
   {
     path: 'tabs',
@@ -22,6 +22,10 @@ const routes: Routes = [
       {
         path: 'perfil',
         loadChildren: () => import('../perfil/perfil.module').then( m => m.PerfilPageModule)
+      },
+      {
+        path: 'configuracion',
+        component:ConfiguracionComponent
       },
       {
         path: '',

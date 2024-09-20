@@ -1,7 +1,16 @@
 #configuracion{
     position: absolute;
-    right: 15px;             /* Pegado a la derecha */
+    right: 10px;             /* Pegado a la derecha */
     top: 50%;             /* Centrado verticalmente */
     transform: translateY(-50%); /* Asegura el centrado */
-    font-size: 25px;      /* Tamaño del ícono */
+    font-size: 15px;      /* Tamaño del ícono */
+     
   }
+#icono1{
+  position: absolute;
+  right: auto;             /* Pegado a la derecha */
+  top: 50%;             /* Centrado verticalmente */
+  transform: translateY(-50%); /* Asegura el centrado */
+  font-size: 28px;      /* Tamaño del ícono */
+  color: darkgrey;
+}

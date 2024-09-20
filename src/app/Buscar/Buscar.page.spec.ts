@@ -3,7 +3,7 @@ import { IonicModule } from '@ionic/angular';
 
 import { ExploreContainerComponentModule } from '../explore-container/explore-container.module';
 
-import { Buscar } from './Buscar.page';
+import { Buscar } from './buscar.page';
 
 describe('Buscar', () => {
   let component: Buscar;
