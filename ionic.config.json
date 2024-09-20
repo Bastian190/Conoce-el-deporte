@@ -1,0 +1,7 @@
+{
+  "name": "ConoceElDeporte",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular"
+}
