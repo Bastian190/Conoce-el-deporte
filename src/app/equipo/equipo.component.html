@@ -1,14 +1,60 @@
 <ion-header [translucent]="true">
   <ion-toolbar>
-    
+    <ion-title>
+      buscar
+    </ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content [fullscreen]="true" class="ion-padding">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-    </ion-toolbar>
-  </ion-header>
+  <ion-card>
+    <img alt="Silhouette of mountains" src="https://ionicframework.com/docs/img/demos/card-media.png" />
+    <ion-card-header>
+      <ion-card-title>nombre del equipo</ion-card-title>
+      <ion-card-subtitle>lugar</ion-card-subtitle>
+    </ion-card-header>
+  
+    <ion-card-content>
+      Lorem, ipsum dolor sit amet consectetur adipisicing elit. Incidunt, blanditiis laboriosam. Dolorum recusandae veritatis illum! Accusantium, sequi aliquam aut soluta quidem, vel, atque iste quod nisi adipisci labore sed cum?
+    </ion-card-content>
+    <div>
+      <ion-card-header>
+      <ion-car-title>logros</ion-car-title>
+      </ion-card-header>
+      <ion-card-content>
 
-
+        Lorem ipsum dolor sit amet consectetur adipisicing elit. Maxime, earum. Labore tenetur nobis nesciunt dignissimos eos est, eveniet corrupti numquam sunt ad, odit possimus illum? Eaque provident delectus eligendi similique.
+      </ion-card-content>
+    </div>
+    <div>
+      <ion-card-header>
+        <ion-car-title>tabla de partidos</ion-car-title>
+      </ion-card-header>
+      <ion-card-content>
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Nombre del Equipo contrario</th>
+              <th>puntaje obtenido</th>
+              <th>ganador o perderdor</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Equipo 1</td>
+              <td>2/1</td>
+              <td><ion-icon name="checkmark-circle-outline"></ion-icon></td>
+            </tr>
+            <tr>
+              <td>Equipo 2</td>
+              <td>3/0</td>
+              <td><ion-icon name="close-circle-outline"></ion-icon></td>
+            </tr>
+            <!-- Más filas de equipos -->
+          </tbody>
+        </table>
+      </ion-card-content>
+    </div>
+    
+  </ion-card>
 </ion-content>
