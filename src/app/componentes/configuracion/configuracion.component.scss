@@ -1,0 +1,27 @@
+#back{
+    font-size: 28px;      /* Tamaño del ícono */
+    color: darkgrey;  
+}
+#titulo{
+    font-size: 20px;
+    position:relative;
+    margin: auto;
+    font-style:normal;
+}
+.content-centered{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+}
+#titulo-contenido{
+    text-align: center;
+    position: center;
+    margin-top: 20px;
+}
+#botones-opciones{
+    margin-bottom: 40%;
+    margin: 30px;
+    margin-top: 40px;
+}
