@@ -16,7 +16,6 @@ export class EditarperfilComponent  implements OnInit {
   Atras() {
     // Navegar hacia la página anterior
     this.navCtrl.back();
-    
   }
   siguiente(){
     if(this.result==1 || this.result==2){

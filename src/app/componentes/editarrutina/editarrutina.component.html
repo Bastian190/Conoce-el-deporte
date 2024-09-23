@@ -1,0 +1,23 @@
+<ion-header>
+    <ion-toolbar>
+      <ion-button slot="start" fill="clear" (click)="goBack()">
+        <ion-icon id="back" name="arrow-back"></ion-icon>
+      </ion-button>
+      <ion-title id="titulo">Editar rutina</ion-title>
+    </ion-toolbar>
+  </ion-header>
+  <ion-content>
+    <ion-title id="titulo2">Rutina</ion-title>
+    <ion-list>
+      <ion-item id="item">
+        <ion-select id="seleccion" placeholder="Seleccione el dia">
+          <div slot="label">Dia que quiere modificar</div>
+          <ion-select-option value="Lunes">Lunes</ion-select-option>
+          <ion-select-option value="Martes">Martes</ion-select-option>
+          <ion-select-option value="Miercoles">Miercoles</ion-select-option>
+          <ion-select-option value="Jueves">Jueves</ion-select-option>
+          <ion-select-option value="Viernes">Viernes</ion-select-option>
+        </ion-select>
+      </ion-item>
+    </ion-list>
+  </ion-content>
