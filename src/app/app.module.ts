@@ -1,7 +1,8 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { RouteReuseStrategy } from '@angular/router';
-
+import { EditarrutinaComponent } from './componentes/editarrutina/editarrutina.component';
+import { EditarperfilComponent } from './componentes/editarperfil/editarperfil.component';
 import { IonicModule, IonicRouteStrategy } from '@ionic/angular';
 import { EquiposModule } from './equipo/equipo.module';
 import { AppRoutingModule } from './app-routing.module';
