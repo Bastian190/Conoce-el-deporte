@@ -25,6 +25,10 @@ const routes: Routes = [
         loadChildren: () => import('../perfil/perfil.module').then( m => m.PerfilPageModule)
       },
       {
+        path: 'login',
+        loadChildren: () => import('../sesion-usuario/sesion-usuario.module').then( m => m.SesionUsuarioPageModule)
+      },
+      {
         path: 'equipo', 
         component: EquipoComponent  
       },
@@ -34,14 +38,14 @@ const routes: Routes = [
       },
       {
         path: '',
-        redirectTo: '/tabs/Inicio',
+        redirectTo: '/tabs/login',
         pathMatch: 'full'
       }
     ]
   },
   {
     path: '',
-    redirectTo: '/tabs/Inicio',
+    redirectTo: '/tabs/login',
     pathMatch: 'full'
   }
 ];

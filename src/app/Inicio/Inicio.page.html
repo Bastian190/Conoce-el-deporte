@@ -6,15 +6,16 @@
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true">
+<ion-content [fullscreen]="true" class="ion-padding">
   <ion-header collapse="condense">
     <ion-toolbar>
-      <ion-title size="large">inicio</ion-title>
+      
     </ion-toolbar>
   </ion-header>
 
   <app-explore-container name="Inicio"></app-explore-container>
   <ion-content [fullscreen]="true" class="ion-padding">
+    <ion-card-title>Bienvenido {{usuario}}</ion-card-title>
     <ion-card>
       <ion-card-header>
         <ion-card-title>noticias</ion-card-title>

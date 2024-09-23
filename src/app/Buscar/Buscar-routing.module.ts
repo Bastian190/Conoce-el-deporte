@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { Buscar } from './buscar.page';
+import { Buscar } from './Buscar.page';
 
 const routes: Routes = [
   {

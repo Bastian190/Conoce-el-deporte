@@ -1,8 +1,10 @@
 <ion-header [translucent]="true">
   <ion-toolbar>
-    <ion-title>
-      buscar
-    </ion-title>
+      <ion-title >buscar</ion-title>
+    <ion-button size="small" (click)="irAPaginaDestino()">
+      <ion-icon show-clear-button="always" name="arrow-back-outline"></ion-icon>
+    </ion-button>
+    
   </ion-toolbar>
 </ion-header>
 
@@ -56,5 +58,24 @@
       </ion-card-content>
     </div>
     
+  </ion-card>
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title>Agregar equipo</ion-card-title>
+      <ion-card-subtitle>Agrega este equipo a tus me gusta</ion-card-subtitle>
+    </ion-card-header>
+  
+    <ion-card-content>
+    ¿Te interesa este equipo?
+    </ion-card-content>
+
+    <ion-button id="present-alert" fill="clear">Si</ion-button>
+      <ion-alert
+        trigger="present-alert"
+        header="Selecciona las opciones de notificacion"
+        [buttons]="alertButtons"
+        [inputs]="alertInputs"
+      ></ion-alert>
+    <ion-button fill="clear">No</ion-button>
   </ion-card>
 </ion-content>
