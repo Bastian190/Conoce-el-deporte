@@ -1,0 +1,44 @@
+.profile-container {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 20px; /* Espacio inferior para separar del formulario */
+  }
+  
+  .profile-button {
+    background: #e0f7fa; /* Color de fondo ligero */
+    border-radius: 50%; /* Hacer el botón redondo */
+    width: 100px; /* Ancho del botón */
+    height: 100px; /* Alto del botón */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative; /* Para el input de archivo */
+  }
+  
+  .responsive-icon {
+    border-radius: 50%; /* Redondear la imagen */
+    object-fit: cover; /* Mantener la proporción de la imagen */
+  }
+  
+  .default-icon {
+    width: 300px; /* Ajustar el tamaño del ícono */
+    height: 400px;
+    color: #020202; /* Color del ícono */
+    align-items: center;
+  }
+  
+  .edit-form {
+    margin: 0 20px; /* Espaciado lateral del formulario */
+  }
+  
+  ion-item {
+    --highlight-color: #00796b; /* Color del highlight en el item */
+    margin-bottom: 15px; /* Espacio entre los items */
+  }
+  
+  .submit-button {
+    background-color: #00796b; /* Color del botón de guardar */
+    color: white; /* Color del texto del botón */
+    margin-top: 20px; /* Espacio superior para el botón */
+  }
+  

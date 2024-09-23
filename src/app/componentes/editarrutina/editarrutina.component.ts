@@ -8,7 +8,11 @@ import { NavController } from '@ionic/angular';
 export class EditarrutinaComponent  implements OnInit {
 
   constructor(private  navCtrl: NavController) { }
-
+  goBack() {
+    // Navegar hacia la página anterior
+    this.navCtrl.back();
+    
+  }
   
 
   ngOnInit() {}

@@ -3,30 +3,25 @@
     <ion-title>
       Busqueda
     </ion-title>
-    <ion-searchbar show-cancel-button="focus" show-clear-button="focus" clear-icon="trash-bin" value="buscar" placeholder="Buscar"></ion-searchbar>
   </ion-toolbar>
+  <ion-searchbar id="buscador" show-cancel-button="focus" show-clear-button="focus" clear-icon="trash-bin" value="buscar" placeholder="Buscar"></ion-searchbar>
 </ion-header>
 
 <ion-content [fullscreen]="true" class="ion-padding">
   <ion-header collapse="condense">
     <ion-toolbar>
-      <ion-title size="large">Tab 2</ion-title>
+      <ion-title size="large">Equipos</ion-title>
     </ion-toolbar>
   </ion-header>
-
-  <app-explore-container name="Buscar"></app-explore-container>
   <ion-card >
     <ion-card-header>
-      <ion-card-title>nombre equipo</ion-card-title>
-      <ion-card-subtitle>lugar </ion-card-subtitle>
-      
+      <ion-card-title>Nombre equipo</ion-card-title>
+      <ion-card-subtitle>Lugar </ion-card-subtitle>
     </ion-card-header>
-    <div>
+    <ion-card-content> 
       <div class="example-button-row"></div>
-        <ion-button mat-raised-button class="btn" [routerLink]="['/tabs/equipo']" >conocer mas</ion-button>
-      </div>
- 
-    <ion-card-content> Card Content </ion-card-content>
+      <ion-button mat-raised-button class="btn" [routerLink]="['/tabs/equipo']" >Conocer mas</ion-button>
+    </ion-card-content>
   </ion-card>
   
   <ion-card >

@@ -1,0 +1,51 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-button slot="start" fill="clear">
+      <ion-icon id="back" name="arrow-back" (click)="irAPaginaDestino()"></ion-icon>
+    </ion-button>
+    <ion-title id="titulo">Editar perfil</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <div class="profile-container">
+    <ion-button fill="clear" shape="round" class="profile-button">
+      <img class="responsive-icon" />
+      <ion-icon  name="person-circle-outline" class="default-icon"></ion-icon>
+      <input type="file" accept="image/*" style="display:none;" />
+    </ion-button>
+  </div>
+
+  <form class="edit-form">
+    <ion-item>
+      <ion-label>Nombre</ion-label>
+      <ion-input placeholder="Nombre" required></ion-input>
+    </ion-item>
+
+    <ion-item>
+      <ion-label>Apellido</ion-label>
+      <ion-input placeholder="Apellido" required></ion-input>
+    </ion-item>
+
+    <ion-item>
+      <ion-label>Correo Electrónico</ion-label>
+      <ion-input type="email" placeholder="Correo Electrónico" required></ion-input>
+    </ion-item>
+
+    <ion-item>
+      <ion-label>Peso (kg)</ion-label>
+      <ion-input type="number" placeholder="Peso" required></ion-input>
+    </ion-item>
+
+    <ion-item>
+      <ion-label>Altura (cm)</ion-label>
+      <ion-input type="number" placeholder="Altura" required></ion-input>
+    </ion-item>
+    <ion-item>
+      <ion-label>Contraseña</ion-label>
+      <ion-input  placeholder="Contraseña" required></ion-input>
+    </ion-item>
+
+    <ion-button expand="full" type="submit" class="submit-button">Guardar Cambios</ion-button>
+  </form>
+</ion-content>
