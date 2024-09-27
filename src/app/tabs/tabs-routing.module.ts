@@ -3,9 +3,11 @@ import { RouterModule, Routes } from '@angular/router';
 import { TabsPage } from './tabs.page';
 import { EquipoComponent } from '../equipo/equipo.component'; 
 import { ConfiguracionComponent } from '../componentes/configuracion/configuracion.component';
+import { EditarperfilComponent } from '../componentes/editarperfil/editarperfil.component';
+import { EditarrutinaComponent } from '../componentes/editarrutina/editarrutina.component';
 const routes: Routes = [
   {
-    path: 'tabs',
+    path: '',
     component: TabsPage,
     children: [
       {
@@ -33,15 +35,23 @@ const routes: Routes = [
         component:ConfiguracionComponent
       },
       {
+        path: 'editar-perfil',
+        component:EditarperfilComponent
+      },
+      {
+        path: 'editarrutina',
+        component: EditarrutinaComponent
+      },
+      {
         path: '',
-        redirectTo: '/tabs/Inicio',
+        redirectTo: 'Inicio',
         pathMatch: 'full'
       }
     ]
   },
   {
     path: '',
-    redirectTo: '/tabs/Inicio',
+    redirectTo: 'Inicio',
     pathMatch: 'full'
   }
 ];

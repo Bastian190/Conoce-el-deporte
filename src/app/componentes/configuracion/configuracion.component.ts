@@ -3,6 +3,7 @@ import { NavController } from '@ionic/angular';
 import { ModalController } from '@ionic/angular';
 import { EditarrutinaComponent } from '../editarrutina/editarrutina.component';
 import { EditarperfilComponent } from '../editarperfil/editarperfil.component';
+import { NavigationExtras, Router } from '@angular/router';
 @Component({
   selector: 'app-configuracion',
   templateUrl: './configuracion.component.html',
@@ -10,23 +11,19 @@ import { EditarperfilComponent } from '../editarperfil/editarperfil.component';
 })
 export class ConfiguracionComponent  implements OnInit {
 
-  constructor(private  navCtrl: NavController, private modalController: ModalController) { }
-  goBack() {
-    // Navegar hacia la página anterior
-    this.navCtrl.back();
-    
+  constructor(private  navCtrl: NavController, private modalController: ModalController,private router:Router) { }
+  irAPaginaDestino() {
+    console.log("entra")
+    this.router.navigate(['/tabs/perfil']);
   }
-  async presentModal() {
-    const modal = await this.modalController.create({
-      component: EditarperfilComponent,
-    });
-    return await modal.present();
+  
+  presentModal() {
+    console.log("entra")
+    this.router.navigate(['/tabs/editar-perfil']);
   }
-  async rutina() {
-    const modal = await this.modalController.create({
-      component: EditarrutinaComponent,
-    });
-    return await modal.present();
+  rutina() {
+    console.log("entra")
+    this.router.navigate(['/tabs/editarrutina']);
   }
   ngOnInit() {}
 

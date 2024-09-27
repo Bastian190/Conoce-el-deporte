@@ -1,0 +1,26 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-title>sesion_usuario</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <ion-header collapse="condense">
+    <ion-toolbar>
+      <ion-title size="large">sesion_usuario</ion-title>
+    </ion-toolbar>
+  </ion-header>
+  <ion-card>
+    <ion-item class="contenedor">
+      <ion-label position="floating" >ingrese usuario</ion-label>
+      <ion-input type="text" [(ngModel)]="usuario"></ion-input>
+    </ion-item>
+    <ion-item class="contenedor">
+      <ion-label position="floating">ingrese contraseña</ion-label>
+      <ion-input type="password" [(ngModel)]="password"></ion-input>
+    </ion-item>
+    <ion-button expand="block" (click)="todos()">ingresar</ion-button>
+    <ion-label>¿olvido su contraseña?</ion-label>
+    <a [routerLink]="['/']">recuperar</a>
+  </ion-card>
+</ion-content>

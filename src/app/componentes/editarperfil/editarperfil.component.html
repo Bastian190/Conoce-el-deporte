@@ -1,7 +1,7 @@
 <ion-header>
   <ion-toolbar>
-    <ion-button slot="start" fill="clear">
-      <ion-icon id="back" name="arrow-back" (click)="irAPaginaDestino()"></ion-icon>
+    <ion-button slot="start" fill="clear" (click)="irAPaginaDestino()">
+      <ion-icon id="back" name="arrow-back" ></ion-icon>
     </ion-button>
     <ion-title id="titulo">Editar perfil</ion-title>
   </ion-toolbar>
@@ -18,34 +18,38 @@
 
   <form class="edit-form">
     <ion-item>
-      <ion-label>Nombre</ion-label>
-      <ion-input placeholder="Nombre" required></ion-input>
+      <ion-label position="floating">Nombre</ion-label>
+      <ion-input  [(ngModel)]="usuario"></ion-input>
     </ion-item>
 
     <ion-item>
-      <ion-label>Apellido</ion-label>
-      <ion-input placeholder="Apellido" required></ion-input>
+      <ion-label position="floating">Apellido</ion-label>
+      <ion-input  required></ion-input>
     </ion-item>
 
     <ion-item>
-      <ion-label>Correo Electrónico</ion-label>
-      <ion-input type="email" placeholder="Correo Electrónico" required></ion-input>
+      <ion-label position="floating">Correo Electrónico</ion-label>
+      <ion-input type="email"[(ngModel)]="correo"></ion-input>
     </ion-item>
 
     <ion-item>
-      <ion-label>Peso (kg)</ion-label>
-      <ion-input type="number" placeholder="Peso" required></ion-input>
+      <ion-label position="floating">Peso (kg)</ion-label>
+      <ion-input type="number"  required></ion-input>
     </ion-item>
 
     <ion-item>
-      <ion-label>Altura (cm)</ion-label>
-      <ion-input type="number" placeholder="Altura" required></ion-input>
+      <ion-label position="floating">Altura (cm)</ion-label>
+      <ion-input type="number" required></ion-input>
     </ion-item>
     <ion-item>
-      <ion-label>Contraseña</ion-label>
-      <ion-input  placeholder="Contraseña" required></ion-input>
+      <ion-label position="floating">Nueva contraseña</ion-label>
+      <ion-input [(ngModel)]="password"></ion-input>
+    </ion-item>
+    <ion-item>
+      <ion-label position="floating">Confirmar contraseña</ion-label>
+      <ion-input   [(ngModel)]="password2"></ion-input>
     </ion-item>
 
-    <ion-button expand="full" type="submit" class="submit-button">Guardar Cambios</ion-button>
+    <ion-button expand="full" type="submit" class="submit-button" (click)="todos()">Guardar Cambios</ion-button>
   </form>
 </ion-content>
