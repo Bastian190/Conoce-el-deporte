@@ -3,6 +3,7 @@ import { NavController } from '@ionic/angular';
 import { AlertController } from '@ionic/angular';
 import { NavigationExtras, Router } from '@angular/router';
 import { ToastController } from '@ionic/angular';
+import { ChangeDetectorRef } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 
 @Component({
@@ -11,16 +12,14 @@ import { ActivatedRoute } from '@angular/router';
   styleUrls: ['./editarperfil.component.scss'],
 })
 export class EditarperfilComponent  implements OnInit {
-  usuario!: string ;
-  apellido!: string;
-  password!: string;
-  password2!: string;
-  correo!: string;
+  correo: string = '';   // Declaración de las variables
   peso!: number;
-  altura!:number;
-  result!: number;
-  constructor( private route: ActivatedRoute, private  navCtrl: NavController, private alertController: AlertController, public toastController:ToastController, private router:Router) { }
-
+  altura!: number ;
+  password: string = '';
+  password2: string = '';
+  result: number=0;
+  constructor( private cdr: ChangeDetectorRef, private route: ActivatedRoute, private  navCtrl: NavController, private alertController: AlertController, public toastController:ToastController, private router:Router) {
+      }
   Atras() {
     // Navegar hacia la página anterior
     this.navCtrl.back();
@@ -31,56 +30,52 @@ export class EditarperfilComponent  implements OnInit {
     
   }
   siguiente(){
-    if(this.result==1 || this.result==2 || this.result==3){
+    if (this.result !== 5){
+      console.log('no entra')
       this.router.navigate(['/tabs/editar-perfil'])
-    }else if(this.result==4){
+    }else{
+      console.log('entra 1')
       this.Atras()
     }  
   }
   ngOnInit() {}
-  validar(user: string, apellido: string, password: string, password2: string, email: string, peso: number, altura: number) {
-    const emailPattern = /^([\da-z_\.-]+)@([\da-z\.-]+)\.([a-z\.]{2,6})$/;
-  
-    if (!user) {
-      console.log('1');
-      this.presentAlert();
-      return this.result = 1;
-    } else if (!apellido) {
-      console.log('Apellido requerido');
-      this.presentAlert();
-      return this.result = 1;
-    } else if (!password) {
-      console.log('2');
-      this.presentAlert();
-      return this.result = 2;
-    } else if (password !== password2) {
-      console.log('3');
+
+
+  validar( pasword: string, pasword2: string,  weight: number, height: number): number {
+    
+    console.log('entra2')
+    if (!pasword || !pasword2) {
+      console.log('Las contraseñas son requeridas');
       this.passwordAlert();
-      return this.result = 3;
-    } else if (email.length === 0) {
-      this.correoAlert();
-      return this.result = 3;
-    } else if (!emailPattern.test(email)) {
-      this.correo2Alert();
-      return this.result = 3;
-    } else if (peso <= 0 || altura <= 0) {
+      return 2;
+    } else if (pasword != pasword2) {
+      console.log('2')
+      console.log(pasword, pasword2)
+      this.passwordAlert()
+      return 2;
+    } else if (weight === null || height === null || weight <= 0 || height <= 0) {
       console.log('Peso o altura inválido');
-      return this.result = 1;
+      return 1;
     } else {
-      console.log('4');
-      return this.result = 4;
+      console.log('5')
+      return 5;
     }
   }
+  validarCorreo(email: string): number{
+    console.log(email)
+    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+    if (email.length === 0) {
+      console.log('3')
+      this.correoAlert()
+      return  3;
 
-  
-  async presentAlert() {
-    const alert = await this.alertController.create({
-      header: 'Alerta',
-      message: 'El usuario o contraseña no es correcto.',
-      buttons: ['OK'],
-    });
-  
-    await alert.present();
+    } else if (!emailPattern.test(email)) {
+      console.log('4')
+      this.correo2Alert()
+      return 4;
+    }else{
+      return 5;
+    }
   }
   async passwordAlert() {
     const alert = await this.alertController.create({
@@ -120,8 +115,22 @@ export class EditarperfilComponent  implements OnInit {
     await alert.present();
   }
   
-  todos() {
-    this.validar(this.usuario, this.apellido, this.password, this.password2, this.correo, this.peso, this.altura);
+  todosperfil(event: Event) {
+    event.preventDefault();
+    
+
+    this.result = this.validarCorreo(this.correo);
+    console.log('Resultado de validación de correo:', this.result);
+
+    if (this.result === 5) {
+      this.result = this.validar(
+        this.password,
+        this.password2,
+        this.peso,
+        this.altura
+      );
+    }
+    this.cdr.detectChanges(); 
     this.siguiente();
   }
 }
