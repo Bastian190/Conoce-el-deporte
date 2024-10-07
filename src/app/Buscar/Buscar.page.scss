@@ -2,3 +2,29 @@
     margin: 0;
     margin-bottom: auto;
 }
+.custom-card {
+    width: 100%; /* Ajusta este porcentaje según sea necesario */
+    margin: 0 auto; /* Centra el card horizontalmente */
+    height: 180px; /* Ajusta la altura según sea necesario */
+    display: flex;
+    flex-direction: column; /* Para asegurar que el contenido se alinea verticalmente */
+    justify-content: space-between; /* Distribuye el espacio entre el contenido */
+  }
+  
+  ion-card-content {
+    display: flex;
+    flex-direction: column; /* Asegura que los elementos dentro del contenido se alineen verticalmente */
+    justify-content: flex-end; /* Alinea el botón al final del contenido */
+  }
+#titulo{
+    text-align: center;
+    margin: 8px;
+    font-size: xx-large;
+}
+#contenido{
+    text-align: center;
+}
+#encabezado{
+    text-align: center;
+    font-size: x-large;
+}

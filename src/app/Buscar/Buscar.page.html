@@ -1,6 +1,6 @@
 <ion-header [translucent]="true">
   <ion-toolbar>
-    <ion-title>
+    <ion-title id="encabezado">
       Busqueda
     </ion-title>
   </ion-toolbar>
@@ -8,134 +8,23 @@
 </ion-header>
 
 <ion-content [fullscreen]="true" class="ion-padding">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">Equipos</ion-title>
-    </ion-toolbar>
-  </ion-header>
-  <ion-card >
-    <ion-card-header>
-      <ion-card-title>Nombre equipo</ion-card-title>
-      <ion-card-subtitle>Lugar </ion-card-subtitle>
-    </ion-card-header>
-    <ion-card-content> 
-      <div class="example-button-row"></div>
-      <ion-button mat-raised-button class="btn" [routerLink]="['/tabs/equipo']" >Conocer mas</ion-button>
-    </ion-card-content>
-  </ion-card>
-  
-  <ion-card >
-    <ion-card-header>
-      <ion-card-title>Card Title</ion-card-title>
-      <ion-card-subtitle>Card Subtitle</ion-card-subtitle>
-    </ion-card-header>
-  
-    <ion-card-content> 
-      <div>
-      <div class="example-button-row"></div>
-        <ion-button mat-raised-button class="btn" [routerLink]="['/tabs/equipo']" >conocer mas</ion-button>
-      </div>
-    </ion-card-content>
-  </ion-card>
-  
-  <ion-card >
-    <ion-card-header>
-      <ion-card-title>Card Title</ion-card-title>
-      <ion-card-subtitle>Card Subtitle</ion-card-subtitle>
-    </ion-card-header>
-  
-    <ion-card-content> 
-      <div>
-      <div class="example-button-row"></div>
-        <ion-button mat-raised-button class="btn" [routerLink]="['/tabs/equipo']" >conocer mas</ion-button>
-      </div>
-    </ion-card-content>
-  </ion-card>
-  
-  <ion-card >
-    <ion-card-header>
-      <ion-card-title>Card Title</ion-card-title>
-      <ion-card-subtitle>Card Subtitle</ion-card-subtitle>
-    </ion-card-header>
-  
-    <ion-card-content>
-      <div>
-      <div class="example-button-row"></div>
-        <ion-button mat-raised-button class="btn" [routerLink]="['/tabs/equipo']" >conocer mas</ion-button>
-      </div>
-    </ion-card-content>
-  </ion-card>
-  
-  <ion-card >
-    <ion-card-header>
-      <ion-card-title>Card Title</ion-card-title>
-      <ion-card-subtitle>Card Subtitle</ion-card-subtitle>
-    </ion-card-header>
-  
-    <ion-card-content> 
-      
-      <div>
-      <div class="example-button-row"></div>
-        <ion-button mat-raised-button class="btn" [routerLink]="['/tabs/equipo']" >conocer mas</ion-button>
-      </div>
-    </ion-card-content>
-  </ion-card>
-  
-  <ion-card >
-    <ion-card-header>
-      <ion-card-title>Card Title</ion-card-title>
-      <ion-card-subtitle>Card Subtitle</ion-card-subtitle>
-    </ion-card-header>
-  
-    <ion-card-content>
-      <div>
-      <div class="example-button-row"></div>
-        <ion-button mat-raised-button class="btn" [routerLink]="['/tabs/equipo']" >conocer mas</ion-button>
-      </div>
-    </ion-card-content>
-  </ion-card>
-  
-  <ion-card >
-    <ion-card-header>
-      <ion-card-title>Card Title</ion-card-title>
-      <ion-card-subtitle>Card Subtitle</ion-card-subtitle>
-    </ion-card-header>
-  
-    <ion-card-content>
-      <div>
-      <div class="example-button-row"></div>
-        <ion-button mat-raised-button class="btn" [routerLink]="['/tabs/equipo']" >conocer mas</ion-button>
-      </div>
-    </ion-card-content>
-  </ion-card>
-  
-  <ion-card >
-    <ion-card-header>
-      <ion-card-title>Card Title</ion-card-title>
-      <ion-card-subtitle>Card Subtitle</ion-card-subtitle>
-    </ion-card-header>
-  
-    <ion-card-content>
-      <div>
-      <div class="example-button-row"></div>
-        <ion-button mat-raised-button class="btn" [routerLink]="['/tabs/equipo']" >conocer mas</ion-button>
-      </div>
-    </ion-card-content>
-  </ion-card>
-  
-  <ion-card >
-    <ion-card-header>
-      <ion-card-title>Card Title</ion-card-title>
-      <ion-card-subtitle>Card Subtitle</ion-card-subtitle>
-    </ion-card-header>
-  
-    <ion-card-content>
-      <div>
-      <div class="example-button-row"></div>
-        <ion-button mat-raised-button class="btn" [routerLink]="['/tabs/equipo']" >conocer mas</ion-button>
-      </div>
-    </ion-card-content>
-  </ion-card>
-
-
+  <ion-title id="titulo" size="large">Equipos</ion-title>
+  <ion-grid>
+    <ion-row>
+      <ion-col size="6" *ngFor="let equipo of equipos"> <!-- Cambia el tamaño según sea necesario -->
+        <ion-card class="custom-card"> <!-- Clase para el estilo -->
+          <ion-card-header id="contenido">
+            <ion-card-title>{{ equipo.nombre_fantasia }}</ion-card-title> <!-- Llama al atributo nombre_fantasia -->
+            <ion-card-subtitle>{{ equipo.tipo_deporte }}</ion-card-subtitle> <!-- Llama al atributo tipo_deporte -->
+          </ion-card-header>
+          <ion-card-content>
+            <div class="example-button-row"></div>
+            <ion-button class="btn" [routerLink]="['/tabs/equipo']">Conocer más</ion-button> <!-- Botón para conocer más -->
+          </ion-card-content>
+        </ion-card>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
 </ion-content>
+
+
