@@ -4,22 +4,29 @@
       Busqueda
     </ion-title>
   </ion-toolbar>
-  <ion-searchbar id="buscador" show-cancel-button="focus" show-clear-button="focus" clear-icon="trash-bin" value="buscar" placeholder="Buscar"></ion-searchbar>
+  <ion-searchbar 
+    id="buscador" 
+    show-cancel-button="focus" 
+    show-clear-button="focus" 
+    clear-icon="trash-bin" 
+    placeholder="Buscar"
+    (ionInput)="buscarEquipo($event)">
+  </ion-searchbar>
 </ion-header>
 
 <ion-content [fullscreen]="true" class="ion-padding">
   <ion-title id="titulo" size="large">Equipos</ion-title>
   <ion-grid>
     <ion-row>
-      <ion-col size="6" *ngFor="let equipo of equipos"> <!-- Cambia el tamaño según sea necesario -->
-        <ion-card class="custom-card"> <!-- Clase para el estilo -->
+      <ion-col size="6" *ngFor="let equipo of equiposFiltrados"> 
+        <ion-card class="custom-card">
           <ion-card-header id="contenido">
-            <ion-card-title>{{ equipo.nombre_fantasia }}</ion-card-title> <!-- Llama al atributo nombre_fantasia -->
-            <ion-card-subtitle>{{ equipo.tipo_deporte }}</ion-card-subtitle> <!-- Llama al atributo tipo_deporte -->
+            <ion-card-title>{{ equipo.nombre_fantasia }}</ion-card-title> 
+            <ion-card-subtitle>{{ equipo.tipo_deporte }}</ion-card-subtitle> 
           </ion-card-header>
           <ion-card-content>
             <div class="example-button-row"></div>
-            <ion-button class="btn" [routerLink]="['/tabs/equipo']">Conocer más</ion-button> <!-- Botón para conocer más -->
+            <ion-button class="btn" [routerLink]="['/tabs/equipo']">Conocer más</ion-button>
           </ion-card-content>
         </ion-card>
       </ion-col>
