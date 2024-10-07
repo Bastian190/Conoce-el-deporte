@@ -1,6 +1,7 @@
 import { NgModule } from '@angular/core';
 import { PreloadAllModules, RouterModule, Routes } from '@angular/router';
 import { RegistroComponent } from './componentes/registro/registro.component';
+import { RegistroRutinaComponent } from './registro-rutina/registro-rutina.component';
 const routes: Routes = [
   {
     path: 'tabs',
@@ -13,6 +14,10 @@ const routes: Routes = [
   {
     path: 'registro', 
     component: RegistroComponent  
+  },
+  {
+    path: 'registroRutina',
+    component: RegistroRutinaComponent
   },
 
   {

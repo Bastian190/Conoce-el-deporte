@@ -42,6 +42,22 @@ export class SesionUsuarioPage implements OnInit {
       return this.result=3;
     }    
   }  
+  validarCorreo(user: string): number{
+    console.log(user)
+    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+    if (user.length === 0) {
+      console.log('3')
+      this.correoAlert()
+      return  3;
+
+    } else if (!emailPattern.test(user)) {
+      console.log('4')
+      this.correo2Alert()
+      return 4;
+    }else{
+      return 5;
+    }
+  }
   async presentAlert() {
     const alert = await this.alertController.create({
       header: 'Alerta',
@@ -51,10 +67,29 @@ export class SesionUsuarioPage implements OnInit {
   
     await alert.present();
   }
+  async correoAlert() {
+    const alert = await this.alertController.create({
+      header: 'Alerta',
+      message: 'Debe escribir un correo.',
+      buttons: ['OK'],
+    });
   
+    await alert.present();
+  }
+  
+  async correo2Alert() {
+    const alert = await this.alertController.create({
+      header: 'Alerta',
+      message: 'El correo no esta bien escrito.',
+      buttons: ['OK'],
+    });
+  
+    await alert.present();
+  }
 
   todos(){
     this.validar(this.usuario, this.password)
+    this.validarCorreo(this.usuario)
     this.siguiente()
   }  
 }

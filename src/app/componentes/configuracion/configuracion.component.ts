@@ -25,6 +25,10 @@ export class ConfiguracionComponent  implements OnInit {
     console.log("entra")
     this.router.navigate(['/tabs/editarrutina']);
   }
+  login() {
+    console.log("entra")
+    this.router.navigate(['/login']);
+  }
   ngOnInit() {}
 
 }

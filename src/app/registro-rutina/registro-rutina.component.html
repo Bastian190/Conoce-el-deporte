@@ -1,0 +1,69 @@
+<ion-header>
+  <ion-toolbar>
+
+    <ion-title id="titulo">Registro de rutina</ion-title>
+  </ion-toolbar>
+</ion-header>
+<ion-content class="ion-padding content-centered">
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title>Seleccione las rutinas que hara por día</ion-card-title>
+    </ion-card-header>
+  
+    <ion-card-content>
+      En esta seccion debes elegir que rutinas quieres hacer durante la semana, recuerda realizar las misiones diarias para subir dentro de la tabla de clasificación.
+    </ion-card-content>
+    <ion-list>
+      <ion-item>
+        <ion-item>
+          <ion-select label="Lunes" label-placement="stacked"  [multiple]="true">
+            <ion-select-option value="1">rutina 1</ion-select-option>
+            <ion-select-option value="2">rutina 2</ion-select-option>
+            <ion-select-option value="3">rutina 3</ion-select-option>
+          </ion-select>
+        </ion-item>
+      </ion-item>
+
+      <ion-item>
+        <ion-item>
+          <ion-select label="Martes" label-placement="stacked"  [multiple]="true">
+            <ion-select-option value="1">Rutina 1</ion-select-option>
+            <ion-select-option value="2">Rutina 2</ion-select-option>
+            <ion-select-option value="3">Rutina 3</ion-select-option>
+          </ion-select>
+        </ion-item>
+      </ion-item>
+
+      <ion-item>
+        <ion-item>
+          <ion-select label="Miercoles" label-placement="stacked"  [multiple]="true">
+            <ion-select-option value="1">Rutina 1</ion-select-option>
+            <ion-select-option value="2">rutina 2</ion-select-option>
+            <ion-select-option value="3">rutina 3</ion-select-option>
+          </ion-select>
+        </ion-item>
+      </ion-item>
+
+      <ion-item>
+        <ion-select label="Jueves" label-placement="stacked"  [multiple]="true">
+          <ion-select-option value="1">rutina 1</ion-select-option>
+          <ion-select-option value="2">rutina 2</ion-select-option>
+          <ion-select-option value="3">rutina 3</ion-select-option>
+        </ion-select>
+      </ion-item>
+
+      <ion-item lines="none">
+        <ion-item>
+          <ion-select label="Viernes" label-placement="stacked"  [multiple]="true">
+            <ion-select-option value="1">rutina 1</ion-select-option>
+            <ion-select-option value="2">rutina 2</ion-select-option>
+            <ion-select-option value="">rutina 3</ion-select-option>
+          </ion-select>
+        </ion-item>
+      </ion-item>
+    </ion-list>
+    <div id="boton">
+      <ion-button (click)="inicio()" id="mandar"  type="submit">registrar rutina</ion-button>
+     </div>
+  </ion-card>
+</ion-content>

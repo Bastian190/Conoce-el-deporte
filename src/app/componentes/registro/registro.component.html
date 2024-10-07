@@ -18,80 +18,58 @@
               <input type="file" accept="image/*" style="display:none;" />
             </ion-button>
           </div>
-          <form>
+          <form [formGroup]="registroForm" (ngSubmit)="registrar()">
 
-          <!-- Nombre -->
-          <ion-item>
-            <ion-label position="stacked">Nombre*</ion-label>
-            <ion-input formControlName="nombre" required></ion-input>
-          </ion-item>
+            <ion-item>
+              <ion-label position="stacked">Nombre*</ion-label>
+              <ion-input formControlName="name" type="text"></ion-input>
+            </ion-item>
 
-          <!-- Segundo Nombre -->
-          <ion-item>
-            <ion-label position="stacked">Segundo Nombre*</ion-label>
-            <ion-input formControlName="segundoNombre"></ion-input>
-          </ion-item>
+            <ion-item>
+              <ion-label position="stacked">Correo*</ion-label>
+              <ion-input formControlName="correo" type="text"></ion-input>
+            </ion-item>
+        
 
-          <!-- Apellido Paterno -->
-          <ion-item>
-            <ion-label position="stacked">Apellido Paterno*</ion-label>
-            <ion-input formControlName="apellidoPaterno" required></ion-input>
-          </ion-item>
+            <ion-item >
+              <ion-label position="stacked" inert>Apellido*</ion-label>
+              <ion-input formControlName="lastname" type="text"></ion-input>
+            </ion-item>
 
-          <!-- Apellido Materno -->
-          <ion-item>
-            <ion-label position="stacked">Apellido Materno*</ion-label>
-            <ion-input formControlName="apellidoMaterno"></ion-input>
-          </ion-item>
+            <ion-item >
+              <ion-label position="stacked" inert>Altura</ion-label>
+              <ion-input formControlName="altura" type="text"></ion-input>
+            </ion-item>
 
-           <!-- Correo Electrónico -->
-           <ion-item>
-            <ion-label position="stacked">Correo Electrónico*</ion-label>
-            <ion-input formControlName="correo" type="email" required></ion-input>
-          </ion-item>
-
-          <!-- Fecha de Nacimiento -->
-          <ion-item>
-            <ion-label position="stacked">Fecha de Nacimiento*</ion-label>
-            <ion-input formControlName="fechaNacimiento" type="date" placeholder="Selecciona tu fecha de nacimiento"></ion-input>
-          </ion-item>
-
-          <!-- Sexo -->
-          <ion-item>
-            <ion-label position="stacked">Sexo</ion-label>
-            <ion-select formControlName="sexo" placeholder="Selecciona tu sexo">
-              <ion-select-option value="Masculino">Masculino</ion-select-option>
-              <ion-select-option value="Femenino">Femenino</ion-select-option>
-              <ion-select-option value="Otro">Otro</ion-select-option>
-            </ion-select>
-          </ion-item>
-
-          <!-- Peso -->
-          <ion-item>
-            <ion-label position="stacked">Peso (kg)</ion-label>
-            <ion-input formControlName="peso" type="number" placeholder="Opcional"></ion-input>
-          </ion-item>
-
-          <!-- Altura -->
-          <ion-item>
-            <ion-label position="stacked">Altura (cm)</ion-label>
-            <ion-input formControlName="altura" type="number" placeholder="Opcional"></ion-input>
-          </ion-item>
-          <!-- Contraseña -->
-          <ion-item>
-            <ion-label position="stacked">Contraseña*</ion-label>
-            <ion-input formControlName="password" type="password" required></ion-input>
-          </ion-item>
-          <!-- Contraseña -->
-          <ion-item>
-            <ion-label position="stacked">Repetir contraseña*</ion-label>
-            <ion-input formControlName="password" type="password" required></ion-input>
-          </ion-item>
-
-          <!-- Botón de Envío -->
-           <div id="boton">
-            <ion-button id="mandar"  type="submit">Registrarse</ion-button>
-           </div>
+            <ion-item >
+              <ion-label position="stacked" inert>Peso</ion-label>
+              <ion-input formControlName="peso" type="text"></ion-input>
+            </ion-item>
+        
+            <ion-item>
+              <ion-label position="stacked">Fecha de Nacimiento*</ion-label>
+              <ion-input formControlName="date" type="date"></ion-input>
+            </ion-item>
+        
+            <ion-item>
+              <ion-label position="stacked">Sexo*</ion-label>
+              <ion-select formControlName="sex">
+                <ion-select-option value="Masculino">Masculino</ion-select-option>
+                <ion-select-option value="Femenino">Femenino</ion-select-option>
+              </ion-select>
+            </ion-item>
+        
+            <ion-item>
+              <ion-label position="stacked">Contraseña*</ion-label>
+              <ion-input formControlName="password" type="password" placeholder="Debe haber un minimo de 6 caracteres"></ion-input>
+            </ion-item>
+        
+            <ion-item>
+              <ion-label position="stacked">Repetir Contraseña*</ion-label>
+              <ion-input formControlName="passwordRepeat" type="password"></ion-input>
+            </ion-item>
+        
+            <ion-button expand="full" type="submit">Registrar</ion-button>
           </form>
         </ion-card>
       </ion-col>
