@@ -4,3 +4,8 @@ export interface Equipos{
     nombre_fantasia: string;
     tipo_deporte: string
 }
+export interface Tipo_rutina{
+    nombre_ejercicio: string;
+    nombre_tipo_rutina: string;
+    gift: null;
+}
