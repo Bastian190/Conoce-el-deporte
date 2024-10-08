@@ -7,5 +7,5 @@ export interface Equipos{
 export interface Tipo_rutina{
     nombre_ejercicio: string;
     nombre_tipo_rutina: string;
-    gift: null;
+
 }

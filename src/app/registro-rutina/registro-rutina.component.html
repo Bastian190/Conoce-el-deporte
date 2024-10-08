@@ -13,53 +13,14 @@
     <ion-card-content>
       En esta seccion debes elegir que rutinas quieres hacer durante la semana, recuerda realizar las misiones diarias para subir dentro de la tabla de clasificación.
     </ion-card-content>
-    <ion-list>
+    <ion-list *ngFor="let dia of diasDeLaSemana">
       <ion-item>
-        <ion-item>
-          <ion-select label="Lunes" label-placement="stacked"  [multiple]="true">
-            <ion-select-option value="1">rutina 1</ion-select-option>
-            <ion-select-option value="2">rutina 2</ion-select-option>
-            <ion-select-option value="3">rutina 3</ion-select-option>
-          </ion-select>
-        </ion-item>
-      </ion-item>
-
-      <ion-item>
-        <ion-item>
-          <ion-select label="Martes" label-placement="stacked"  [multiple]="true">
-            <ion-select-option value="1">Rutina 1</ion-select-option>
-            <ion-select-option value="2">Rutina 2</ion-select-option>
-            <ion-select-option value="3">Rutina 3</ion-select-option>
-          </ion-select>
-        </ion-item>
-      </ion-item>
-
-      <ion-item>
-        <ion-item>
-          <ion-select label="Miercoles" label-placement="stacked"  [multiple]="true">
-            <ion-select-option value="1">Rutina 1</ion-select-option>
-            <ion-select-option value="2">rutina 2</ion-select-option>
-            <ion-select-option value="3">rutina 3</ion-select-option>
-          </ion-select>
-        </ion-item>
-      </ion-item>
-
-      <ion-item>
-        <ion-select label="Jueves" label-placement="stacked"  [multiple]="true">
-          <ion-select-option value="1">rutina 1</ion-select-option>
-          <ion-select-option value="2">rutina 2</ion-select-option>
-          <ion-select-option value="3">rutina 3</ion-select-option>
+        <ion-label>{{ dia }}</ion-label>
+        <ion-select label="{{ dia }}" label-placement="stacked" [multiple]="true" (ionChange)="onSelect($event.detail.value, dia)">
+          <ion-select-option *ngFor="let rutina of rutina" [value]="rutina.nombre_tipo_rutina">
+            {{ rutina.nombre_tipo_rutina }}
+          </ion-select-option>
         </ion-select>
-      </ion-item>
-
-      <ion-item lines="none">
-        <ion-item>
-          <ion-select label="Viernes" label-placement="stacked"  [multiple]="true">
-            <ion-select-option value="1">rutina 1</ion-select-option>
-            <ion-select-option value="2">rutina 2</ion-select-option>
-            <ion-select-option value="">rutina 3</ion-select-option>
-          </ion-select>
-        </ion-item>
       </ion-item>
     </ion-list>
     <div id="boton">
