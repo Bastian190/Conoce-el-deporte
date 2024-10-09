@@ -1,30 +1,39 @@
 <ion-header>
   <ion-toolbar>
-
-    <ion-title id="titulo">Registro de rutina</ion-title>
+    <ion-title id="titulo">Crea tu rutina</ion-title>
   </ion-toolbar>
 </ion-header>
 <ion-content class="ion-padding content-centered">
-  <ion-card>
-    <ion-card-header>
-      <ion-card-title>Seleccione las rutinas que hara por día</ion-card-title>
+  <ion-card id="contenido">
+    <ion-card-header id="nombre">
+      <ion-card-title>¡Selecciona tu rutina diaria!</ion-card-title>
     </ion-card-header>
   
-    <ion-card-content>
-      En esta seccion debes elegir que rutinas quieres hacer durante la semana, recuerda realizar las misiones diarias para subir dentro de la tabla de clasificación.
+    <ion-card-content id="descripcion">
+      En esta sección debes elegir qué rutinas quieres hacer durante la semana. Recuerda realizar las misiones diarias para subir dentro de la tabla de clasificación.¡Suerte!.
     </ion-card-content>
     <ion-list *ngFor="let dia of diasDeLaSemana">
       <ion-item>
         <ion-label>{{ dia }}</ion-label>
-        <ion-select label="{{ dia }}" label-placement="stacked" [multiple]="true" (ionChange)="onSelect($event.detail.value, dia)">
+        <ion-select label-placement="stacked" [multiple]="true" (ionChange)="onSelect($event.detail.value, dia)">
           <ion-select-option *ngFor="let rutina of rutina" [value]="rutina.nombre_tipo_rutina">
             {{ rutina.nombre_tipo_rutina }}
           </ion-select-option>
         </ion-select>
       </ion-item>
     </ion-list>
+    <ion-list>
+      <ion-item>
+        <ion-label>Seleccione intensidad</ion-label>
+        <ion-select label-placement="stacked" (ionChange)="validacion($event.detail.value)">
+          <ion-select-option *ngFor="let i of intensidad" [value]="i">
+            {{ i }}
+          </ion-select-option>
+        </ion-select>
+      </ion-item>
+    </ion-list> 
     <div id="boton">
-      <ion-button (click)="inicio()" id="mandar"  type="submit">registrar rutina</ion-button>
+      <ion-button (click)="inicio()" id="mandar"  type="submit">Guardar rutina</ion-button>
      </div>
   </ion-card>
 </ion-content>

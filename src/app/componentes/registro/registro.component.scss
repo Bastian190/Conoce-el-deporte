@@ -50,3 +50,14 @@ ion-item {
     color: #020202; /* Color del ícono */
     align-items: center;
   }
+  #contenido{
+    border-radius: 20px;
+}
+#boton{
+  text-align: center;
+  margin-bottom: 10px;
+  margin-top: 10px;
+} 
+ion-item ion-label {
+  font-size:x-large;
+}

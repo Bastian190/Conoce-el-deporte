@@ -28,15 +28,32 @@ export class RegistroComponent  implements OnInit {
       date: ['', [Validators.required]],
       sex: ['', [Validators.required]],
       password: ['', [Validators.required, Validators.minLength(6)]],
-      passwordRepeat: ['', [Validators.required]]
+      passwordRepeat: ['', [Validators.required, Validators.minLength(6)]]
     });
+  }
+  validarFormulario() {
+    const correoControl = this.registroForm.get('correo');
+
+    const camposVacios = Object.keys(this.registroForm.controls).some(control => {
+      const formControl = this.registroForm.get(control);
+      return formControl ? !formControl.value : true;// Verifica si el valor del control está vacío
+    });
+  
+    if (camposVacios) {
+      this.mostrarToast('Por favor, completa todos los campos obligatorios.');
+      return false; // Indica que la validación falló
+    }
+    if (correoControl && correoControl.invalid && correoControl.touched) {
+      this.mostrarToast('El correo está mal escrito, vuelva a intentar');
+      return false; // Indica que la validación falló
+    }
+
+    return true; // Indica que todas las validaciones pasaron
   }
   async registrar() {
     console.log(this.registroForm.value); 
-
-    if (this.registroForm.invalid) {
-      this.mostrarToast('Por favor, rellena todos los campos obligatorios correctamente.');
-      return;
+    if (!this.validarFormulario()) {
+      return; // Si la validación falla, salimos de la función
     }
 
     const { password, passwordRepeat } = this.registroForm.value;
@@ -56,7 +73,7 @@ export class RegistroComponent  implements OnInit {
     
   }
 
-  async mostrarToast(message: string, color: string = 'danger') {
+  async mostrarToast(message: string, color: string = 'warning') {
     const toast = await this.toastController.create({
       message,
       duration: 2000,

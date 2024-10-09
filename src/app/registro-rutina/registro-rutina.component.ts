@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { NavController, ToastController } from '@ionic/angular';
 import { NavigationExtras, Router } from '@angular/router';
 import { FirestoreService } from '../servicios/firestore.service';
-import { Tipo_rutina} from '../modelos/equipos.models';
+import { Tipo_rutina, Rutinas} from '../modelos/equipos.models';
 import { ChangeDetectorRef } from '@angular/core';
 
 @Component({
@@ -13,6 +13,8 @@ import { ChangeDetectorRef } from '@angular/core';
 export class RegistroRutinaComponent  implements OnInit {
   diasDeLaSemana: string[] = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes'];
   rutina: Tipo_rutina[] = [];
+  intensidad: string[]=[];
+  Rutinas: Rutinas[]=[];
   result!:number;
 
   constructor(private  navCtrl: NavController, private router:Router, private firestoreService:FirestoreService,private cdr: ChangeDetectorRef, private toastController: ToastController) {}
@@ -20,7 +22,8 @@ export class RegistroRutinaComponent  implements OnInit {
 
   inicio() {
     console.log("entra")
-    if(this.result==1){
+    if(this.result==1 || this.result==3){
+      
       return
     }else if(this.result==2){
       this.router.navigate(['/tabs/Inicio'])
@@ -30,6 +33,7 @@ export class RegistroRutinaComponent  implements OnInit {
   
   ngOnInit() {
     this.cargarRutinas();
+    this.cargarIntensidad();
   }
   cargarRutinas() {
 
@@ -51,19 +55,43 @@ export class RegistroRutinaComponent  implements OnInit {
   });
 
   }
+  cargarIntensidad(){
 
+    this.firestoreService.getcolleccionChanges<Rutinas>('Rutinas').subscribe(data => {
+      if (data && data.length > 0) {
+        console.log('Datos recibidos:', data);
+        // Asumiendo que data tiene los campos de intensidad facil, media, dificil
+        const intensidadDoc = data[0]; // Tomando el primer documento o ajusta según la lógica
+        this.intensidad = [
+          intensidadDoc.facil,
+          intensidadDoc.media,
+          intensidadDoc.dificil
+        ];
+        console.log('Intensidades:', this.intensidad);
+        this.cdr.detectChanges();  // Para que Angular detecte cambios en la vista
+      }
+    });
+  }
+  
   onSelect(selectedValues: string[], dia: string) {
     this.mostrarToast(`Seleccionaste ${selectedValues.length} opciones para ${dia}`,'success');
-
-    if (selectedValues.length < 1 || selectedValues.length > 2) {
+     if (selectedValues.length < 1 || selectedValues.length > 2) {
       selectedValues.pop();
-      this.mostrarToast(`Debes seleccionar entre 1 y 2 opciones para ${dia}.`);
+      this.mostrarToast(`¡Debes seleccionar máximo dos rutinas para él día ${dia}!.`);
       return this.result=1;
     }else{
       return this.result=2;
     }
   }
-  async mostrarToast(message: string, color: string = 'danger') {
+  validacion(selectedValues: string[]){
+    if(!selectedValues ||selectedValues.length===0){
+      this.mostrarToast(`Debes seleccionar una opcion.`);
+      return this.result=3;
+    }else{
+      return this.result=2;
+    }
+  }
+  async mostrarToast(message: string, color: string = 'warning') {
     const toast = await this.toastController.create({
       message,
       duration: 2000,

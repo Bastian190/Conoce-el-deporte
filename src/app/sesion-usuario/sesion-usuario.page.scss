@@ -12,7 +12,7 @@
     width: auto;
     height: max-content;
     text-align: center;
-    font-size: 20px;
+    font-size: x-large;
   }
   
   .inicio {
@@ -25,11 +25,14 @@
     box-shadow: none;
     margin: auto;
     align-items: center;
+    font-size: x-large;
   }
   
   .contenido {
     box-shadow: none;
     top: 15%;
+    border-radius: 20px;
+   
   }
   
   #recuperar {
@@ -65,3 +68,14 @@
   input.example-right-align {
     -moz-appearance: textfield;
   }
+  ion-item ion-label {
+    font-size:x-large;
+  }
+ion-label{
+  font-size: large;
+  
+}
+a{
+  font-size: large;
+  
+}

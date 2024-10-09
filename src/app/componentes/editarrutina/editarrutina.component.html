@@ -3,21 +3,28 @@
       <ion-button slot="start" fill="clear" (click)="irAPaginaDestino1()">
         <ion-icon id="back" name="arrow-back"></ion-icon>
       </ion-button>
-      <ion-title id="titulo">Editar rutina</ion-title>
+      <ion-title id="titulo">Edita tu rutina</ion-title>
     </ion-toolbar>
-  </ion-header>
-  <ion-content>
-    <ion-title id="titulo2">Rutina</ion-title>
-    <ion-list>
-      <ion-item id="item">
-        <ion-select id="seleccion" placeholder="Seleccione el dia">
-          <div slot="label">Dia que quiere modificar</div>
-          <ion-select-option value="Lunes">Lunes</ion-select-option>
-          <ion-select-option value="Martes">Martes</ion-select-option>
-          <ion-select-option value="Miercoles">Miercoles</ion-select-option>
-          <ion-select-option value="Jueves">Jueves</ion-select-option>
-          <ion-select-option value="Viernes">Viernes</ion-select-option>
-        </ion-select>
-      </ion-item>
-    </ion-list>
-  </ion-content>
+</ion-header>
+<ion-card id="contenido">
+  <ion-card-header>
+    <ion-card-title id="titulo2">Seleccione el día que quiere editar rutina</ion-card-title>
+  </ion-card-header>
+  <ion-list >
+    <ion-item >
+      <ion-select label-placement="stacked" (ionChange)="onSelect($event.detail.value)">
+        <ion-select-option *ngFor="let dia of diasDeLaSemana" [value]="dia">
+          {{ dia }}
+        </ion-select-option>
+      </ion-select>
+    </ion-item>
+    <ion-item>
+      <ion-select label-placement="stacked" >
+        <ion-select-option *ngFor="let rutina of rutina" [value]="rutina.nombre_tipo_rutina">
+          {{ rutina.nombre_tipo_rutina }}
+        </ion-select-option>
+      </ion-select>
+    </ion-item>
+  </ion-list>
+ <ion-button>Editar rutina</ion-button>
+</ion-card>

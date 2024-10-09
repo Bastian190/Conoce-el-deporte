@@ -9,3 +9,8 @@ export interface Tipo_rutina{
     nombre_tipo_rutina: string;
 
 }
+export interface Rutinas{
+    facil: string;
+    media: string;
+    dificil: string;
+}
