@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-
+import { NavigationExtras, Router } from '@angular/router';
 @Component({
   selector: 'app-recuperar',
   templateUrl: './recuperar.component.html',
@@ -7,7 +7,11 @@ import { Component, OnInit } from '@angular/core';
 })
 export class RecuperarComponent  implements OnInit {
 
-  constructor() { }
+  constructor(private router:Router) { }
+  irAPaginaDestino1() {
+    console.log("entra")
+    this.router.navigate(['login']);
+  }
 
   ngOnInit() {}
 

@@ -1,3 +1,20 @@
-<p>
-  recuperar works!
-</p>
+<ion-header>
+  <ion-toolbar>
+    <ion-button slot="start" fill="clear" (click)="irAPaginaDestino1()">
+      <ion-icon id="back" name="arrow-back"></ion-icon>
+    </ion-button>
+    <ion-title>Recuperar Contraseña</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <form>
+    <ion-item>
+      <ion-label position="stacked">Correo Electrónico</ion-label>
+      <ion-input type="email" placeholder="Ingresa tu correo"></ion-input>
+    </ion-item>
+
+    <ion-button expand="full" type="submit">Enviar</ion-button>
+  </form>
+</ion-content>
+

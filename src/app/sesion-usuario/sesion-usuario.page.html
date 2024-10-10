@@ -1,6 +1,7 @@
 
 <ion-content id="todo">
-  <ion-card class="contenido">
+  <img src="assets/logoo.png" alt="Logo de la aplicación" id="logo">
+  <ion-card class="contenido" id="formulario">
     <ion-card class="titulo">
       <ion-card-header>
         <ion-title id="iniciar">Iniciar Sesión</ion-title>
@@ -21,7 +22,7 @@
           <ion-button expand="full" shape="round"  (click)="todos()" id="ingresar">Ingresar
           </ion-button>
           <ion-label>¿olvido su contraseña?</ion-label>
-          <a [routerLink]="['/']">recuperar</a>
+          <a [routerLink]="['/recuperar']">recuperar</a>
           <div></div>
           <ion-label>¿No tiene cuenta?</ion-label>
           <a [routerLink]="['/registro']">Registrarse</a>

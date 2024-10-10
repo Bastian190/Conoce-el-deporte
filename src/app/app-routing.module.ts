@@ -1,6 +1,7 @@
 import { NgModule } from '@angular/core';
 import { PreloadAllModules, RouterModule, Routes } from '@angular/router';
 import { RegistroComponent } from './componentes/registro/registro.component';
+import { RecuperarComponent } from './componentes/recuperar/recuperar.component';
 import { RegistroRutinaComponent } from './registro-rutina/registro-rutina.component';
 const routes: Routes = [
   {
@@ -18,6 +19,10 @@ const routes: Routes = [
   {
     path: 'registroRutina',
     component: RegistroRutinaComponent
+  },
+  {
+    path: 'recuperar', 
+    component: RecuperarComponent  
   },
 
   {
