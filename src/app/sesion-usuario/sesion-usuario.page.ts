@@ -28,6 +28,7 @@ export class SesionUsuarioPage implements OnInit {
   ngOnInit() {
   }
   validar(user: string, pasword: string){
+    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
     if(user ==null ){
       console.log("1")
       this.presentAlert()
@@ -37,27 +38,14 @@ export class SesionUsuarioPage implements OnInit {
       console.log("2")
       this.presentAlert()
       return this.result=2;
-    } else {
-      console.log("3")
-      return this.result=3;
-    }    
-  }  
-  validarCorreo(user: string): number{
-    console.log(user)
-    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
-    if (user.length === 0) {
-      console.log('3')
-      this.correoAlert()
-      return  3;
-
-    } else if (!emailPattern.test(user)) {
+    }  else if (!emailPattern.test(user)) {
       console.log('4')
       this.correo2Alert()
-      return 4;
+      return this.result= 2;
     }else{
-      return 5;
-    }
-  }
+      return this.result= 3;
+    }   
+  }  
   async presentAlert() {
     const alert = await this.alertController.create({
       header: 'Alerta',
@@ -89,7 +77,6 @@ export class SesionUsuarioPage implements OnInit {
 
   todos(){
     this.validar(this.usuario, this.password)
-    this.validarCorreo(this.usuario)
     this.siguiente()
   }  
 }
