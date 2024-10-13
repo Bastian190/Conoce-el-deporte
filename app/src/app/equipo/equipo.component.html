@@ -1,51 +1,61 @@
 <ion-header [translucent]="true">
   <ion-toolbar>
-      <ion-title >buscar</ion-title>
-    <ion-button size="small" (click)="irAPaginaDestino()">
-      <ion-icon show-clear-button="always" name="arrow-back-outline"></ion-icon>
+      <ion-title id="titulo" >Ver más</ion-title>
+    <ion-button slot="start" fill="clear" (click)="irAPaginaDestino()">
+      <ion-icon id="back" show-clear-button="always" name="arrow-back"></ion-icon>
     </ion-button>
     
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true" class="ion-padding">
+<ion-content [fullscreen]="true" class="ion-padding"  *ngIf="equipo">
   <ion-card>
     <img alt="Silhouette of mountains" src="https://ionicframework.com/docs/img/demos/card-media.png" />
     <ion-card-header>
-      <ion-card-title>Nombre del equipo</ion-card-title>
-      <ion-card-subtitle>Lugar</ion-card-subtitle>
+      <ion-card-title>{{ equipo.nombre_fantasia }}</ion-card-title>
+      <ion-card-subtitle>{{ equipo.ubicacion }}</ion-card-subtitle>
     </ion-card-header>
   
     <ion-card-content>
-      Lorem, ipsum dolor sit amet consectetur adipisicing elit. Incidunt, blanditiis laboriosam. Dolorum recusandae veritatis illum! Accusantium, sequi aliquam aut soluta quidem, vel, atque iste quod nisi adipisci labore sed cum?
+      {{ equipo.descripcion }}
     </ion-card-content>
-    <div>
+    <div *ngIf="logros && logros.length > 0">
       <ion-card-header>
       <ion-car-title>Logros</ion-car-title>
       </ion-card-header>
-      <ion-card-content>
-
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Maxime, earum. Labore tenetur nobis nesciunt dignissimos eos est, eveniet corrupti numquam sunt ad, odit possimus illum? Eaque provident delectus eligendi similique.
+      <ion-card-content  *ngFor="let logro of logros">
+        {{ logro.logro }}: {{logro.fecha ? (logro.fecha.toDate() | date) : 'Fecha no disponible'}}
       </ion-card-content>
     </div>
-    <div>
+    <div *ngIf="partidos && partidos.length > 0">
       <ion-card-header>
         <ion-car-title>Tabla de partidos</ion-car-title>
       </ion-card-header>
-      <ion-card-content>
+      <ion-card-content  >
+        <ion-item *ngFor="let partido of partidos">
         <table class="table">
           <thead>
             <tr>
-              <th>Nombre del Equipo contrario</th>
+              <th>Equipo contrario</th>
+
               <th>Resultado encuentro</th>
+
+<<<<<<< HEAD:app/src/app/equipo/equipo.component.html
+              <th>ubicacion</th>
+=======
               <th>Ganador o perderdor</th>
+>>>>>>> 452c81007005e64fb75a6cb4e173b1f7f3354c8f:src/app/equipo/equipo.component.html
             </tr>
           </thead>
           <tbody>
             <tr>
-              <td>Equipo 1</td>
-              <td>2/1</td>
+              <td>{{ partido.contrincante }}</td>
+              <td>{{ partido.resultado }}</td>
+<<<<<<< HEAD:app/src/app/equipo/equipo.component.html
+              <td>{{ partido.ubicacion }}</td>
+=======
               <td><ion-icon name="checkmark-circle-outline"></ion-icon></td>
+>>>>>>> 452c81007005e64fb75a6cb4e173b1f7f3354c8f:src/app/equipo/equipo.component.html
             </tr>
             <tr>
               <td>Equipo 2</td>
@@ -55,6 +65,7 @@
             <!-- Más filas de equipos -->
           </tbody>
         </table>
+      </ion-item>
       </ion-card-content>
     </div>
     

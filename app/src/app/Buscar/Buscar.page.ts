@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { FirestoreService } from '../servicios/firestore.service';
 import { Equipos } from '../modelos/equipos.models';
 import { ChangeDetectorRef } from '@angular/core';
-
+import { Router, NavigationExtras } from '@angular/router';
 @Component({
   selector: 'buscar',
   templateUrl: 'Buscar.page.html',
@@ -12,7 +12,7 @@ export class Buscar {
   equipos: Equipos[] = [];
   equiposFiltrados: Equipos[] = [];
 
-  constructor(private firestoreService:FirestoreService,private cdr: ChangeDetectorRef) { this.loadequipos();}
+  constructor(private firestoreService:FirestoreService,private cdr: ChangeDetectorRef,private router: Router) { this.loadequipos();}
 
   loadequipos() {
     // Carga los equipos desde Firestore
@@ -40,5 +40,15 @@ export class Buscar {
       }
       this.cdr.detectChanges();  
     }, 0);
+  }
+
+  verMas(equipo: Equipos) {
+    console.log(equipo);
+    const navigationExtras: NavigationExtras = {
+      state: {
+        equipo: equipo  // Pasando todo el equipo
+      }
+    };
+    this.router.navigate(['/equipo'], navigationExtras);
   }
 }

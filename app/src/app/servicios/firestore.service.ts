@@ -1,10 +1,10 @@
 import { inject, Injectable } from '@angular/core';
 import { collectionData, Firestore, doc, docData  } from '@angular/fire/firestore';
 import { collection, CollectionReference, query, where } from 'firebase/firestore';
-import { catchError, map, Observable } from 'rxjs';
+import { catchError, map, Observable, of } from 'rxjs';
 import { Equipos, Logros, Partidos } from '../modelos/equipos.models';
 import { DocumentData } from 'firebase/firestore/lite';
-
+import { Timestamp } from 'firebase/firestore';
 @Injectable({
   providedIn: 'root'
 })
@@ -56,7 +56,7 @@ export class FirestoreService {
             return data.map(item => ({
                 id: item['id'],
                 logro: item['logro'],
-                fecha: item['fecha'].toDate() // Asegúrate de que 'fecha' es un Timestamp
+                fecha: item['fecha'] // Asegúrate de que 'fecha' es un Timestamp
             })) as Logros[];
         }),
         catchError(error => {
@@ -65,16 +65,23 @@ export class FirestoreService {
         })
     ) as Observable<Logros[]>;
 }
-  logrosCollection(logrosCollection: any, equipoId: string) {
-    throw new Error('Method not implemented.');
-  }
+
   getPartidosPorEquipo(equipoId: string): Observable<Partidos[]> {
-    const partidosCollection = collection(this.firestore, `equipos/${equipoId}/partidos`);
-    return collectionData(partidosCollection, { idField: 'id' }) as Observable<Partidos[]>;
+    const partidosCollection = collection(this.firestore, `Equipos/${equipoId}/Partidos`);
+    return collectionData(partidosCollection, { idField: 'id' }).pipe(
+      map((data: DocumentData[]) => {
+        return data.map(item => ({
+          id: item['id'],                
+          contrincante: item['contrincante'],
+          resultado: item['resultado'],
+          fecha_partido: item['fecha_partido'].toDate(), // Si es un Timestamp de Firestore
+          ubicacion: item['ubicacion']
+        })) as Partidos[];
+      }),
+      catchError(error => {
+        console.error('Error obteniendo partidos:', error);
+        return of([]); // Retorna un array vacío en caso de error
+      })
+    ) as Observable<Partidos[]>;
   }
-
 }
-function of(arg0: never[]): any {
-  throw new Error('Function not implemented.');
-}
-
