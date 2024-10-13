@@ -1,22 +1,36 @@
+<<<<<<< HEAD
 import { Component, OnInit } from '@angular/core';
 import { NavController, ToastController } from '@ionic/angular';
 import { NavigationExtras, Router } from '@angular/router';
 import { FirestoreService } from '../servicios/firestore.service';
 import { Tipo_rutina, Rutinas} from '../modelos/equipos.models';
 import { ChangeDetectorRef } from '@angular/core';
+=======
+import { NavController } from '@ionic/angular';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
+import { NavigationExtras, Router } from '@angular/router';
+import { FirestoreService } from '../servicios/firestore.service';
+import { Tipo_rutina } from '../modelos/equipos.models'; 
+>>>>>>> origin/bastian
 
 @Component({
   selector: 'app-registro-rutina',
   templateUrl: './registro-rutina.component.html',
   styleUrls: ['./registro-rutina.component.scss'],
 })
+<<<<<<< HEAD
 export class RegistroRutinaComponent  implements OnInit {
   diasDeLaSemana: string[] = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes'];
+=======
+export class RegistroRutinaComponent implements OnInit {
+
+>>>>>>> origin/bastian
   rutina: Tipo_rutina[] = [];
   intensidad: string[]=[];
   Rutinas: Rutinas[]=[];
   result!:number;
 
+<<<<<<< HEAD
   constructor(private  navCtrl: NavController, private router:Router, private firestoreService:FirestoreService,private cdr: ChangeDetectorRef, private toastController: ToastController) {}
 
 
@@ -98,5 +112,35 @@ export class RegistroRutinaComponent  implements OnInit {
       color
     });
     toast.present();
+=======
+  constructor(
+    private navCtrl: NavController,
+    private router: Router,
+    private firestoreService: FirestoreService,
+    private cdr: ChangeDetectorRef
+  ) {}
+
+  inicio() {
+    console.log("entra");
+    this.router.navigate(['/tabs/Inicio']);
+  }
+
+  ngOnInit() {
+    // Cargar rutinas de la subcolección al inicializar el componente
+    this.cargarRutinas();
+  }
+
+  cargarRutinas() {
+    // Reemplaza 'coleccionPrincipal', 'documento', y 'subcoleccion' con los valores correctos
+    const coleccionPrincipal = 'Rutinas'; // Cambia por el nombre de tu colección
+    const documento = 'PlyuiOZ5ex4zKxUcZGTO'; // Cambia por el ID del documento
+    const subcoleccion = 'Tipo_rutina'; // Cambia por el nombre de la subcolección
+
+    this.firestoreService.getSubdocumentos<Tipo_rutina>(coleccionPrincipal, documento, subcoleccion).subscribe(data => {
+      this.rutina = data;
+      console.log("Rutinas cargadas:", this.rutina);
+      this.cdr.detectChanges(); // Llama a detectChanges si es necesario
+    });
+>>>>>>> origin/bastian
   }
 }
