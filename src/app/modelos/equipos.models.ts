@@ -16,7 +16,7 @@ export interface Rutinas{
     facil: string;
     media: string;
     dificil: string;
-    nombre_tipo_rutina: string
+    nombre_tipo_rutina: string;
 }
 export interface Partidos{
     contrincante: string;
