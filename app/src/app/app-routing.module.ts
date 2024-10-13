@@ -3,6 +3,7 @@ import { PreloadAllModules, RouterModule, Routes } from '@angular/router';
 import { RegistroComponent } from './componentes/registro/registro.component';
 import { RecuperarComponent } from './componentes/recuperar/recuperar.component';
 import { RegistroRutinaComponent } from './registro-rutina/registro-rutina.component';
+import { EquipoComponent } from './equipo/equipo.component';
 const routes: Routes = [
   {
     path: 'tabs',
@@ -24,6 +25,11 @@ const routes: Routes = [
     path: 'recuperar', 
     component: RecuperarComponent  
   },
+  
+  {path: 'equipo',
+  component: EquipoComponent
+  },
+
 
   {
     path: '',

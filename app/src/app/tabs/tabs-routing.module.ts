@@ -28,7 +28,7 @@ const routes: Routes = [
         loadChildren: () => import('../perfil/perfil.module').then( m => m.PerfilPageModule)
       },
       {
-        path: 'equipo', 
+        path: 'equipo/:nombre_equipo', 
         component: EquipoComponent  
       },
       {
