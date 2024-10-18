@@ -28,3 +28,16 @@ export interface Logros{
     fecha: Timestamp;
     logro: string;
 }
+export interface Usuario {
+    nombre: string;
+    apellido: string;
+    fechaNacimiento: Date;
+    sexo: string;
+    altura: number;
+    peso: number;
+    correo: string;
+    contraseña?: string; // Cambiado a opcional
+    fotoPerfil?: string; // Campo para la URL de la foto de perfil
+}
+
+  

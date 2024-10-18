@@ -1,5 +1,7 @@
 import { Component } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { Usuario } from '../modelos/equipos.models';
+
 @Component({
   selector: 'app-tab1',
   templateUrl: 'Inicio.page.html',
@@ -7,7 +9,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 })
 export class Inicio {
 
-  usuario: any;
+  usuario: Usuario []=[];
 
   constructor(private activeroute: ActivatedRoute, private router: Router) { 
     // Nos suscribimos a los parámetros de la ruta

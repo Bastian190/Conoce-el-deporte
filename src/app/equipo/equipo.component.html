@@ -32,7 +32,7 @@
         <ion-car-title>Tabla de partidos</ion-car-title>
       </ion-card-header>
       <ion-card-content  >
-        <ion-item *ngFor="let partido of partidos">
+      <ion-item>
         <table class="table">
           <thead>
             <tr>
@@ -40,10 +40,10 @@
 
               <th>Resultado encuentro</th>
 
-              <th>ubicacion</th>
+              <th>Ubicación</th>
             </tr>
           </thead>
-          <tbody>
+          <tbody *ngFor="let partido of partidos">
             <tr>
               <td>{{ partido.contrincante }}</td>
               <td>{{ partido.resultado }}</td>

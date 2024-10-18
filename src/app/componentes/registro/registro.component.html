@@ -12,10 +12,10 @@
       <ion-col size="12">
         <ion-card id="contenido">
           <div class="profile-container">
-            <ion-button fill="clear" shape="round" class="profile-button">
-              <img class="responsive-icon" />
-              <ion-icon  name="person-circle-outline" class="default-icon"></ion-icon>
-              <input type="file" accept="image/*" style="display:none;" />
+            <ion-button fill="clear" shape="round" class="profile-button" (click)="fileInput.click()">
+              <img *ngIf="fotoPerfil" [src]="fotoPerfil" class="responsive-icon" />
+              <ion-icon name="person-circle-outline" class="default-icon"></ion-icon>
+              <input type="file" accept="image/*" style="display:none;" (change)="cargarFoto($event)" #fileInput />
             </ion-button>
           </div>
           <form [formGroup]="registroForm" (ngSubmit)="registrar()">
