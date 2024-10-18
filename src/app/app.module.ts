@@ -17,11 +17,13 @@ import { getStorage, provideStorage } from '@angular/fire/storage';
 import { RegistroRutinaModule } from './registro-rutina/registro-rutina.module';
 import { recuperarModule } from './componentes/recuperar/recuperar.module';
 import { ReactiveFormsModule } from '@angular/forms';
+import { AuthService } from './servicios/auth.service';
+import { AngularFireAuthModule } from '@angular/fire/compat/auth';
 
 @NgModule({
   declarations: [AppComponent],
-  imports: [BrowserModule, IonicModule.forRoot(), AppRoutingModule, EquiposModule,EditarperfilModule,EditarrutinaModule,registroModule,RegistroRutinaModule, ReactiveFormsModule,recuperarModule],
-  providers: [{ provide: RouteReuseStrategy, useClass: IonicRouteStrategy }, provideFirebaseApp(() => initializeApp({"projectId":"conoce-eldeporte","appId":"1:654408239881:web:2e6e71367c8955372121d8","storageBucket":"conoce-eldeporte.appspot.com","apiKey":"AIzaSyANkZ2O66SwlD8cEfpr4hyD_TEoV9ip-ZM","authDomain":"conoce-eldeporte.firebaseapp.com","messagingSenderId":"654408239881","measurementId":"G-CL7JHWEBVW"})), provideAuth(() => getAuth()), provideFirestore(() => getFirestore()), provideFunctions(() => getFunctions()), provideMessaging(() => getMessaging()), provideStorage(() => getStorage())],
+  imports: [BrowserModule, IonicModule.forRoot(), AppRoutingModule, EquiposModule,EditarperfilModule,EditarrutinaModule,registroModule,RegistroRutinaModule, ReactiveFormsModule,recuperarModule,AngularFireAuthModule,],
+  providers: [{ provide: RouteReuseStrategy, useClass: IonicRouteStrategy }, provideFirebaseApp(() => initializeApp({"projectId":"conoce-eldeporte","appId":"1:654408239881:web:2e6e71367c8955372121d8","storageBucket":"conoce-eldeporte.appspot.com","apiKey":"AIzaSyANkZ2O66SwlD8cEfpr4hyD_TEoV9ip-ZM","authDomain":"conoce-eldeporte.firebaseapp.com","messagingSenderId":"654408239881","measurementId":"G-CL7JHWEBVW"})), provideAuth(() => getAuth()), provideFirestore(() => getFirestore()), provideFunctions(() => getFunctions()), provideMessaging(() => getMessaging()), provideStorage(() => getStorage()),AuthService],
   bootstrap: [AppComponent],
 })
 export class AppModule {}

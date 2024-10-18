@@ -11,15 +11,15 @@
 
 <ion-content>
   <!-- Contenedor del perfil del usuario -->
-  <div class="profile-container">
+   <div class="profile-container">
     <ion-avatar class="user-avatar">
-      <img src="https://www.w3schools.com/howto/img_avatar.png" alt="Avatar">
+      <img [src]="usuarioFotoPerfil" alt="Avatar"> <!-- Foto de perfil dinámica -->
     </ion-avatar>
     <div class="user-info">
-      <h2>Pepito</h2>
-      <p>22 años</p>
-      <p>Equipo (Sin equipo)</p>
-      <p>correoejemplo.com</p>
+      <h2>{{ usuarioNombre }}</h2>  <!-- Nombre del usuario -->
+      <p>{{ usuarioEdad }} años</p>  <!-- Edad calculada del usuario -->
+      <p>Equipo ({{ usuarioEquipo }})</p>  <!-- Equipo del usuario -->
+      <p>{{ usuarioCorreo }}</p>  <!-- Correo del usuario -->
     </div>
   </div>
   <!-- Toggle switch -->
