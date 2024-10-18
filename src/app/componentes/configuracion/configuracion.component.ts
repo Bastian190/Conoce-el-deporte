@@ -38,7 +38,7 @@ export class ConfiguracionComponent  implements OnInit {
     const toast = await this.toastController.create({
       message: 'Sesión cerrada.',
       duration: 2000, // Duración en milisegundos
-      position: 'top', // Posición del toast (puedes cambiarla a 'bottom', 'middle', etc.)
+      position: 'bottom', // Posición del toast (puedes cambiarla a 'bottom', 'middle', etc.)
     });
     await toast.present();
   }
