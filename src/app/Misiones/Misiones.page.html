@@ -26,11 +26,12 @@
       <ion-list>
         <ion-item *ngFor="let ejercicio of ejerciciosDelDia">
           <ion-thumbnail slot="start">
-            <img [src]="ejercicio.imagen" alt="Imagen del ejercicio" />
+            <img [src]="ejercicio.gift" alt="Imagen del ejercicio" />
           </ion-thumbnail>
-          <ion-label>{{ ejercicio.nombre }}</ion-label>
+          <ion-label>{{ ejercicio.nombre_ejercicio }}</ion-label>
         </ion-item>
       </ion-list>
+      
       
       <ion-item *ngIf="!ejerciciosDelDia || ejerciciosDelDia.length === 0">
         <ion-label>No hay ejercicios para el día de hoy. ¡Descansa en este día!</ion-label>

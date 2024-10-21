@@ -24,6 +24,7 @@ export class Misiones {
   ngOnInit() {
     this.cargarEjerciciosDelDia();
   }
+  
   async cargarEjerciciosDelDia() {
     const diaActual: string = this.getDayOfWeek(); // Obtener el día actual
     const currentUser = this.authService.getCurrentUser(); // Obtener el usuario autenticado
@@ -32,24 +33,30 @@ export class Misiones {
       const uid = currentUser.uid; // Obtener el ID del usuario autenticado
   
       try {
-        // Obtener la rutina semanal del usuario
-        const rutinaDoc = await this.firestoreService.getRutinaDelDia(uid)
+        // Obtener la rutina del día actual del usuario
+        const rutinaDelDia = await this.firestoreService.getRutinaDelDia(uid, diaActual);
   
-        if (rutinaDoc && rutinaDoc[diaActual]) {
-          const tipoRutina = rutinaDoc[diaActual]; // Obtener el tipo de rutina para el día actual
+        if (rutinaDelDia && Array.isArray(rutinaDelDia)) {
+          const ejerciciosPromises = rutinaDelDia.map(async (rutina: string) => {
+            // Buscar ejercicios en la subcolección tipo_rutina
+            return this.firestoreService.getEjerciciosPorRutina(rutina);
+          });
   
-          // Obtener ejercicios en la subcolección tipo_rutina
-          const ejercicios = await this.firestoreService.getEjerciciosPorRutina(tipoRutina);
-          this.ejerciciosDelDia = ejercicios; // Guardar los ejercicios del día
-          console.log('Ejercicios del día:', this.ejerciciosDelDia);
+          // Esperar todas las promesas y aplanar el resultado
+          const ejerciciosArray = await Promise.all(ejerciciosPromises);
+          this.ejerciciosDelDia = ejerciciosArray.reduce((acc, val) => acc.concat(val), []); // Aplanar el array
+  
+          console.log('Ejercicios del día:', this.ejerciciosDelDia); // Imprimir para verificar
         } else {
-          console.log('No hay rutina guardada para hoy.');
+          this.mostrarToast('No hay rutina guardada para hoy.', 'warning');
         }
       } catch (error) {
-        console.error('Error al cargar la rutina del día:', error);
+        this.mostrarToast('Error al cargar la rutina del día.', 'danger');
+        console.error('Error al cargar la rutina del día: ', error);
       }
     } else {
-      console.log('Debes iniciar sesión para ver tu rutina.');
+      this.mostrarToast('Debes iniciar sesión para ver tu rutina.', 'warning');
+      // Redirigir a la página de inicio de sesión si no hay usuario
     }
   }
   

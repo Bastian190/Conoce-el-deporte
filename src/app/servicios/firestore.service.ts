@@ -103,30 +103,47 @@ export class FirestoreService {
       throw error;  // Lanza el error para manejarlo en el componente
     }
   }
-  async getRutinaDelDia(uid: string): Promise<any> {
+  async getRutinaDelDia(uid: string, dia: string): Promise<any> {
     const rutinaRef = doc(this.firestore, `usuarios/${uid}/rutinas/rutina_semanal`);
     const rutinaSnapshot = await getDoc(rutinaRef);
   
     if (rutinaSnapshot.exists()) {
-      return rutinaSnapshot.data(); // Retorna el mapa de rutinas
+      const rutinaData = rutinaSnapshot.data();
+      console.log("data", rutinaData);
+      
+      // Asegúrate de que el día actual existe en la rutina
+      if (rutinaData && rutinaData[dia]) {
+        console.log("dia:",rutinaData[dia]);
+        return rutinaData[dia]; // Retorna solo el array del día actual
+      } else {
+        console.log(`No se encontró rutina para el día: ${dia}`);
+        return null; // No hay rutina para el día solicitado
+      }
     } else {
       console.log('No se encontró rutina semanal para el usuario:', uid);
-      return null;
+      return null; // No se encontró el documento
     }
   }
   
-    async getEjerciciosPorRutina(tipoRutina: string): Promise<any[]> {
-    const tipoRutinaRef = collection(this.firestore, 'Rutinas', 'tipo_rutina');
-    const ejerciciosQuery = query(tipoRutinaRef, where('rutina', '==', tipoRutina));
-    const querySnapshot = await getDocs(ejerciciosQuery);
   
+
+  
+  
+  async getEjerciciosPorRutina(rutina: string): Promise<any[]> {
+    const tipoRutinaRef = collection(this.firestore, `Rutinas/${rutina}/Tipo_rutina`);
+    const ejerciciosQuery = query(tipoRutinaRef, where('nombre_tipo_rutina', '==', rutina));
+    const querySnapshot = await getDocs(ejerciciosQuery);
+    console.log(tipoRutinaRef);
     const ejercicios: any[] = [];
     querySnapshot.forEach((doc) => {
-      ejercicios.push({ id: doc.id, ...doc.data() }); // Agrega los ejercicios a la lista
+      ejercicios.push({ id: doc.id, ...doc.data() }); // Agregar los ejercicios a la lista
     });
   
     return ejercicios;
   }
+  
+  
+  
   
   getDocument<tipo>(collectionPath: string, docId: string) {
     const docRef = doc(this.firestore, collectionPath, docId);
