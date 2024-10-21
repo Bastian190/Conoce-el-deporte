@@ -56,23 +56,28 @@
     </div>
     
   </ion-card>
-  <ion-card>
+  <ion-card id="notificaciones">
     <ion-card-header>
-      <ion-card-title>Agregar equipo</ion-card-title>
-      <ion-card-subtitle>Agrega este equipo a tus me gusta</ion-card-subtitle>
+      <ion-card-title>Agregalo a tus me favoritos acá</ion-card-title>
     </ion-card-header>
   
     <ion-card-content>
-    ¿Te interesa este equipo?
+       ¡Siguelos para estar actualizado!
     </ion-card-content>
-
-    <ion-button id="present-alert" fill="clear">Si</ion-button>
+  
+    <ng-container *ngIf="!esEquipoSeguido">
+      <ion-button shape="round" id="present-alert">Seguir</ion-button>
       <ion-alert
         trigger="present-alert"
-        header="Selecciona las opciones de notificacion"
+        header="Selecciona las opciones de notificación"
         [buttons]="alertButtons"
         [inputs]="alertInputs"
       ></ion-alert>
-    <ion-button fill="clear">No</ion-button>
+    </ng-container>
+  
+    <ng-container *ngIf="esEquipoSeguido">
+      <ion-card-content>
+        Ya sigues a este equipo.
+      </ion-card-content>
+    </ng-container>
   </ion-card>
-</ion-content>

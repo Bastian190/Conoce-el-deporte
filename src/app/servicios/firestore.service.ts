@@ -1,10 +1,13 @@
 import { inject, Injectable } from '@angular/core';
-import { collectionData, Firestore, doc, docData  } from '@angular/fire/firestore';
-import { collection, CollectionReference, query, where } from 'firebase/firestore';
+import { collectionData, Firestore, doc, docData, setDoc,serverTimestamp} from '@angular/fire/firestore';
+import { collection, CollectionReference, getDoc, query, where } from 'firebase/firestore';
 import { catchError, map, Observable, of } from 'rxjs';
 import { Equipos, Logros, Partidos } from '../modelos/equipos.models';
 import { DocumentData } from 'firebase/firestore/lite';
 import { Timestamp } from 'firebase/firestore';
+import { AuthService } from './auth.service'; 
+
+
 @Injectable({
   providedIn: 'root'
 })
@@ -84,4 +87,31 @@ export class FirestoreService {
       })
     ) as Observable<Partidos[]>;
   }
+
+   async agregarEquipoSeguido(uid: string, equipoId: string, tipoNotificacion: string) {
+    try {
+      const usuarioRef = doc(this.firestore, `usuarios/${uid}/equiposSeguidos/${equipoId}`);
+      await setDoc(usuarioRef, {
+        equipoId: equipoId,
+        tipoNotificacion: tipoNotificacion,
+        timestamp: serverTimestamp(), // Usar serverTimestamp directamente
+      });
+      console.log('Equipo seguido agregado correctamente');
+    } catch (error) {
+      console.error('Error al seguir el equipo:', error);
+    }
+  }
+  async verificarEquipoSeguido(uid: string, equipoId: string): Promise<boolean> {
+    try {
+      const usuarioRef = doc(this.firestore, `usuarios/${uid}/equiposSeguidos/${equipoId}`);
+      const docSnapshot = await getDoc(usuarioRef);
+  
+      return docSnapshot.exists(); // Devuelve true si el documento existe, false si no
+    } catch (error) {
+      console.error('Error al verificar si el equipo está seguido:', error);
+      return false; // En caso de error, devuelve false
+    }
+  }
+  
+  
 }

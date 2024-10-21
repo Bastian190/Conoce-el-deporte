@@ -1,9 +1,10 @@
 import { Injectable } from '@angular/core';
 import { Auth, signInWithEmailAndPassword, createUserWithEmailAndPassword, User,setPersistence, browserLocalPersistence, onAuthStateChanged} from '@angular/fire/auth';
-import { Firestore, doc, setDoc  } from '@angular/fire/firestore';
+import { Firestore, doc, setDoc,getDoc  } from '@angular/fire/firestore';
 import { Storage, ref, uploadBytes, getDownloadURL } from '@angular/fire/storage';
 import { Usuario } from '../modelos/equipos.models';
-
+import { collection, getDocs } from 'firebase/firestore';
+import { Equipos } from '../modelos/equipos.models';
 
 
 @Injectable({
@@ -40,5 +41,10 @@ export class AuthService {
       console.error('Error al cerrar sesión: ', error);
     }
   }
+ 
+   
+  
+  
 }
+
 
