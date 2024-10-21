@@ -23,29 +23,29 @@ export class PerfilPage implements OnInit {
     private firestore: Firestore, // Firestore para consultas
     private storage: Storage
   ) {}
-
+  mostrarCorreo: boolean = false;
   ngOnInit() {
     this.obtenerDatosUsuario();
   }
 
   async obtenerDatosUsuario() {
     try {
-      const user: User | null = await this.authService.getCurrentUser(); // Obtener el usuario actual
+      const user: User | null = await this.authService.getCurrentUser(); 
       if (user) {
         const uid = user.uid;
 
-        // Consultar la información del usuario en Firestore
+        
         const userDocRef = doc(this.firestore, `usuarios/${uid}`);
         const userDoc = await getDoc(userDocRef);
 
         if (userDoc.exists()) {
           const usuarioData = userDoc.data();
           this.usuarioNombre = `${usuarioData['nombre']} ${usuarioData['apellido']}`;
-          this.usuarioEdad = this.calcularEdad(usuarioData['fechaNacimiento']); // Llama a la función para calcular la edad
+          this.usuarioEdad = this.calcularEdad(usuarioData['fechaNacimiento']); 
           this.usuarioEquipo = usuarioData['equipo'] || 'Sin equipo';
           this.usuarioCorreo = usuarioData['correo'];
 
-          // Verificar si el usuario tiene una foto de perfil almacenada
+          
           if (usuarioData['fotoPerfil']) {
             this.obtenerFotoPerfil(usuarioData['fotoPerfil']);
           }
@@ -60,22 +60,23 @@ export class PerfilPage implements OnInit {
     try {
       const storageRef = ref(this.storage, fotoPerfilPath);
       const url = await getDownloadURL(storageRef);
-      this.usuarioFotoPerfil = url; // Asignar la URL de la imagen
+      this.usuarioFotoPerfil = url; 
     } catch (error) {
       console.error('Error al obtener la foto de perfil: ', error);
-      // Si hay un error, dejamos la imagen por defecto
+    
     }
   }
 
   calcularEdad(fechaNacimiento: any): number {
     if (fechaNacimiento) {
-      // Asegúrate de que fechaNacimiento es un objeto Timestamp
-      const fechaNac = fechaNacimiento.toDate(); // Convierte el Timestamp a un objeto Date
+      
+      const fechaNac = fechaNacimiento.toDate(); 
       const edadDifMs = Date.now() - fechaNac.getTime();
       const edadFecha = new Date(edadDifMs);
       return Math.abs(edadFecha.getUTCFullYear() - 1970);
     }
-    return 0; // Retorna 0 si no hay fecha de nacimiento
+    return 0; 
   }
   
+
 }

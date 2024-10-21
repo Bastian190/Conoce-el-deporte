@@ -25,7 +25,7 @@
     <ion-list>
       <ion-item>
         <ion-label>Seleccione intensidad</ion-label>
-        <ion-select label-placement="stacked" (ionChange)="validacion($event.detail.value)">
+        <ion-select label-placement="stacked" (ionChange)="intensidadSeleccionada = $event.detail.value">
           <ion-select-option *ngFor="let i of intensidad" [value]="i">
             {{ i }}
           </ion-select-option>
@@ -33,7 +33,7 @@
       </ion-item>
     </ion-list> 
     <div id="boton">
-      <ion-button (click)="inicio()" id="mandar"  type="submit">Guardar rutina</ion-button>
+      <ion-button (click)="todos()" id="mandar"  type="submit">Guardar rutina</ion-button>
      </div>
   </ion-card>
  

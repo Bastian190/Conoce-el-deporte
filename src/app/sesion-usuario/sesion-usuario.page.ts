@@ -26,9 +26,12 @@ export class SesionUsuarioPage implements OnInit {
   validar(user: string, pasword: string) {
     if (user == null) {
       this.presentAlert();
+      console.log(this.password)
       return (this.result = 1);
+      
     } else if (pasword == null) {
       this.presentAlert();
+      console.log(this.password)
       return (this.result = 2);
     } else {
       return (this.result = 3);
@@ -41,6 +44,7 @@ export class SesionUsuarioPage implements OnInit {
 
     if (this.result === 3) {
       this.authService.signIn(this.usuario, this.password).then(() => {
+        console.log(this.password)
         let navigationExtras: NavigationExtras = {
           state: { usuario: this.usuario }
         };

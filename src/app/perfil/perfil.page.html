@@ -19,13 +19,13 @@
       <h2>{{ usuarioNombre }}</h2>  <!-- Nombre del usuario -->
       <p>{{ usuarioEdad }} años</p>  <!-- Edad calculada del usuario -->
       <p>Equipo ({{ usuarioEquipo }})</p>  <!-- Equipo del usuario -->
-      <p>{{ usuarioCorreo }}</p>  <!-- Correo del usuario -->
+      <p *ngIf="mostrarCorreo">{{ usuarioCorreo }}</p>  <!-- Correo del usuario -->
     </div>
   </div>
   <!-- Toggle switch -->
   <ion-item lines="none" class="toggle-container">
-    <ion-label>Interesado en pertenecer a un equipo</ion-label>
-    <ion-toggle slot="end" [enableOnOffLabels]="true"></ion-toggle>
+    <ion-label>Mostrar Correo</ion-label>
+    <ion-toggle slot="end" [(ngModel)]="mostrarCorreo"></ion-toggle>
   </ion-item>
 
   <!-- Título de equipos que te gustan -->

@@ -4,7 +4,7 @@ import { NavigationExtras, Router } from '@angular/router';
 import { FirestoreService } from '../servicios/firestore.service';
 import { Tipo_rutina, Rutinas} from '../modelos/equipos.models';
 import { ChangeDetectorRef } from '@angular/core';
-
+import { AuthService } from '../servicios/auth.service';
 
 @Component({
   selector: 'app-registro-rutina',
@@ -16,9 +16,11 @@ export class RegistroRutinaComponent  implements OnInit {
   rutina: Tipo_rutina[] = [];
   intensidad: string[]=[];
   Rutinas: Rutinas[]=[];
+  rutinaSeleccionada: any = {};
+  intensidadSeleccionada: string | null = null;
   result!:number;
 
-  constructor(private  navCtrl: NavController, private router:Router, private firestoreService:FirestoreService,private cdr: ChangeDetectorRef, private toastController: ToastController) {}
+  constructor(private  navCtrl: NavController, private router:Router, private firestoreService:FirestoreService,private cdr: ChangeDetectorRef, private toastController: ToastController, private authService: AuthService) {}
 
 
   inicio() {
@@ -56,41 +58,58 @@ export class RegistroRutinaComponent  implements OnInit {
   });
 
   }
-  cargarIntensidad(){
-
+  cargarIntensidad() {
     this.firestoreService.getcolleccionChanges<Rutinas>('Rutinas').subscribe(data => {
       if (data && data.length > 0) {
-        console.log('Datos recibidos:', data);
-        // Asumiendo que data tiene los campos de intensidad facil, media, dificil
-        const intensidadDoc = data[0]; // Tomando el primer documento o ajusta según la lógica
-        this.intensidad = [
-          intensidadDoc.facil,
-          intensidadDoc.media,
-          intensidadDoc.dificil
-        ];
-        console.log('Intensidades:', this.intensidad);
-        this.cdr.detectChanges();  // Para que Angular detecte cambios en la vista
+        const intensidadDoc = data[0];
+        this.intensidad = [intensidadDoc.facil, intensidadDoc.media, intensidadDoc.dificil];
+        this.cdr.detectChanges();
       }
     });
   }
   
   onSelect(selectedValues: string[], dia: string) {
-    this.mostrarToast(`Seleccionaste ${selectedValues.length} opciones para ${dia}`,'success');
-     if (selectedValues.length < 1 || selectedValues.length > 2) {
-      selectedValues.pop();
-      this.mostrarToast(`¡Debes seleccionar máximo dos rutinas para él día ${dia}!.`);
-      return this.result=1;
-    }else{
-      return this.result=2;
+    this.rutinaSeleccionada[dia] = selectedValues;  // Almacenar la selección del usuario por día
+    if (selectedValues.length < 1 || selectedValues.length > 2) {
+      this.mostrarToast(`¡Debes seleccionar máximo dos rutinas para el día ${dia}!`, 'warning');
+      this.result = 1;
+    } else {
+      this.result = 2;
     }
   }
-  validacion(selectedValues: string[]){
-    if(!selectedValues ||selectedValues.length===0){
-      this.mostrarToast(`Debes seleccionar una opcion.`);
-      return this.result=3;
-    }else{
-      return this.result=2;
+
+  // Maneja la validación de la intensidad
+  validacion(selectedValues: string[]) {
+    this.intensidadSeleccionada = selectedValues[0];  // Asignar la intensidad seleccionada
+    if (!this.intensidadSeleccionada) {
+      this.mostrarToast('Debes seleccionar una opción de intensidad.', 'warning');
+      this.result = 3;
+    } else {
+      this.result = 2;
     }
+  }
+  async guardarRutina() {
+    const currentUser = this.authService.getCurrentUser(); // Obtener el usuario autenticado
+  
+    if (currentUser) {
+      const uid = currentUser.uid; // Obtener el ID del usuario autenticado
+      try {
+        // Guardar la rutina y la intensidad seleccionadas en la subcolección del usuario
+        await this.firestoreService.guardarRutina(uid, this.rutinaSeleccionada, this.intensidadSeleccionada);
+        this.mostrarToast('Rutina guardada exitosamente.', 'success');
+        this.router.navigate(['/tabs/Inicio']);
+      } catch (error) {
+        this.mostrarToast('Error al guardar la rutina.', 'danger');
+        console.error('Error al guardar la rutina: ', error);
+      }
+    } else {
+      this.mostrarToast('No hay un usuario autenticado.', 'warning');
+    }
+  }
+  todos(){
+    this.guardarRutina()
+    this.inicio()
+    
   }
   async mostrarToast(message: string, color: string = 'warning') {
     const toast = await this.toastController.create({

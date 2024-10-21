@@ -24,34 +24,18 @@
     </ion-card-header>
     <ion-card-content>
       <ion-list>
-        <ion-item>
+        <ion-item *ngFor="let ejercicio of ejerciciosDelDia">
           <ion-thumbnail slot="start">
-            <img alt="Silhouette of mountains" src="https://ionicframework.com/docs/img/demos/thumbnail.svg" />
+            <img [src]="ejercicio.imagen" alt="Imagen del ejercicio" />
           </ion-thumbnail>
-          <ion-label>Item</ion-label><ion-toggle [enableOnOffLabels]="true"></ion-toggle>
-        </ion-item>
-  
-        <ion-item>
-          <ion-thumbnail slot="start">
-            <img alt="Silhouette of mountains" src="https://ionicframework.com/docs/img/demos/thumbnail.svg" />
-          </ion-thumbnail>
-          <ion-label>Item</ion-label><ion-toggle [enableOnOffLabels]="true"></ion-toggle>
-        </ion-item>
-  
-        <ion-item>
-          <ion-thumbnail slot="start">
-            <img alt="Silhouette of mountains" src="https://ionicframework.com/docs/img/demos/thumbnail.svg" />
-          </ion-thumbnail>
-          <ion-label>Item</ion-label><ion-toggle [enableOnOffLabels]="true"></ion-toggle>
-        </ion-item>
-  
-        <ion-item lines="none">
-          <ion-thumbnail slot="start">
-            <img alt="Silhouette of mountains" src="https://ionicframework.com/docs/img/demos/thumbnail.svg" />
-          </ion-thumbnail>
-          <ion-label>Item</ion-label><ion-toggle [enableOnOffLabels]="true"></ion-toggle>
+          <ion-label>{{ ejercicio.nombre }}</ion-label>
         </ion-item>
       </ion-list>
+      
+      <ion-item *ngIf="!ejerciciosDelDia || ejerciciosDelDia.length === 0">
+        <ion-label>No hay ejercicios para el día de hoy. ¡Descansa en este día!</ion-label>
+        <img src="assets/descanso.gif" alt="descanso">
+      </ion-item>
     </ion-card-content>
   </ion-card>
   <div>

@@ -1,6 +1,6 @@
 import { inject, Injectable } from '@angular/core';
 import { collectionData, Firestore, doc, docData  } from '@angular/fire/firestore';
-import { collection, CollectionReference, query, where } from 'firebase/firestore';
+import { collection, CollectionReference, getDoc, getDocs, query, setDoc, updateDoc, where } from 'firebase/firestore';
 import { catchError, map, Observable, of } from 'rxjs';
 import { Equipos, Logros, Partidos } from '../modelos/equipos.models';
 import { DocumentData } from 'firebase/firestore/lite';
@@ -83,5 +83,57 @@ export class FirestoreService {
         return of([]); // Retorna un array vacío en caso de error
       })
     ) as Observable<Partidos[]>;
+  }
+  async guardarRutina(uid: string, rutinaSeleccionada: any, intensidadSeleccionada: string | null): Promise<void> {
+    // Ruta a la subcolección "rutinas" del usuario
+    const userRutinaRef = doc(this.firestore, `usuarios/${uid}/rutinas`, 'rutina_semanal');
+    
+    const data = {
+      rutina: rutinaSeleccionada,
+      intensidad: intensidadSeleccionada,
+      fecha: new Date() // Añade una fecha para saber cuándo se creó la rutina
+    };
+
+    try {
+      // Crear o actualizar la rutina en la subcolección
+      await setDoc(userRutinaRef, data, { merge: true });  // `merge: true` asegura que si ya existe, se actualice
+      console.log("Rutina guardada correctamente en la subcolección.");
+    } catch (error) {
+      console.error("Error al guardar la rutina en la subcolección: ", error);
+      throw error;  // Lanza el error para manejarlo en el componente
+    }
+  }
+  async getRutinaDelDia(uid: string): Promise<any> {
+    const rutinaRef = doc(this.firestore, `usuarios/${uid}/rutinas/rutina_semanal`);
+    const rutinaSnapshot = await getDoc(rutinaRef);
+  
+    if (rutinaSnapshot.exists()) {
+      return rutinaSnapshot.data(); // Retorna el mapa de rutinas
+    } else {
+      console.log('No se encontró rutina semanal para el usuario:', uid);
+      return null;
+    }
+  }
+  
+    async getEjerciciosPorRutina(tipoRutina: string): Promise<any[]> {
+    const tipoRutinaRef = collection(this.firestore, 'Rutinas', 'tipo_rutina');
+    const ejerciciosQuery = query(tipoRutinaRef, where('rutina', '==', tipoRutina));
+    const querySnapshot = await getDocs(ejerciciosQuery);
+  
+    const ejercicios: any[] = [];
+    querySnapshot.forEach((doc) => {
+      ejercicios.push({ id: doc.id, ...doc.data() }); // Agrega los ejercicios a la lista
+    });
+  
+    return ejercicios;
+  }
+  
+  getDocument<tipo>(collectionPath: string, docId: string) {
+    const docRef = doc(this.firestore, collectionPath, docId);
+    return docData(docRef) as Observable<tipo>;
+  }
+  updateUserProfile(uid: string, data: any) {
+    const userDocRef = doc(this.firestore, 'usuarios', uid); // Cambia 'usuarios' por tu colección real
+    return updateDoc(userDocRef, data);
   }
 }
