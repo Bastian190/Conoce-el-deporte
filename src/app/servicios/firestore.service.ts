@@ -1,6 +1,6 @@
 import { inject, Injectable } from '@angular/core';
 import { collectionData, Firestore, doc, docData, setDoc,serverTimestamp} from '@angular/fire/firestore';
-import { collection, CollectionReference, getDoc, query, where } from 'firebase/firestore';
+import { collection, CollectionReference, getDoc, getDocs, query, where } from 'firebase/firestore';
 import { catchError, map, Observable, of } from 'rxjs';
 import { Equipos, Logros, Partidos } from '../modelos/equipos.models';
 import { DocumentData } from 'firebase/firestore/lite';
@@ -110,6 +110,33 @@ export class FirestoreService {
     } catch (error) {
       console.error('Error al verificar si el equipo está seguido:', error);
       return false; // En caso de error, devuelve false
+    }
+  }
+
+  // Función para obtener los equipos seguidos por el usuario
+  async obtenerEquiposSeguidos(uid: string): Promise<string[]> {
+    const equiposSeguidosRef = collection(this.firestore, `usuarios/${uid}/equiposSeguidos`);
+    const equiposSeguidosSnapshot = await getDocs(equiposSeguidosRef);
+
+    const equiposSeguidos: string[] = [];
+
+    equiposSeguidosSnapshot.forEach((doc) => {
+      equiposSeguidos.push(doc.data()['equipoId']); // Agrega el ID de cada equipo seguido
+    });
+
+    return equiposSeguidos;
+  }
+
+  // Función para obtener los datos completos del equipo a partir de su ID
+  async obtenerDatosEquipo(equipoId: string): Promise<Equipos | null> {
+    const equipoRef = doc(this.firestore, `Equipos/${equipoId}`);
+    const equipoSnapshot = await getDoc(equipoRef);
+
+    if (equipoSnapshot.exists()) {
+      return equipoSnapshot.data() as Equipos;
+    } else {
+      console.log('Equipo no encontrado');
+      return null;
     }
   }
   
