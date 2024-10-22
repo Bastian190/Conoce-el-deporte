@@ -1,10 +1,13 @@
 import { inject, Injectable } from '@angular/core';
-import { collectionData, Firestore, doc, docData  } from '@angular/fire/firestore';
+import { collectionData, Firestore, doc, docData,serverTimestamp  } from '@angular/fire/firestore';
 import { collection, CollectionReference, getDoc, getDocs, query, setDoc, updateDoc, where } from 'firebase/firestore';
 import { catchError, map, Observable, of } from 'rxjs';
 import { Equipos, Logros, Partidos } from '../modelos/equipos.models';
 import { DocumentData } from 'firebase/firestore/lite';
 import { Timestamp } from 'firebase/firestore';
+import { AuthService } from './auth.service'; 
+
+
 @Injectable({
   providedIn: 'root'
 })
@@ -46,6 +49,7 @@ export class FirestoreService {
     const subCollection = collection(this.firestore, path);
     return collectionData(subCollection) as Observable<tipo[]>;
   }
+
   getLogrosPorEquipo(equipoId: string): Observable<Logros[]> {
     const logrosCollection = collection(this.firestore, `Equipos/${equipoId}/Logros`);
     console.log('Consulta a la colección:', logrosCollection); // Verifica que la referencia sea correcta
@@ -64,7 +68,7 @@ export class FirestoreService {
             return of([]); // Retorna un array vacío en caso de error
         })
     ) as Observable<Logros[]>;
-}
+    }
 
   getPartidosPorEquipo(equipoId: string): Observable<Partidos[]> {
     const partidosCollection = collection(this.firestore, `Equipos/${equipoId}/Partidos`);
@@ -133,6 +137,57 @@ export class FirestoreService {
       }
     } else {
       console.log('No se encontró el documento rutina_semanal para el usuario:', uid);
+   }
+ }
+
+   async agregarEquipoSeguido(uid: string, equipoId: string, tipoNotificacion: string) {
+    try {
+      const usuarioRef = doc(this.firestore, `usuarios/${uid}/equiposSeguidos/${equipoId}`);
+      await setDoc(usuarioRef, {
+        equipoId: equipoId,
+        tipoNotificacion: tipoNotificacion,
+        timestamp: serverTimestamp(), // Usar serverTimestamp directamente
+      });
+      console.log('Equipo seguido agregado correctamente');
+    } catch (error) {
+      console.error('Error al seguir el equipo:', error);
+    }
+  }
+  async verificarEquipoSeguido(uid: string, equipoId: string): Promise<boolean> {
+    try {
+      const usuarioRef = doc(this.firestore, `usuarios/${uid}/equiposSeguidos/${equipoId}`);
+      const docSnapshot = await getDoc(usuarioRef);
+  
+      return docSnapshot.exists(); // Devuelve true si el documento existe, false si no
+    } catch (error) {
+      console.error('Error al verificar si el equipo está seguido:', error);
+      return false; // En caso de error, devuelve false
+    }
+  }
+
+  // Función para obtener los equipos seguidos por el usuario
+  async obtenerEquiposSeguidos(uid: string): Promise<string[]> {
+    const equiposSeguidosRef = collection(this.firestore, `usuarios/${uid}/equiposSeguidos`);
+    const equiposSeguidosSnapshot = await getDocs(equiposSeguidosRef);
+
+    const equiposSeguidos: string[] = [];
+
+    equiposSeguidosSnapshot.forEach((doc) => {
+      equiposSeguidos.push(doc.data()['equipoId']); // Agrega el ID de cada equipo seguido
+    });
+
+    return equiposSeguidos;
+  }
+
+  // Función para obtener los datos completos del equipo a partir de su ID
+  async obtenerDatosEquipo(equipoId: string): Promise<Equipos | null> {
+    const equipoRef = doc(this.firestore, `Equipos/${equipoId}`);
+    const equipoSnapshot = await getDoc(equipoRef);
+
+    if (equipoSnapshot.exists()) {
+      return equipoSnapshot.data() as Equipos;
+    } else {
+      console.log('Equipo no encontrado');
       return null;
     }
   }

@@ -29,16 +29,14 @@ export class ConfiguracionComponent  implements OnInit {
   }
   async cerrarSesion() {
     await this.authService.signOut();
-    // Redirigir a la página de inicio o a donde desees después de cerrar sesión
     this.router.navigate(['/login']);
     this.presentToast();
   }
-  // Método para mostrar el toast
   async presentToast() {
     const toast = await this.toastController.create({
       message: 'Sesión cerrada.',
-      duration: 2000, // Duración en milisegundos
-      position: 'bottom', // Posición del toast (puedes cambiarla a 'bottom', 'middle', etc.)
+      duration: 2000,
+      position: 'bottom',
     });
     await toast.present();
   }

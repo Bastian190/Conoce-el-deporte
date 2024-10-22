@@ -1,9 +1,10 @@
 import { Injectable } from '@angular/core';
 import { Auth, signInWithEmailAndPassword, createUserWithEmailAndPassword, User,setPersistence, browserLocalPersistence, onAuthStateChanged} from '@angular/fire/auth';
-import { Firestore, doc, setDoc  } from '@angular/fire/firestore';
+import { Firestore, doc, setDoc,getDoc  } from '@angular/fire/firestore';
 import { Storage, ref, uploadBytes, getDownloadURL } from '@angular/fire/storage';
 import { Usuario } from '../modelos/equipos.models';
-
+import { collection, getDocs } from 'firebase/firestore';
+import { Equipos } from '../modelos/equipos.models';
 
 
 @Injectable({
@@ -29,9 +30,13 @@ export class AuthService {
       await setDoc(userRef, { ...usuario, uid: userCredential.user.uid });
     }
 
-    getCurrentUser(): User | null {
-      return this.auth.currentUser; // Devuelve el usuario actual, o null si no hay ninguno
+    async getCurrentUser(): Promise<User | null> {
+      return new Promise((resolve) => {
+        const user = this.auth.currentUser; // Devuelve el usuario actual
+        resolve(user);
+      });
     }
+
     // Método para cerrar sesión
   async signOut() {
     try {
@@ -40,5 +45,11 @@ export class AuthService {
       console.error('Error al cerrar sesión: ', error);
     }
   }
+  
+ 
+   
+  
+  
 }
+
 

@@ -32,29 +32,15 @@
   <h3 class="liked-teams-title">Equipos que te gustan</h3>
 
   <!-- Contenedor de equipos -->
-  <div class="teams-container">
-    <div class="team-card">
-      <ion-card>
-        <img src="https://via.placeholder.com/150" alt="Team Image">
+  <div  class="teams-container">
+    <div  class="team-card">
+      <ion-card *ngFor="let equipo of equiposSeguidos">
         <ion-card-header>
-          <ion-card-title>Club Lo rojas</ion-card-title>
+          <ion-card-title>{{ equipo.nombre_equipo }}</ion-card-title>
         </ion-card-header>
         <ion-card-content>
-          <p>Futbol soccer</p>
-          <p>Equipo de futbol ubicado en Lo Rojas</p>
-        </ion-card-content>
-      </ion-card>
-    </div>
-
-    <div class="team-card">
-      <ion-card>
-        <img src="https://via.placeholder.com/150" alt="Team Image">
-        <ion-card-header>
-          <ion-card-title>Zorros de La Cruz</ion-card-title>
-        </ion-card-header>
-        <ion-card-content>
-          <p>Futbol Americano</p>
-          <p>Equipo de futbol americano de la cruz</p>
+          <p>{{ equipo.descripcion }}</p>
+          <p>{{ equipo.tipo_deporte }}</p>
         </ion-card-content>
       </ion-card>
     </div>
