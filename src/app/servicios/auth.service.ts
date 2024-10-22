@@ -30,11 +30,8 @@ export class AuthService {
       await setDoc(userRef, { ...usuario, uid: userCredential.user.uid });
     }
 
-    async getCurrentUser(): Promise<User | null> {
-      return new Promise((resolve) => {
-        const user = this.auth.currentUser; // Devuelve el usuario actual
-        resolve(user);
-      });
+    getCurrentUser(): User | null {
+      return this.auth.currentUser; // Devuelve el usuario actual, o null si no hay ninguno
     }
 
     // Método para cerrar sesión

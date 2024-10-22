@@ -6,6 +6,7 @@ import { getDownloadURL, ref, Storage } from '@angular/fire/storage';
 import { User } from '@angular/fire/auth';
 import { Equipos } from '../modelos/equipos.models';
 import { FirestoreService } from '../servicios/firestore.service';
+
 @Component({
   selector: 'app-perfil',
   templateUrl: './perfil.page.html',
@@ -18,6 +19,8 @@ export class PerfilPage implements OnInit {
   usuarioCorreo!: string;
   usuarioFotoPerfil: string = 'https://www.w3schools.com/howto/img_avatar.png'; // Imagen por defecto
   equiposSeguidos: Equipos[] = [];
+  mostrarCorreo: boolean = false; // Nueva variable para controlar el toggle
+
   constructor(
     private navController: NavController,
     private authService: AuthService, // Servicio de autenticación
@@ -37,9 +40,6 @@ export class PerfilPage implements OnInit {
       console.log('No hay usuario autenticado, redirigiendo a la página de inicio de sesión...');
     }
   }
-  
-  
-  
 
   obtenerDatosEquiposSeguidos(uid: string) {
     this.equiposSeguidos = []; // Inicializa la lista de equipos seguidos
@@ -71,11 +71,6 @@ export class PerfilPage implements OnInit {
         console.error('Error al obtener equipos seguidos:', error);
       });
   }
-  
-  
-  
-  
-  
 
   async obtenerDatosUsuario() {
     try {
@@ -83,7 +78,6 @@ export class PerfilPage implements OnInit {
       if (user) {
         const uid = user.uid;
 
-        
         const userDocRef = doc(this.firestore, `usuarios/${uid}`);
         const userDoc = await getDoc(userDocRef);
 
@@ -94,7 +88,6 @@ export class PerfilPage implements OnInit {
           this.usuarioEquipo = usuarioData['equipo'] || 'Sin equipo';
           this.usuarioCorreo = usuarioData['correo'];
 
-          
           if (usuarioData['fotoPerfil']) {
             this.obtenerFotoPerfil(usuarioData['fotoPerfil']);
           }
@@ -112,13 +105,11 @@ export class PerfilPage implements OnInit {
       this.usuarioFotoPerfil = url; 
     } catch (error) {
       console.error('Error al obtener la foto de perfil: ', error);
-    
     }
   }
 
   calcularEdad(fechaNacimiento: any): number {
     if (fechaNacimiento) {
-      
       const fechaNac = fechaNacimiento.toDate(); 
       const edadDifMs = Date.now() - fechaNac.getTime();
       const edadFecha = new Date(edadDifMs);
@@ -126,6 +117,4 @@ export class PerfilPage implements OnInit {
     }
     return 0; 
   }
-  
-
 }
