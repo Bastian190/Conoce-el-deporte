@@ -104,43 +104,74 @@ export class FirestoreService {
     }
   }
   async getRutinaDelDia(uid: string, dia: string): Promise<any> {
+    // Referencia al documento de rutina_semanal del usuario
     const rutinaRef = doc(this.firestore, `usuarios/${uid}/rutinas/rutina_semanal`);
+    
+    // Obtener el snapshot del documento
     const rutinaSnapshot = await getDoc(rutinaRef);
   
+    // Verificar si el documento existe
     if (rutinaSnapshot.exists()) {
+      // Obtener los datos del documento
       const rutinaData = rutinaSnapshot.data();
-      console.log("data", rutinaData);
-      
-      // Asegúrate de que el día actual existe en la rutina
-      if (rutinaData && rutinaData[dia]) {
-        console.log("dia:",rutinaData[dia]);
-        return rutinaData[dia]; // Retorna solo el array del día actual
+  
+      // Asegurarse de que existe el campo 'rutina_semanal'
+      if (rutinaData && rutinaData['rutina']) {
+        const rutinaSemanal = rutinaData['rutina'];
+  
+        // Verificar si hay datos para el día específico en el mapa de rutina_semanal
+        if (rutinaSemanal[dia]) {
+          console.log(`Rutina para el día ${dia}:`, rutinaSemanal[dia]);
+          return rutinaSemanal[dia]; // Retorna la rutina para el día específico
+        } else {
+          console.log(`No se encontró rutina para el día: ${dia}`);
+          return null; // No hay rutina para el día solicitado
+        }
       } else {
-        console.log(`No se encontró rutina para el día: ${dia}`);
-        return null; // No hay rutina para el día solicitado
+        console.log('El campo "rutina" no se encontró en rutina_semanal.');
+        return null;
       }
     } else {
-      console.log('No se encontró rutina semanal para el usuario:', uid);
-      return null; // No se encontró el documento
+      console.log('No se encontró el documento rutina_semanal para el usuario:', uid);
+      return null;
     }
   }
   
   
+  
 
   
+  async getEjerciciosPorRutina(nombreTipoRutina: string): Promise<any[]> {
+    // Supongamos que 'Rutinas' es una colección, y cada rutina tiene un documento con subcolección 'Tipo_rutina'
+    const rutinasRef = collection(this.firestore, 'Rutinas'); // Referencia a la colección principal de Rutinas
   
-  async getEjerciciosPorRutina(rutina: string): Promise<any[]> {
-    const tipoRutinaRef = collection(this.firestore, `Rutinas/${rutina}/Tipo_rutina`);
-    const ejerciciosQuery = query(tipoRutinaRef, where('nombre_tipo_rutina', '==', rutina));
-    const querySnapshot = await getDocs(ejerciciosQuery);
-    console.log(tipoRutinaRef);
+    // Crear un array para almacenar los ejercicios
     const ejercicios: any[] = [];
-    querySnapshot.forEach((doc) => {
-      ejercicios.push({ id: doc.id, ...doc.data() }); // Agregar los ejercicios a la lista
-    });
+  
+    // Obtener todos los documentos de la colección 'Rutinas'
+    const rutinasSnapshot = await getDocs(rutinasRef);
+  
+    for (const rutinaDoc of rutinasSnapshot.docs) {
+      // Para cada documento de rutina, obtener la subcolección 'Tipo_rutina'
+      const tipoRutinaRef = collection(this.firestore, `Rutinas/${rutinaDoc.id}/Tipo_rutina`);
+  
+      // Consulta para obtener los ejercicios donde 'nombre_tipo_rutina' coincida con la rutina del usuario
+      const ejerciciosQuery = query(tipoRutinaRef, where('nombre_tipo_rutina', '==', nombreTipoRutina));
+      
+      // Ejecutar la consulta
+      const querySnapshot = await getDocs(ejerciciosQuery);
+  
+      // Iterar sobre los documentos encontrados y agregar al array de ejercicios
+      querySnapshot.forEach((doc) => {
+        ejercicios.push({ id: doc.id, ...doc.data() });
+      });
+    }
   
     return ejercicios;
   }
+  
+  
+  
   
   
   
