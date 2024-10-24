@@ -21,7 +21,7 @@
       <ion-card-subtitle id="subtitulo">Completa tus misiones para obtener puntos</ion-card-subtitle>
     </ion-card-header>
     <ion-card-content>
-      <ion-list>
+      <ion-list *ngIf="ejerciciosDelDia && ejerciciosDelDia.length > 0" class="scrollable-list">
         <ion-item *ngFor="let ejercicio of ejerciciosDelDia">
           <ion-thumbnail slot="start" id="contendor-gif">
             <img id="gif" [src]="ejercicio.gifUrl" alt="GIF de {{ ejercicio.nombre }}" />
@@ -29,8 +29,7 @@
           <ion-label id="label">{{ ejercicio.nombre_ejercicio }}</ion-label>
         </ion-item>
       </ion-list>
-      
-      
+    
       <ion-item *ngIf="!ejerciciosDelDia || ejerciciosDelDia.length === 0">
         <ion-label>No hay ejercicios para el día de hoy. ¡Descansa en este día!</ion-label>
         <img id="descanso" src="assets/descanso.gif" alt="descanso">

@@ -192,38 +192,59 @@ export class FirestoreService {
     }
   }
   
-  
-  
+
 
   
-  async getEjerciciosPorRutina(nombreTipoRutina: string): Promise<any[]> {
-    // Supongamos que 'Rutinas' es una colección, y cada rutina tiene un documento con subcolección 'Tipo_rutina'
-    const rutinasRef = collection(this.firestore, 'Rutinas'); // Referencia a la colección principal de Rutinas
-  
-    // Crear un array para almacenar los ejercicios
-    const ejercicios: any[] = [];
-  
-    // Obtener todos los documentos de la colección 'Rutinas'
-    const rutinasSnapshot = await getDocs(rutinasRef);
-  
-    for (const rutinaDoc of rutinasSnapshot.docs) {
-      // Para cada documento de rutina, obtener la subcolección 'Tipo_rutina'
-      const tipoRutinaRef = collection(this.firestore, `Rutinas/${rutinaDoc.id}/Tipo_rutina`);
-  
-      // Consulta para obtener los ejercicios donde 'nombre_tipo_rutina' coincida con la rutina del usuario
-      const ejerciciosQuery = query(tipoRutinaRef, where('nombre_tipo_rutina', '==', nombreTipoRutina));
-      
-      // Ejecutar la consulta
-      const querySnapshot = await getDocs(ejerciciosQuery);
-  
-      // Iterar sobre los documentos encontrados y agregar al array de ejercicios
-      querySnapshot.forEach((doc) => {
-        ejercicios.push({ id: doc.id, ...doc.data() });
-      });
-    }
-  
-    return ejercicios;
+  // Función para obtener ejercicios por rutina
+async getEjerciciosPorRutina(nombreTipoRutina: string): Promise<any[]> {
+  const rutinasRef = collection(this.firestore, 'Rutinas'); // Referencia a la colección de Rutinas
+  const ejercicios: any[] = [];
+
+  // Obtener todos los documentos de la colección 'Rutinas'
+  const rutinasSnapshot = await getDocs(rutinasRef);
+
+  for (const rutinaDoc of rutinasSnapshot.docs) {
+    // Obtener la subcolección 'Tipo_rutina'
+    const tipoRutinaRef = collection(this.firestore, `Rutinas/${rutinaDoc.id}/Tipo_rutina`);
+
+    // Consulta para ejercicios que coincidan con el nombre de la rutina
+    const ejerciciosQuery = query(tipoRutinaRef, where('nombre_tipo_rutina', '==', nombreTipoRutina));
+    const querySnapshot = await getDocs(ejerciciosQuery);
+
+    // Añadir los ejercicios encontrados al array
+    querySnapshot.forEach((doc) => {
+      ejercicios.push({ id: doc.id, ...doc.data() });
+    });
   }
+
+  return ejercicios;
+}
+
+// Función para obtener ejercicios de calentamiento
+async getEjerciciosPorTipo(tipoEjercicio: string): Promise<any[]> {
+  const rutinasRef = collection(this.firestore, 'Rutinas'); // Referencia a la colección de Rutinas
+  const ejercicios: any[] = [];
+
+  // Obtener todos los documentos de la colección 'Rutinas'
+  const rutinasSnapshot = await getDocs(rutinasRef);
+
+  for (const rutinaDoc of rutinasSnapshot.docs) {
+      // Obtener la subcolección 'Tipo_rutina'
+      const tipoRutinaRef = collection(this.firestore, `Rutinas/${rutinaDoc.id}/Tipo_rutina`);
+
+      // Consulta para obtener los ejercicios donde 'nombre_tipo_rutina' sea del tipo solicitado
+      const ejerciciosQuery = query(tipoRutinaRef, where('nombre_tipo_rutina', '==', tipoEjercicio));
+      const querySnapshot = await getDocs(ejerciciosQuery);
+
+      // Añadir los ejercicios encontrados al array
+      querySnapshot.forEach((doc) => {
+          ejercicios.push({ id: doc.id, ...doc.data() });
+      });
+  }
+
+  return ejercicios;
+}
+
   
   getDocument<tipo>(collectionPath: string, docId: string) {
     const docRef = doc(this.firestore, collectionPath, docId);

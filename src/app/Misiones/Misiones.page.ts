@@ -36,7 +36,6 @@ export class Misiones implements OnInit {
   async cargarEjerciciosDelDia() {
     const diaActual: string = this.getDayOfWeek(); // Obtener el día actual
     const currentUser = this.authService.getCurrentUser(); // Obtener el usuario autenticado
-
     const ejerciciosGuardados = JSON.parse(localStorage.getItem('ejerciciosDelDia') || 'null');
     const diaGuardado = localStorage.getItem('diaEjercicios');
 
@@ -55,25 +54,35 @@ export class Misiones implements OnInit {
                 const nombreTipoRutina = rutinaDelDia[0];
                 console.log(`Rutina del día (${diaActual}):`, nombreTipoRutina);
 
+                // Obtener los ejercicios principales de la rutina
                 const ejercicios = await this.firestoreService.getEjerciciosPorRutina(nombreTipoRutina);
+                const ejerciciosAleatorios = this.shuffleArray(ejercicios);
+                const ejerciciosSeleccionados = ejerciciosAleatorios.slice(0, 5); // Selecciona solo 5 ejercicios
 
-                if (ejercicios.length > 0) {
-                    const ejerciciosAleatorios = this.shuffleArray(ejercicios);
-                    this.ejerciciosDelDia = ejerciciosAleatorios.slice(0, 5);
+                // Obtener 2 ejercicios de calentamiento
+                const calentamientos = await this.firestoreService.getEjerciciosPorTipo('calentamiento');
+                const calentamientosAleatorios = this.shuffleArray(calentamientos);
+                const calentamientosSeleccionados = calentamientosAleatorios.slice(0, 2); // Selecciona solo 2 calentamientos
 
-                    for (const ejercicio of this.ejerciciosDelDia) {
-                        // Asume que ejercicio.gift ya es una URL
-                        ejercicio.gifUrl = ejercicio.gift; // No se necesita más procesamiento
-                        console.log('URL del GIF:', ejercicio.gifUrl);
-                    }
+                // Obtener 2 ejercicios de estiramiento
+                const estiramientos = await this.firestoreService.getEjerciciosPorTipo('estiramiento');
+                const estiramientosAleatorios = this.shuffleArray(estiramientos);
+                const estiramientosSeleccionados = estiramientosAleatorios.slice(0, 2); // Selecciona solo 2 estiramientos
 
-                    localStorage.setItem('ejerciciosDelDia', JSON.stringify(this.ejerciciosDelDia));
-                    localStorage.setItem('diaEjercicios', diaActual);
+                // Combinar todos los ejercicios: 5 ejercicios principales, 2 calentamientos, 2 estiramientos
+                this.ejerciciosDelDia = [...calentamientosSeleccionados, ...ejerciciosSeleccionados, ...estiramientosSeleccionados];
 
-                    console.log('Ejercicios del día:', this.ejerciciosDelDia);
-                } else {
-                    this.mostrarToast('No se encontraron ejercicios para la rutina de hoy.', 'warning');
+                // Guardar los gifs en los ejercicios
+                for (const ejercicio of this.ejerciciosDelDia) {
+                    ejercicio.gifUrl = ejercicio.gift; // Asume que ejercicio.gift ya es una URL
+                    console.log('URL del GIF:', ejercicio.gifUrl);
                 }
+
+                // Guardar en localStorage
+                localStorage.setItem('ejerciciosDelDia', JSON.stringify(this.ejerciciosDelDia));
+                localStorage.setItem('diaEjercicios', diaActual);
+
+                console.log('Ejercicios del día:', this.ejerciciosDelDia);
             } else {
                 this.mostrarToast('No hay rutina guardada para hoy.', 'warning');
             }
@@ -86,6 +95,7 @@ export class Misiones implements OnInit {
     }
 }
 
+
   
 
   private shuffleArray(array: any[]): any[] {
@@ -96,31 +106,7 @@ export class Misiones implements OnInit {
     return array;
   }
 
-  private async getGifUrl(gifReference: any): Promise<string> {
-    if (gifReference && typeof gifReference === 'object') {
-        // Intenta acceder a la propiedad que esperas
-        gifReference = gifReference.url || ''; // Ajusta según la estructura real
-    }
-
-    // Aquí sigue la lógica existente para manejar las cadenas
-    if (typeof gifReference !== 'string') {
-        throw new Error('gifReference debe ser una cadena, pero recibió: ' + typeof gifReference);
-    }
-
-    // Comprobar si ya es una URL pública
-    if (gifReference.startsWith('https://firebasestorage.googleapis.com/')) {
-        return gifReference; // Retorna la URL directamente
-    }
-
-    // Convertir gs:// a URL HTTP
-    if (gifReference.startsWith('gs://')) {
-        const baseUrl = 'https://firebasestorage.googleapis.com/v0/b/conoce-eldeporte.appspot.com/o/';
-        const path = encodeURIComponent(gifReference.replace('gs://conoce-eldeporte.appspot.com/', ''));
-        return `${baseUrl}${path}?alt=media`; // Retorna la URL de descarga
-    }
-
-    throw new Error('URL de GIF no válida: ' + gifReference);
-}
+ 
 
   
   
