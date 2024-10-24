@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { NavController } from '@ionic/angular';
-import { Firestore, doc, getDoc } from '@angular/fire/firestore';
+import { Firestore, doc, getDoc,collection } from '@angular/fire/firestore';
 import { AuthService } from '../servicios/auth.service'; // Importar el servicio de autenticación
 import { getDownloadURL, ref, Storage } from '@angular/fire/storage';
 import { User } from '@angular/fire/auth';
@@ -39,39 +39,45 @@ export class PerfilPage implements OnInit {
     } else {
       console.log('No hay usuario autenticado, redirigiendo a la página de inicio de sesión...');
     }
+    console.log(this.equiposSeguidos);
+    
   }
 
-  obtenerDatosEquiposSeguidos(uid: string) {
+  async obtenerDatosEquiposSeguidos(uid: string) {
     this.equiposSeguidos = []; // Inicializa la lista de equipos seguidos
-  
-    this.firestoreService.obtenerEquiposSeguidos(uid)
-      .then(equiposIdsSeguidos => {
-        if (equiposIdsSeguidos.length === 0) {
-          console.log('El usuario no sigue a ningún equipo.');
-          return; // Si no hay equipos, salir de la función
-        }
-  
-        const promises = equiposIdsSeguidos.map(equipoId => 
-          this.firestoreService.obtenerDatosEquipo(equipoId).then(equipoData => {
-            if (equipoData) {
-              this.equiposSeguidos.push(equipoData); // Almacenar los datos del equipo
-            }
-          }).catch(error => {
-            console.error(`Error al obtener datos del equipo ${equipoId}:`, error);
-          })
-        );
-  
-        // Esperar a que todas las promesas se resuelvan
-        return Promise.all(promises);
-      })
-      .then(() => {
-        console.log('Equipos seguidos cargados:', this.equiposSeguidos);
-      })
-      .catch(error => {
-        console.error('Error al obtener equipos seguidos:', error);
-      });
-  }
 
+    this.firestoreService.obtenerEquiposSeguidos(uid)
+        .then(equiposIdsSeguidos => {
+            console.log('Equipos seguidos IDs:', equiposIdsSeguidos); // Verifica los IDs
+
+            if (equiposIdsSeguidos.length === 0) {
+                console.log('El usuario no sigue a ningún equipo.');
+                return; // Si no hay equipos, salir de la función
+            }
+
+            const promises = equiposIdsSeguidos.map(equipoId =>
+                this.firestoreService.obtenerDatosEquipo(equipoId).then(equipoData => {
+                    if (equipoData) {
+                        equipoData.id = equipoId; // Asegúrate de que el id esté presente
+                        this.equiposSeguidos.push(equipoData);
+                        console.log('Equipo cargado:', equipoData);
+                    }
+                }).catch(error => {
+                    console.error(`Error al obtener datos del equipo ${equipoId}:`, error);
+                })
+            );
+
+            return Promise.all(promises);
+        })
+        .then(() => {
+            console.log('Equipos seguidos cargados:', this.equiposSeguidos);
+        })
+        .catch(error => {
+            console.error('Error al obtener equipos seguidos:', error);
+        });
+}
+
+  
   async obtenerDatosUsuario() {
     try {
       const user: User | null = await this.authService.getCurrentUser(); 
@@ -117,4 +123,36 @@ export class PerfilPage implements OnInit {
     }
     return 0; 
   }
+  dejarDeSeguir(equipoId: string) {
+    console.log(`Intentando dejar de seguir el equipo con ID: ${equipoId}`); // Verifica el ID aquí
+
+    // Asegúrate de que el ID no sea undefined
+    if (!equipoId) {
+        console.error('El ID del equipo es undefined. Verifica la llamada a dejarDeSeguir.');
+        return; // Sal de la función si el ID no es válido
+    }
+
+    const user = this.authService.getCurrentUser();
+    if (user) {
+        const uid = user.uid;
+        this.firestoreService.dejarDeSeguirEquipo(uid, equipoId)
+            .then(() => {
+                // Filtrar el equipo de la lista de equiposSeguidos
+                this.equiposSeguidos = this.equiposSeguidos.filter(equipo => equipo.id !== equipoId);
+                console.log(`El equipo con ID ${equipoId} ha sido eliminado de la lista de equipos seguidos.`);
+            })
+            .catch(error => {
+                console.error('Error al dejar de seguir el equipo:', error);
+            });
+    } else {
+        console.error('No hay un usuario autenticado para eliminar el equipo seguido.');
+    }
+}
+
+
+  
+  
+  
+  
+  
 }

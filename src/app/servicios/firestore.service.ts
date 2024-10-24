@@ -1,6 +1,6 @@
 import { inject, Injectable } from '@angular/core';
 import { collectionData, Firestore, doc, docData,serverTimestamp  } from '@angular/fire/firestore';
-import { collection, CollectionReference, getDoc, getDocs, query, setDoc, updateDoc, where } from 'firebase/firestore';
+import { collection, CollectionReference, deleteDoc, getDoc, getDocs, query, setDoc, updateDoc, where } from 'firebase/firestore';
 import { catchError, map, Observable, of } from 'rxjs';
 import { Equipos, Logros, Partidos } from '../modelos/equipos.models';
 import { DocumentData } from 'firebase/firestore/lite';
@@ -16,12 +16,12 @@ export class FirestoreService {
   firestore: Firestore = inject(Firestore)
 
 
-  constructor() { }
+  constructor(private authService: AuthService) { }
 
-  getcolleccionChanges<tipo>(path: string){
-    const itemCollection = collection(this.firestore, path);
-    return collectionData(itemCollection) as Observable<tipo[]>;
-    }
+  getcolleccionChanges<T>(nombreColeccion: string): Observable<T[]> {
+    const coleccionRef = collection(this.firestore, nombreColeccion); // Asegúrate de que esto es correcto
+    return collectionData(coleccionRef, { idField: 'id' }) as Observable<T[]>; // Devuelve la colección
+  }
     getEquipoPorNombre(nombreEquipo: string): Observable<string | null> {
       const equiposCollection = collection(this.firestore, 'Equipos') as CollectionReference<DocumentData>;
       const q = query(equiposCollection, where('nombre_equipo', '==', nombreEquipo));
@@ -225,12 +225,6 @@ export class FirestoreService {
     return ejercicios;
   }
   
-  
-  
-  
-  
-  
-  
   getDocument<tipo>(collectionPath: string, docId: string) {
     const docRef = doc(this.firestore, collectionPath, docId);
     return docData(docRef) as Observable<tipo>;
@@ -239,4 +233,14 @@ export class FirestoreService {
     const userDocRef = doc(this.firestore, 'usuarios', uid); // Cambia 'usuarios' por tu colección real
     return updateDoc(userDocRef, data);
   }
+
+  dejarDeSeguirEquipo(uid: string, equipoId: string) {
+    const userRef = doc(this.firestore, `usuarios/${uid}`);
+    const equiposSeguidosRef = collection(this.firestore, `${userRef.path}/equiposSeguidos`);
+    
+    return deleteDoc(doc(equiposSeguidosRef, equipoId));
+}
+
+  
+  
 }

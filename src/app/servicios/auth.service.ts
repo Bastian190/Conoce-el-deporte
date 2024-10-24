@@ -42,6 +42,11 @@ export class AuthService {
       console.error('Error al cerrar sesión: ', error);
     }
   }
+  getUserId(): string | null {
+    const user = this.auth.currentUser;
+    return user ? user.uid : null; // Retorna el ID del usuario o null si no hay usuario autenticado
+  }
+  
   
  
    

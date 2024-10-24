@@ -32,18 +32,20 @@
   <h3 class="liked-teams-title">Equipos que te gustan</h3>
 
   <!-- Contenedor de equipos -->
-  <div  class="teams-container">
-    <div  class="team-card">
-      <ion-card *ngFor="let equipo of equiposSeguidos">
-        <ion-card-header>
-          <ion-card-title>{{ equipo.nombre_equipo }}</ion-card-title>
-        </ion-card-header>
-        <ion-card-content>
-          <p>{{ equipo.descripcion }}</p>
-          <p>{{ equipo.tipo_deporte }}</p>
-        </ion-card-content>
-      </ion-card>
-    </div>
-    
-  </div>
+  <ion-grid>
+    <ion-row>
+      <ion-col size="6" *ngFor="let equipo of equiposSeguidos"> 
+        <ion-card class="custom-card">
+          <ion-card-header id="contenido">
+            <ion-card-title>{{ equipo.nombre_fantasia }}</ion-card-title> 
+            <ion-card-subtitle>{{ equipo.tipo_deporte }}</ion-card-subtitle> 
+          </ion-card-header>
+          <ion-card-content>
+            <div class="example-button-row"></div>
+            <ion-button class="btn" (click)="dejarDeSeguir(equipo.id)">Dejar de seguir</ion-button>
+          </ion-card-content>
+        </ion-card>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
 </ion-content>

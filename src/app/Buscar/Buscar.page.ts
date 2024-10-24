@@ -3,6 +3,7 @@ import { FirestoreService } from '../servicios/firestore.service';
 import { Equipos } from '../modelos/equipos.models';
 import { ChangeDetectorRef } from '@angular/core';
 import { Router, NavigationExtras } from '@angular/router';
+
 @Component({
   selector: 'buscar',
   templateUrl: 'Buscar.page.html',
@@ -12,7 +13,9 @@ export class Buscar {
   equipos: Equipos[] = [];
   equiposFiltrados: Equipos[] = [];
 
-  constructor(private firestoreService:FirestoreService,private cdr: ChangeDetectorRef,private router: Router) { this.loadequipos();}
+  constructor(private firestoreService: FirestoreService, private cdr: ChangeDetectorRef, private router: Router) {
+    this.loadequipos();
+  }
 
   loadequipos() {
     // Carga los equipos desde Firestore
@@ -24,10 +27,11 @@ export class Buscar {
       }
     });
   }
-  buscarEquipo(event: any) {
-    const valorBusqueda = event.detail.value ? event.detail.value.toLowerCase() : '';  
 
-    console.log('Valor de búsqueda:', valorBusqueda);  
+  buscarEquipo(event: any) {
+    const valorBusqueda = event.detail.value ? event.detail.value.toLowerCase() : '';
+
+    console.log('Valor de búsqueda:', valorBusqueda);
 
     setTimeout(() => {
       if (!valorBusqueda || valorBusqueda.trim() === '') {
@@ -38,7 +42,7 @@ export class Buscar {
                  equipo.tipo_deporte.toLowerCase().includes(valorBusqueda);
         });
       }
-      this.cdr.detectChanges();  
+      this.cdr.detectChanges();
     }, 0);
   }
 

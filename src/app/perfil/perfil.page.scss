@@ -23,7 +23,7 @@
 .user-avatar {
   margin-right: 16px;
   width: 80px;
-  height: auto;
+  height: 80px;
 }
 
 .user-info {
@@ -32,7 +32,7 @@
 }
 
 .user-info h2 {
-  font-size: 20px;
+  font-size: 1.1em;
   margin-bottom: 2px;
 }
 .user-info p {
@@ -89,4 +89,7 @@ ion-card-content {
   display: flex;
   flex-direction: column; /* Asegura que los elementos dentro del contenido se alineen verticalmente */
   justify-content: flex-end; /* Alinea el botón al final del contenido */
+}
+#contenido{
+  text-align: center;
 }
