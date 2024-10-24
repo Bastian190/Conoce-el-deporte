@@ -6,6 +6,8 @@ import { AuthService } from '../../servicios/auth.service'; // Asegúrate de que
 import { Usuario } from '../../modelos/equipos.models'; // Asegúrate de que la ruta sea correcta
 import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 
+
+
 @Component({
   selector: 'app-registro',
   templateUrl: './registro.component.html',
@@ -22,7 +24,7 @@ export class RegistroComponent implements OnInit {
     private router: Router,
     private toastController: ToastController,
     private alertController: AlertController,
-    private authService: AuthService // Inyectar el servicio
+    private authService: AuthService, // Inyectar el servicio
   ) {
     this.storage = getStorage(); // Inicializa el almacenamiento
   }
@@ -34,7 +36,7 @@ export class RegistroComponent implements OnInit {
       altura: ['', [Validators.min(0)]],
       peso: ['', [Validators.min(0)]],
       correo: ['', [Validators.required, Validators.email]],
-      date: ['', [Validators.required]],
+      date: ['', [Validators.required, ]],
       sex: ['', [Validators.required]],
       password: ['', [Validators.required, Validators.minLength(6)]],
       passwordRepeat: ['', [Validators.required, Validators.minLength(6)]]
@@ -45,7 +47,7 @@ export class RegistroComponent implements OnInit {
     if (!this.validarFormulario()) {
       return; // Si la validación falla, salimos de la función
     }
-
+  
     const { password, passwordRepeat } = this.registroForm.value;
     if (password.length < 6) {
       this.mostrarToast('La contraseña debe tener al menos 6 caracteres.');
@@ -55,12 +57,11 @@ export class RegistroComponent implements OnInit {
       this.mostrarToast('Las contraseñas no coinciden');
       return;
     }
-
-
+  
     const fechaNacimiento = new Date(this.registroForm.value.date);
-     // Llamamos a subirFotoPerfil y esperamos la URL o undefined
+    // Llamamos a subirFotoPerfil y esperamos la URL o undefined
     const fotoPerfilUrl = await this.subirFotoPerfil();
-
+  
     const usuario: Usuario = {
       nombre: this.registroForm.value.name,
       apellido: this.registroForm.value.lastname,
@@ -71,19 +72,20 @@ export class RegistroComponent implements OnInit {
       correo: this.registroForm.value.correo,
       ...(fotoPerfilUrl && { fotoPerfil: fotoPerfilUrl }) // Carga la foto de perfil opcional
     };
-
+  
     try {
-      // Llamada al servicio para registrar el usuario
-    await this.authService.registrarUsuario(usuario, password);
-    this.mostrarToast('Registro exitoso', 'success');
-    this.router.navigate(['registroRutina']);
-    
-  } catch (error: any) {
-    console.error('Error al registrar el usuario:', error);
-    this.mostrarToast('Error al registrar el usuario: ' + (error.message || error));
-  }
-  }
 
+      await this.authService.registrarUsuario(usuario, password);
+  
+      this.mostrarToast('Registro exitoso', 'success');
+      this.router.navigate(['registroRutina']);
+  
+    } catch (error: any) {
+      console.error('Error al registrar el usuario:', error);
+      this.mostrarToast('Error al registrar el usuario: ' + (error.message || error));
+    }
+  }
+  
   async subirFotoPerfil(): Promise<string | undefined> {
     const inputFile = document.querySelector('input[type="file"]') as HTMLInputElement;
   

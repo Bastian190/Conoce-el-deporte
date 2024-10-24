@@ -6,7 +6,8 @@ import { getDownloadURL, ref, Storage } from '@angular/fire/storage';
 import { User } from '@angular/fire/auth';
 import { Equipos } from '../modelos/equipos.models';
 import { FirestoreService } from '../servicios/firestore.service';
-
+import { Clipboard } from '@awesome-cordova-plugins/clipboard/ngx';
+import { Platform } from '@ionic/angular';
 @Component({
   selector: 'app-perfil',
   templateUrl: './perfil.page.html',
@@ -26,7 +27,9 @@ export class PerfilPage implements OnInit {
     private authService: AuthService, // Servicio de autenticación
     private firestore: Firestore, // Firestore para consultas
     private storage: Storage,
-    private firestoreService: FirestoreService
+    private firestoreService: FirestoreService,
+    private clipboard: Clipboard,
+    private platform: Platform
   ) {}
 
   async ngOnInit() {
@@ -103,7 +106,30 @@ export class PerfilPage implements OnInit {
       console.error('Error obteniendo los datos del usuario: ', error);
     }
   }
-
+  copyEmailToClipboard() {
+    const email = this.usuarioCorreo;
+    
+    if (!email) {
+      console.error('Correo no disponible para copiar');
+      return;
+    }
+  
+    // Comprobar si estamos en un dispositivo Cordova o en un navegador
+    if (this.platform.is('cordova')) {
+      this.clipboard.copy(email).then(() => {
+        console.log('Correo copiado al portapapeles');
+      }).catch((error) => {
+        console.error('Error al copiar el correo:', error);
+      });
+    } else {
+      // Usar el método del navegador
+      navigator.clipboard.writeText(email).then(() => {
+        console.log('Correo copiado al portapapeles (navegador)');
+      }).catch((error) => {
+        console.error('Error al copiar el correo en el navegador:', error);
+      });
+    }
+  }
   async obtenerFotoPerfil(fotoPerfilPath: string) {
     try {
       const storageRef = ref(this.storage, fotoPerfilPath);

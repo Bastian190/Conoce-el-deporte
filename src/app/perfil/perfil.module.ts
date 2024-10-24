@@ -7,6 +7,7 @@ import { ExploreContainerComponentModule } from '../explore-container/explore-co
 import { PerfilPageRoutingModule } from './perfil-routing.module';
 import { PerfilPage } from './perfil.page';
 import { ConfiguracionComponent } from 'src/app/componentes/configuracion/configuracion.component';
+import { Clipboard } from '@awesome-cordova-plugins/clipboard/ngx';
 @NgModule({
   imports: [
     CommonModule,
@@ -15,6 +16,7 @@ import { ConfiguracionComponent } from 'src/app/componentes/configuracion/config
     ExploreContainerComponentModule,
     PerfilPageRoutingModule
   ],
-  declarations: [PerfilPage,ConfiguracionComponent]
+  declarations: [PerfilPage,ConfiguracionComponent],
+  providers: [Clipboard],
 })
 export class PerfilPageModule {}

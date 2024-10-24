@@ -19,7 +19,10 @@
       <h2>{{ usuarioNombre }}</h2>  <!-- Nombre del usuario -->
       <p>{{ usuarioEdad }} años</p>  <!-- Edad calculada del usuario -->
       <p>Equipo ({{ usuarioEquipo }})</p>  <!-- Equipo del usuario -->
-      <p *ngIf="mostrarCorreo">{{ usuarioCorreo }}</p>  <!-- Correo del usuario -->
+      <div *ngIf="mostrarCorreo">
+        <p>{{ usuarioCorreo }}</p>  <!-- Correo del usuario -->
+        <ion-button (click)="copyEmailToClipboard()">Copiar Correo</ion-button>  <!-- Botón para copiar el correo -->
+      </div>
     </div>
   </div>
   <!-- Toggle switch -->

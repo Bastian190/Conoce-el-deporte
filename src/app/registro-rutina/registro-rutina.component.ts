@@ -5,7 +5,7 @@ import { FirestoreService } from '../servicios/firestore.service';
 import { Tipo_rutina, Rutinas} from '../modelos/equipos.models';
 import { ChangeDetectorRef } from '@angular/core';
 import { AuthService } from '../servicios/auth.service';
-
+import { addDoc, collection, Firestore, serverTimestamp} from '@angular/fire/firestore';
 @Component({
   selector: 'app-registro-rutina',
   templateUrl: './registro-rutina.component.html',
@@ -20,7 +20,7 @@ export class RegistroRutinaComponent  implements OnInit {
   intensidadSeleccionada: string | null = null;
   result!:number;
 
-  constructor(private  navCtrl: NavController, private router:Router, private firestoreService:FirestoreService,private cdr: ChangeDetectorRef, private toastController: ToastController, private authService: AuthService) {}
+  constructor(private  navCtrl: NavController, private router:Router, private firestoreService:FirestoreService,private cdr: ChangeDetectorRef, private toastController: ToastController, private authService: AuthService, private firestore: Firestore) {}
 
 
   inicio() {
@@ -37,6 +37,29 @@ export class RegistroRutinaComponent  implements OnInit {
   ngOnInit() {
     this.cargarRutinas();
     this.cargarIntensidad();
+    const currentUser = this.authService.getCurrentUser();
+
+    if (currentUser) {
+      const usuarioId = currentUser.uid;
+      
+      if (usuarioId) {
+        this.inicializarPuntajes(usuarioId); // Inicializa los puntajes si el usuario está autenticado
+      }
+    } else {
+      console.error('No se encontró ningún usuario autenticado');
+    }
+  }
+  async inicializarPuntajes(usuarioId: string) {
+    try {
+      // Crear la subcolección "puntajes" en el documento de usuario
+      await addDoc(collection(this.firestore, `usuarios/${usuarioId}/puntajes`), {
+        puntos: 0,
+        fecha: serverTimestamp() // Usar serverTimestamp de Firestore
+      });
+      console.log('Puntajes inicializados en 0');
+    } catch (error) {
+      console.error('Error al inicializar los puntajes:', error);
+    }
   }
   cargarRutinas() {
 
