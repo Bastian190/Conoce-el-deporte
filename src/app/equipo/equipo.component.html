@@ -1,85 +1,80 @@
 <ion-header [translucent]="true">
   <ion-toolbar>
-      <ion-title id="titulo" >Ver más</ion-title>
     <ion-button slot="start" fill="clear" (click)="irAPaginaDestino()">
-      <ion-icon id="back" show-clear-button="always" name="arrow-back"></ion-icon>
+      <ion-icon id="back" name="arrow-back"></ion-icon>
     </ion-button>
-    
+    <ion-title id="titulo">Ver más</ion-title>
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true" class="ion-padding"  *ngIf="equipo">
+<ion-content [fullscreen]="true" class="ion-padding" *ngIf="equipo">
   <ion-card>
-    <img alt="Silhouette of mountains" src="https://ionicframework.com/docs/img/demos/card-media.png" />
+    <img alt="Silhouette of mountains" src="https://ionicframework.com/docs/img/demos/card-media.png" class="card-image"/>
     <ion-card-header>
       <ion-card-title>{{ equipo.nombre_fantasia }}</ion-card-title>
       <ion-card-subtitle>{{ equipo.ubicacion }}</ion-card-subtitle>
     </ion-card-header>
-  
     <ion-card-content>
       {{ equipo.descripcion }}
     </ion-card-content>
-    <div *ngIf="logros && logros.length > 0">
+
+    <!-- Logros -->
+    <div *ngIf="logros && logros.length > 0" class="section">
       <ion-card-header>
-      <ion-car-title>Logros</ion-car-title>
+        <ion-card-title>Logros</ion-card-title>
       </ion-card-header>
-      <ion-card-content  *ngFor="let logro of logros">
-        {{ logro.logro }}: {{logro.fecha ? (logro.fecha.toDate() | date) : 'Fecha no disponible'}}
+      <ion-card-content *ngFor="let logro of logros">
+        {{ logro.logro }}: {{ logro.fecha ? (logro.fecha.toDate() | date) : 'Fecha no disponible' }}
       </ion-card-content>
     </div>
-    <div *ngIf="partidos && partidos.length > 0">
+
+    <!-- Tabla de partidos -->
+    <div *ngIf="partidos && partidos.length > 0" class="section">
       <ion-card-header>
-        <ion-car-title>Tabla de partidos</ion-car-title>
+        <ion-card-title>Tabla de partidos</ion-card-title>
       </ion-card-header>
-      <ion-card-content  >
-      <ion-item>
-        <table class="table">
-          <thead>
-            <tr>
-              <th>Equipo contrario</th>
-
-              <th>Resultado encuentro</th>
-
-              <th>Ubicación</th>
-            </tr>
-          </thead>
-          <tbody *ngFor="let partido of partidos">
-            <tr>
-              <td>{{ partido.contrincante }}</td>
-              <td>{{ partido.resultado }}</td>
-              <td>{{ partido.ubicacion }}</td>
-            </tr>
-
-
-          </tbody>
-        </table>
-      </ion-item>
+      <ion-card-content>
+        <ion-item>
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Equipo contrario</th>
+                <th>Resultado encuentro</th>
+                <th>Ubicación</th>
+              </tr>
+            </thead>
+            <tbody *ngFor="let partido of partidos">
+              <tr>
+                <td>{{ partido.contrincante }}</td>
+                <td>{{ partido.resultado }}</td>
+                <td>{{ partido.ubicacion }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </ion-item>
       </ion-card-content>
     </div>
-    
   </ion-card>
+
+  <!-- Notificaciones -->
   <ion-card id="notificaciones">
     <ion-card-header>
-      <ion-card-title>Agregalo a tus me favoritos acá</ion-card-title>
+      <ion-card-title>Agrega a tus favoritos</ion-card-title>
     </ion-card-header>
-  
     <ion-card-content>
-       ¡Siguelos para estar actualizado!
+      ¡Síguelos para estar actualizado!
     </ion-card-content>
-  
     <ng-container *ngIf="!esEquipoSeguido">
       <ion-button shape="round" id="present-alert">Seguir</ion-button>
       <ion-alert
         trigger="present-alert"
-        header="Selecciona las opciones de notificación"
+        header="¿Qué tipo de notificaciones quieres recibir?"
         [buttons]="alertButtons"
         [inputs]="alertInputs"
       ></ion-alert>
     </ng-container>
-  
     <ng-container *ngIf="esEquipoSeguido">
-      <ion-card-content>
-        Ya sigues a este equipo.
-      </ion-card-content>
+      <ion-card-content>Ya sigues a este equipo.</ion-card-content>
     </ng-container>
   </ion-card>
+</ion-content>

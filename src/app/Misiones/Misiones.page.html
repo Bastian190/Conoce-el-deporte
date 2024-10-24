@@ -15,27 +15,25 @@
       <ion-title size="large">misiones</ion-title>
     </ion-toolbar>
   </ion-header>
-
-  <app-explore-container name="Misiones"></app-explore-container>
   <ion-card>
     <ion-card-header>
       <ion-card-title>Misiones</ion-card-title>
-      <ion-card-subtitle>Completa tus misiones para obtener puntos</ion-card-subtitle>
+      <ion-card-subtitle id="subtitulo">Completa tus misiones para obtener puntos</ion-card-subtitle>
     </ion-card-header>
     <ion-card-content>
       <ion-list>
         <ion-item *ngFor="let ejercicio of ejerciciosDelDia">
-          <ion-thumbnail slot="start">
-            <img [src]="ejercicio.gifUrl" alt="GIF de {{ ejercicio.nombre }}" />
+          <ion-thumbnail slot="start" id="contendor-gif">
+            <img id="gif" [src]="ejercicio.gifUrl" alt="GIF de {{ ejercicio.nombre }}" />
           </ion-thumbnail>
-          <ion-label>{{ ejercicio.nombre_ejercicio }}</ion-label>
+          <ion-label id="label">{{ ejercicio.nombre_ejercicio }}</ion-label>
         </ion-item>
       </ion-list>
       
       
       <ion-item *ngIf="!ejerciciosDelDia || ejerciciosDelDia.length === 0">
         <ion-label>No hay ejercicios para el día de hoy. ¡Descansa en este día!</ion-label>
-        <img src="assets/descanso.gif" alt="descanso">
+        <img id="descanso" src="assets/descanso.gif" alt="descanso">
       </ion-item>
     </ion-card-content>
   </ion-card>
