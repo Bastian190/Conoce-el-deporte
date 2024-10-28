@@ -4,7 +4,7 @@ import { AuthService } from '../servicios/auth.service';
 import { FirestoreService } from '../servicios/firestore.service';
 import { Storage } from '@angular/fire/storage';
 import { getDownloadURL, ref } from '@angular/fire/storage'; // Usar AngularFireStorage
-
+import { addDoc, collection, doc, Firestore, getDoc, getDocs, serverTimestamp, updateDoc} from '@angular/fire/firestore';
 @Component({
   selector: 'app-tab3',
   templateUrl: 'Misiones.page.html',
@@ -14,12 +14,13 @@ export class Misiones implements OnInit {
   rutinasSeleccionada: any = {};
   ejerciciosDelDia: any[] = [];
   private diaActual: string | null = null;
-
+  
   constructor(
     public toastController: ToastController,
     private authService: AuthService, 
     private firestoreService: FirestoreService,
-    private storage: Storage // Usamos Storage desde AngularFire
+    private storage: Storage,
+    private firestore: Firestore // Usamos Storage desde AngularFire
   ) {}
 
   getDayOfWeek(): string {
@@ -31,6 +32,7 @@ export class Misiones implements OnInit {
 
   ngOnInit() {
     this.cargarEjerciciosDelDia();
+    
   }
 
   async cargarEjerciciosDelDia() {
@@ -122,8 +124,11 @@ export class Misiones implements OnInit {
     throw new Error('URL de GIF no válida: ' + gifReference);
 }
 
-  
-  
+
+
+
+
+
   
   
 

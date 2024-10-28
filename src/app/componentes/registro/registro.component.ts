@@ -119,23 +119,37 @@ export class RegistroComponent implements OnInit {
 
   validarFormulario() {
     const correoControl = this.registroForm.get('correo');
-
+    const fechaNacimientoControl = this.registroForm.get('date');
+  
     const camposVacios = Object.keys(this.registroForm.controls).some(control => {
       const formControl = this.registroForm.get(control);
       return formControl ? !formControl.value : true; // Verifica si el valor del control está vacío
     });
-
+  
     if (camposVacios) {
       this.mostrarToast('Por favor, completa todos los campos obligatorios.');
-      return false; // Indica que la validación falló
+      return false;
     }
+  
     if (correoControl && correoControl.invalid && correoControl.touched) {
       this.mostrarToast('El correo está mal escrito, vuelva a intentar');
-      return false; // Indica que la validación falló
+      return false;
     }
-
-    return true; // Indica que todas las validaciones pasaron
+  
+    // Validar la fecha de nacimiento
+    const fechaNacimiento = new Date(fechaNacimientoControl?.value);
+    const hoy = new Date();
+    const edadMinima = new Date(hoy.getFullYear() - 55, hoy.getMonth(), hoy.getDate());
+    const edadMaxima = new Date(hoy.getFullYear() - 14, hoy.getMonth(), hoy.getDate());
+  
+    if (fechaNacimiento < edadMinima || fechaNacimiento > edadMaxima) {
+      this.mostrarToast('La fecha de nacimiento debe estar entre 14 y 55 años.');
+      return false;
+    }
+  
+    return true;
   }
+  
 
   cargarFoto(event: Event) {
     const input = event.target as HTMLInputElement;
