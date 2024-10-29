@@ -55,21 +55,13 @@
       <ion-card-header>
         <ion-card-title>Objetivos alcanzados</ion-card-title>
       </ion-card-header>
-      <ion-list [inset]="true" [mode]="undefined">
-        <ion-item>
-          <ion-label>obj 1</ion-label>
-        </ion-item>
-        <ion-item>
-          <ion-label>obj 2</ion-label>
-        </ion-item>
-        <ion-item>
-          <ion-label>obj 3</ion-label>
-        </ion-item>
-        <ion-item>
-          <ion-label>obj 4</ion-label>
-        </ion-item>
-        <ion-item>
-          <ion-label>obj 5</ion-label>
+      <ion-list>
+        <ion-item *ngFor="let objetivo of objetivos">
+          <ion-label>{{ objetivo.descripcion }}</ion-label>
+          <ion-checkbox 
+            slot="end" 
+            (ionChange)="marcarObjetivoComoFinalizado(objetivo.id)">
+          </ion-checkbox>
         </ion-item>
       </ion-list>
     </ion-card>
