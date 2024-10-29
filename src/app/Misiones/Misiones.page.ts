@@ -34,10 +34,11 @@ export class Misiones implements OnInit {
   }
 
   async cargarEjerciciosDelDia() {
-    const diaActual: string = this.getDayOfWeek(); // Obtener el día actual
-    const currentUser = this.authService.getCurrentUser(); // Obtener el usuario autenticado
+    const diaActual: string = this.getDayOfWeek();
+    const currentUser = this.authService.getCurrentUser();
     const ejerciciosGuardados = JSON.parse(localStorage.getItem('ejerciciosDelDia') || 'null');
     const diaGuardado = localStorage.getItem('diaEjercicios');
+
 
     if (ejerciciosGuardados && diaGuardado === diaActual) {
         this.ejerciciosDelDia = ejerciciosGuardados;
@@ -46,43 +47,64 @@ export class Misiones implements OnInit {
     }
 
     if (currentUser) {
-        const uid = currentUser.uid;
         try {
-            const rutinaDelDia = await this.firestoreService.getRutinaDelDia(uid, diaActual);
-
+            // Obtener la intensidad desde Firestore
+            const intensidadDoc = await this.firestoreService.getIntensidadRutina(currentUser.uid);
+            console.log('Intensidad obtenida:', intensidadDoc);
+  
+            let puntosPorEjercicio = 0;
+            if (intensidadDoc && intensidadDoc.intensidad) {
+                switch (intensidadDoc.intensidad) {
+                    case 'Facil':
+                        puntosPorEjercicio = 5;
+                        break;
+                    case 'Media':
+                        puntosPorEjercicio = 8;
+                        break;
+                    case 'Dificil':
+                        puntosPorEjercicio = 10;
+                        break;
+                    default:
+                        console.warn('Intensidad desconocida, usando puntaje por defecto de 0.');
+                        puntosPorEjercicio = 0;
+                }
+            } else {
+                console.warn('No se encontró intensidad o el valor es inválido.');
+                puntosPorEjercicio = 0; // Asegurarse de que se utiliza 0 si no hay intensidad
+            }
+  
+            const rutinaDelDia = await this.firestoreService.getRutinaDelDia(currentUser.uid, diaActual);
+            console.log('Rutina del día obtenida:', rutinaDelDia);
+  
             if (rutinaDelDia) {
                 const nombreTipoRutina = rutinaDelDia[0];
-                console.log(`Rutina del día (${diaActual}):`, nombreTipoRutina);
-
-                // Obtener los ejercicios principales de la rutina
                 const ejercicios = await this.firestoreService.getEjerciciosPorRutina(nombreTipoRutina);
+                console.log('Ejercicios principales:', ejercicios);
+  
                 const ejerciciosAleatorios = this.shuffleArray(ejercicios);
-                const ejerciciosSeleccionados = ejerciciosAleatorios.slice(0, 5); // Selecciona solo 5 ejercicios
-
-                // Obtener 2 ejercicios de calentamiento
+                const ejerciciosSeleccionados = ejerciciosAleatorios.slice(0, 5);
+  
                 const calentamientos = await this.firestoreService.getEjerciciosPorTipo('calentamiento');
                 const calentamientosAleatorios = this.shuffleArray(calentamientos);
-                const calentamientosSeleccionados = calentamientosAleatorios.slice(0, 2); // Selecciona solo 2 calentamientos
-
-                // Obtener 2 ejercicios de estiramiento
+                const calentamientosSeleccionados = calentamientosAleatorios.slice(0, 2);
+  
                 const estiramientos = await this.firestoreService.getEjerciciosPorTipo('estiramiento');
                 const estiramientosAleatorios = this.shuffleArray(estiramientos);
-                const estiramientosSeleccionados = estiramientosAleatorios.slice(0, 2); // Selecciona solo 2 estiramientos
-
-                // Combinar todos los ejercicios: 5 ejercicios principales, 2 calentamientos, 2 estiramientos
+                const estiramientosSeleccionados = estiramientosAleatorios.slice(0, 2);
+  
                 this.ejerciciosDelDia = [...calentamientosSeleccionados, ...ejerciciosSeleccionados, ...estiramientosSeleccionados];
-
-                // Guardar los gifs en los ejercicios
-                for (const ejercicio of this.ejerciciosDelDia) {
-                    ejercicio.gifUrl = ejercicio.gift; // Asume que ejercicio.gift ya es una URL
-                    console.log('URL del GIF:', ejercicio.gifUrl);
-                }
-
-                // Guardar en localStorage
+  
+                // Confirmar que los ejercicios están siendo iterados correctamente
+                this.ejerciciosDelDia.forEach(ejercicio => {
+                    ejercicio.puntos = puntosPorEjercicio; // Asignar puntos según la intensidad
+                    ejercicio.gifUrl = ejercicio.gift || ''; // Asumir que el campo gift contiene la URL o un string vacío
+                    console.log(`Ejercicio: ${ejercicio.nombre}, Puntos: ${ejercicio.puntos}, GIF URL: ${ejercicio.gifUrl}`);
+                });
+  
                 localStorage.setItem('ejerciciosDelDia', JSON.stringify(this.ejerciciosDelDia));
                 localStorage.setItem('diaEjercicios', diaActual);
-
-                console.log('Ejercicios del día:', this.ejerciciosDelDia);
+  
+                console.log('Ejercicios del día guardados en localStorage:', this.ejerciciosDelDia);
             } else {
                 this.mostrarToast('No hay rutina guardada para hoy.', 'warning');
             }
@@ -92,8 +114,14 @@ export class Misiones implements OnInit {
         }
     } else {
         this.mostrarToast('Debes iniciar sesión para ver tu rutina.', 'warning');
-    }
+    } 
 }
+  
+
+
+
+
+
 
 
   

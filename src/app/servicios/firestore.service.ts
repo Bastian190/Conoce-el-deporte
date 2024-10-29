@@ -261,6 +261,31 @@ async getEjerciciosPorTipo(tipoEjercicio: string): Promise<any[]> {
     
     return deleteDoc(doc(equiposSeguidosRef, equipoId));
 }
+async getIntensidadRutina(userId: string): Promise<any> {
+  const docRef = doc(this.firestore, `usuarios/${userId}/rutinas/rutina_semanal`); // Asegúrate de que la ruta es correcta
+  const docSnap = await getDoc(docRef);
+
+  if (docSnap.exists()) {
+      const data = docSnap.data();
+      console.log("Documento encontrado:", data);
+      
+      // Asegúrate de que el campo 'intensidad' existe
+      if (data && data['intensidad']) { // Cambiado a notación de corchetes
+          return { intensidad: data['intensidad'] }; // Devuelve solo el campo intensidad
+      } else {
+          console.warn(`No se encontró el campo 'intensidad' en el documento de rutina_semanal.`);
+          return null; // Si el campo 'intensidad' no existe, devuelve null
+      }
+  } else {
+      console.log(`No se encontró el documento de intensidad en usuarios/${userId}/rutinas/rutina_semanal`);
+      return null; // Si no existe el documento, devuelve null
+  }
+}
+
+
+
+
+
 
   
   
