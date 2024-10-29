@@ -93,3 +93,7 @@ ion-card-content {
 #contenido{
   text-align: center;
 }
+ion-card {
+  --box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
+  border-radius: 12px;
+}

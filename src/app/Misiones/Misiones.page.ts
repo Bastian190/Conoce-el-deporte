@@ -39,11 +39,11 @@ export class Misiones implements OnInit {
   }
 
   async cargarEjerciciosDelDia() {
-    const diaActual: string = this.getDayOfWeek(); // Obtener el día actual
-    const currentUser = this.authService.getCurrentUser(); // Obtener el usuario autenticado
-
+    const diaActual: string = this.getDayOfWeek();
+    const currentUser = this.authService.getCurrentUser();
     const ejerciciosGuardados = JSON.parse(localStorage.getItem('ejerciciosDelDia') || 'null');
     const diaGuardado = localStorage.getItem('diaEjercicios');
+
 
     if (ejerciciosGuardados && diaGuardado === diaActual) {
         this.ejerciciosDelDia = ejerciciosGuardados;
@@ -52,33 +52,64 @@ export class Misiones implements OnInit {
     }
 
     if (currentUser) {
-        const uid = currentUser.uid;
         try {
-            const rutinaDelDia = await this.firestoreService.getRutinaDelDia(uid, diaActual);
-
+            // Obtener la intensidad desde Firestore
+            const intensidadDoc = await this.firestoreService.getIntensidadRutina(currentUser.uid);
+            console.log('Intensidad obtenida:', intensidadDoc);
+  
+            let puntosPorEjercicio = 0;
+            if (intensidadDoc && intensidadDoc.intensidad) {
+                switch (intensidadDoc.intensidad) {
+                    case 'Facil':
+                        puntosPorEjercicio = 5;
+                        break;
+                    case 'Media':
+                        puntosPorEjercicio = 8;
+                        break;
+                    case 'Dificil':
+                        puntosPorEjercicio = 10;
+                        break;
+                    default:
+                        console.warn('Intensidad desconocida, usando puntaje por defecto de 0.');
+                        puntosPorEjercicio = 0;
+                }
+            } else {
+                console.warn('No se encontró intensidad o el valor es inválido.');
+                puntosPorEjercicio = 0; // Asegurarse de que se utiliza 0 si no hay intensidad
+            }
+  
+            const rutinaDelDia = await this.firestoreService.getRutinaDelDia(currentUser.uid, diaActual);
+            console.log('Rutina del día obtenida:', rutinaDelDia);
+  
             if (rutinaDelDia) {
                 const nombreTipoRutina = rutinaDelDia[0];
-                console.log(`Rutina del día (${diaActual}):`, nombreTipoRutina);
-
                 const ejercicios = await this.firestoreService.getEjerciciosPorRutina(nombreTipoRutina);
-
-                if (ejercicios.length > 0) {
-                    const ejerciciosAleatorios = this.shuffleArray(ejercicios);
-                    this.ejerciciosDelDia = ejerciciosAleatorios.slice(0, 5);
-
-                    for (const ejercicio of this.ejerciciosDelDia) {
-                        // Asume que ejercicio.gift ya es una URL
-                        ejercicio.gifUrl = ejercicio.gift; // No se necesita más procesamiento
-                        console.log('URL del GIF:', ejercicio.gifUrl);
-                    }
-
-                    localStorage.setItem('ejerciciosDelDia', JSON.stringify(this.ejerciciosDelDia));
-                    localStorage.setItem('diaEjercicios', diaActual);
-
-                    console.log('Ejercicios del día:', this.ejerciciosDelDia);
-                } else {
-                    this.mostrarToast('No se encontraron ejercicios para la rutina de hoy.', 'warning');
-                }
+                console.log('Ejercicios principales:', ejercicios);
+  
+                const ejerciciosAleatorios = this.shuffleArray(ejercicios);
+                const ejerciciosSeleccionados = ejerciciosAleatorios.slice(0, 5);
+  
+                const calentamientos = await this.firestoreService.getEjerciciosPorTipo('calentamiento');
+                const calentamientosAleatorios = this.shuffleArray(calentamientos);
+                const calentamientosSeleccionados = calentamientosAleatorios.slice(0, 2);
+  
+                const estiramientos = await this.firestoreService.getEjerciciosPorTipo('estiramiento');
+                const estiramientosAleatorios = this.shuffleArray(estiramientos);
+                const estiramientosSeleccionados = estiramientosAleatorios.slice(0, 2);
+  
+                this.ejerciciosDelDia = [...calentamientosSeleccionados, ...ejerciciosSeleccionados, ...estiramientosSeleccionados];
+  
+                // Confirmar que los ejercicios están siendo iterados correctamente
+                this.ejerciciosDelDia.forEach(ejercicio => {
+                    ejercicio.puntos = puntosPorEjercicio; // Asignar puntos según la intensidad
+                    ejercicio.gifUrl = ejercicio.gift || ''; // Asumir que el campo gift contiene la URL o un string vacío
+                    console.log(`Ejercicio: ${ejercicio.nombre}, Puntos: ${ejercicio.puntos}, GIF URL: ${ejercicio.gifUrl}`);
+                });
+  
+                localStorage.setItem('ejerciciosDelDia', JSON.stringify(this.ejerciciosDelDia));
+                localStorage.setItem('diaEjercicios', diaActual);
+  
+                console.log('Ejercicios del día guardados en localStorage:', this.ejerciciosDelDia);
             } else {
                 this.mostrarToast('No hay rutina guardada para hoy.', 'warning');
             }
@@ -88,8 +119,15 @@ export class Misiones implements OnInit {
         }
     } else {
         this.mostrarToast('Debes iniciar sesión para ver tu rutina.', 'warning');
-    }
+    } 
 }
+  
+
+
+
+
+
+
 
   
 
@@ -101,31 +139,7 @@ export class Misiones implements OnInit {
     return array;
   }
 
-  private async getGifUrl(gifReference: any): Promise<string> {
-    if (gifReference && typeof gifReference === 'object') {
-        // Intenta acceder a la propiedad que esperas
-        gifReference = gifReference.url || ''; // Ajusta según la estructura real
-    }
-
-    // Aquí sigue la lógica existente para manejar las cadenas
-    if (typeof gifReference !== 'string') {
-        throw new Error('gifReference debe ser una cadena, pero recibió: ' + typeof gifReference);
-    }
-
-    // Comprobar si ya es una URL pública
-    if (gifReference.startsWith('https://firebasestorage.googleapis.com/')) {
-        return gifReference; // Retorna la URL directamente
-    }
-
-    // Convertir gs:// a URL HTTP
-    if (gifReference.startsWith('gs://')) {
-        const baseUrl = 'https://firebasestorage.googleapis.com/v0/b/conoce-eldeporte.appspot.com/o/';
-        const path = encodeURIComponent(gifReference.replace('gs://conoce-eldeporte.appspot.com/', ''));
-        return `${baseUrl}${path}?alt=media`; // Retorna la URL de descarga
-    }
-
-    throw new Error('URL de GIF no válida: ' + gifReference);
-}
+ 
 
 async cargarObjetivos() {
   const currentUser = this.authService.getCurrentUser();
