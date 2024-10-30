@@ -49,7 +49,7 @@ export class PerfilPage implements OnInit {
     
   }
 
-  async obtenerDatosEquiposSeguidos(uid: string) {
+  obtenerDatosEquiposSeguidos(uid: string) {
     this.equiposSeguidos = []; // Inicializa la lista de equipos seguidos
 
     this.firestoreService.obtenerEquiposSeguidos(uid)
@@ -61,19 +61,20 @@ export class PerfilPage implements OnInit {
                 return; // Si no hay equipos, salir de la función
             }
 
-            const promises = equiposIdsSeguidos.map(equipoId =>
-                this.firestoreService.obtenerDatosEquipo(equipoId).then(equipoData => {
-                    if (equipoData) {
-                        equipoData.id = equipoId; // Asegúrate de que el id esté presente
-                        this.equiposSeguidos.push(equipoData);
-                        console.log('Equipo cargado:', equipoData);
-                    }
-                }).catch(error => {
-                    console.error(`Error al obtener datos del equipo ${equipoId}:`, error);
-                })
-            );
-
-            return Promise.all(promises);
+            // Itera sobre los IDs de equipos seguidos
+            equiposIdsSeguidos.forEach(equipoId => {
+                this.firestoreService.obtenerDatosEquipo(equipoId)
+                    .then(equipoData => {
+                        if (equipoData) {
+                            equipoData.id = equipoId; // Asegúrate de que el id esté presente
+                            this.equiposSeguidos.push(equipoData);
+                            console.log('Equipo cargado:', equipoData);
+                        }
+                    })
+                    .catch(error => {
+                        console.error(`Error al obtener datos del equipo ${equipoId}:`, error);
+                    });
+            });
         })
         .then(() => {
             console.log('Equipos seguidos cargados:', this.equiposSeguidos);
@@ -82,6 +83,7 @@ export class PerfilPage implements OnInit {
             console.error('Error al obtener equipos seguidos:', error);
         });
 }
+
 
   
   async obtenerDatosUsuario() {

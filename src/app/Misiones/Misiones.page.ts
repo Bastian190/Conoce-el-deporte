@@ -1,4 +1,4 @@
-import { Component, OnInit, NgZone } from '@angular/core';
+import { Component, OnInit, NgZone,ChangeDetectorRef  } from '@angular/core';
 import { ToastController } from '@ionic/angular';
 import { AuthService } from '../servicios/auth.service';
 import { FirestoreService } from '../servicios/firestore.service';
@@ -6,6 +6,7 @@ import { Storage } from '@angular/fire/storage';
 import { getDownloadURL, ref } from '@angular/fire/storage'; // Usar AngularFireStorage
 import { addDoc, collection, doc, Firestore, getDoc, getDocs, increment, serverTimestamp, setDoc, updateDoc} from '@angular/fire/firestore';
 import { getAuth, onAuthStateChanged } from 'firebase/auth';
+
 @Component({
   selector: 'app-tab3',
   templateUrl: 'Misiones.page.html',
@@ -23,13 +24,14 @@ export class Misiones implements OnInit {
     private firestoreService: FirestoreService,
     private storage: Storage,
     private firestore: Firestore,
-    private ngZone: NgZone // Usamos Storage desde AngularFire
+    private ngZone: NgZone,
+    private changeDetectorRef: ChangeDetectorRef // Usamos Storage desde AngularFire
   ) {}
 
   getDayOfWeek(): string {
     const daysOfWeek = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'];
     const today = new Date().getDay();
-    console.log(daysOfWeek[today]); // Esto devuelve un número del 0 al 6
+    console.log(daysOfWeek[today]); 
     return daysOfWeek[today];
   }
 
@@ -178,83 +180,98 @@ export class Misiones implements OnInit {
       this.mostrarToast('Debes iniciar sesión para ver tus objetivos.', 'warning');
     }
   }
+  
 
 
- async marcarObjetivoComoFinalizado(objetivoId: string) {
-  const currentUser = this.authService.getCurrentUser();
-  if (currentUser) {
-    const rutinaId = 'PlyuiOZ5ex4zKxUcZGTO'; // Reemplaza con el ID correcto
-
-    try {
-      // Obtener el objetivo específico
-      const objetivoDoc = await getDoc(doc(this.firestore, `Rutinas/${rutinaId}/objetivos`, objetivoId));
-      if (objetivoDoc.exists()) {
-        const objetivoData = objetivoDoc.data();
-        const puntos = objetivoData['puntaje'] || 0; // Usar el puntaje del objetivo específico
-
-        // Obtener el primer documento de la subcolección de puntajes del usuario
-        const puntajesSnapshot = await getDocs(collection(this.firestore, `usuarios/${currentUser.uid}/puntajes`));
-        if (!puntajesSnapshot.empty) {
-          const puntajeDoc = puntajesSnapshot.docs[0]; // Tomar el primer documento encontrado
-          const puntajeRef = doc(this.firestore, `usuarios/${currentUser.uid}/puntajes`, puntajeDoc.id); // Referencia al documento
-
-          // Actualizar el campo 'puntaje' con el valor específico del objetivo
-          await updateDoc(puntajeRef, {
-            puntos: increment(puntos), // Incrementa el puntaje con el valor específico del objetivo
-            fecha: serverTimestamp() // Actualiza la fecha a la actual
+  marcarObjetivoComoFinalizado(objetivoId: string): Promise<void> {
+    const currentUser = this.authService.getCurrentUser();
+    if (currentUser) {
+      const rutinaId = 'PlyuiOZ5ex4zKxUcZGTO'; // ID de la rutina
+      const objetivoDocRef = doc(this.firestore, `Rutinas/${rutinaId}/objetivos`, objetivoId);
+  
+      return getDoc(objetivoDocRef).then((objetivoDoc) => {
+        if (objetivoDoc.exists()) {
+          const objetivoData = objetivoDoc.data();
+          const puntos = objetivoData['puntaje'] || 0;
+  
+          const puntajesRef = collection(this.firestore, `usuarios/${currentUser.uid}/puntajes`);
+          return getDocs(puntajesRef).then((puntajesSnapshot) => {
+            if (!puntajesSnapshot.empty) {
+              const puntajeDoc = puntajesSnapshot.docs[0];
+              const puntajeRef = doc(this.firestore, `usuarios/${currentUser.uid}/puntajes`, puntajeDoc.id);
+  
+              // Actualizar el documento encontrado
+              return updateDoc(puntajeRef, {
+                puntos: increment(puntos),
+                fecha: serverTimestamp(),
+              }).then(() => {
+                console.log(`Puntaje de ${puntos} sumado al documento existente del usuario.`);
+                return;
+              });
+            } else {
+              // Si no hay documentos en puntajes, crear uno nuevo
+              return addDoc(collection(this.firestore, `usuarios/${currentUser.uid}/puntajes`), {
+                puntos: puntos,
+                fecha: serverTimestamp(),
+              }).then(() => {
+                console.log(`Se creó un nuevo documento de puntaje con ${puntos}.`);
+                return;
+              });
+            }
           });
-          console.log(`Puntaje de ${puntos} sumado al documento existente del usuario.`);
         } else {
-          // Si no hay documentos en puntajes, crear uno nuevo con el puntaje específico
-          await addDoc(collection(this.firestore, `usuarios/${currentUser.uid}/puntajes`), {
-            puntos: puntos,
-            fecha: serverTimestamp()
-          });
-          console.log(`Se creó un nuevo documento de puntaje con ${puntos}.`);
+          console.log('Objetivo no encontrado.');
+          return Promise.resolve(); // Retorna un Promise<void> si el objetivo no existe
         }
-
-        // Cargar un nuevo objetivo para reemplazar el completado
-        await this.reemplazarObjetivo(objetivoId, rutinaId);
-      } else {
-        console.log('Objetivo no encontrado.');
-      }
-    } catch (error) {
-      this.mostrarToast('Error al marcar el objetivo como finalizado.', 'danger');
-      console.error('Error al marcar objetivo:', error);
-    }
-  } else {
-    this.mostrarToast('Debes iniciar sesión para finalizar un objetivo.', 'warning');
-  }
-}
-
-
-
-
-
-  async reemplazarObjetivo(objetivoId: string, rutinaId: string) {
-    // Obtener un nuevo objetivo aleatorio de la colección de objetivos
-    const objetivosSnapshot = await getDocs(collection(this.firestore, `Rutinas/${rutinaId}/objetivos`));
-    
-    // Filtrar los objetivos que no han sido completados
-    const objetivosDisponibles = objetivosSnapshot.docs.filter(doc => doc.id !== objetivoId).map(doc => ({
-      id: doc.id,
-      ...doc.data()
-    }));
-
-    if (objetivosDisponibles.length > 0) {
-      // Elegir un nuevo objetivo aleatorio
-      const nuevoObjetivo = objetivosDisponibles[Math.floor(Math.random() * objetivosDisponibles.length)];
-      
-      // Agregar el nuevo objetivo al array
-      this.objetivos.push(nuevoObjetivo);
-      this.objetivos = this.objetivos.slice(0, 5); // Asegúrate de mantener solo 5 objetivos
-
-      console.log('Nuevo objetivo agregado:', nuevoObjetivo);
+      })
+      .then(() => {
+        // Llamar a reemplazarObjetivo después de marcar el objetivo como finalizado
+        return this.reemplazarObjetivo(objetivoId, rutinaId);
+      })
+      .catch((error) => {
+        this.mostrarToast('Error al marcar el objetivo como finalizado.', 'danger');
+        console.error('Error al marcar objetivo:', error);
+      });
     } else {
-      console.log('No hay más objetivos disponibles para agregar.');
+      this.mostrarToast('Debes iniciar sesión para finalizar un objetivo.', 'warning');
+      return Promise.resolve(); // Retorna un Promise<void> si no hay un usuario actual
     }
   }
+  
+  
+  
 
+
+
+
+
+  reemplazarObjetivo(objetivoId: string, rutinaId: string) {
+    getDocs(collection(this.firestore, `Rutinas/${rutinaId}/objetivos`))
+      .then((objetivosSnapshot) => {
+        const objetivosDisponibles = objetivosSnapshot.docs
+          .filter((doc) => doc.id !== objetivoId)
+          .map((doc) => ({
+            id: doc.id,
+            ...doc.data(),
+          }));
+  
+        if (objetivosDisponibles.length > 0) {
+          const nuevoObjetivo = objetivosDisponibles[Math.floor(Math.random() * objetivosDisponibles.length)];
+  
+          // Actualiza la lista de objetivos
+          this.objetivos = [...this.objetivos.filter(obj => obj.id !== objetivoId), nuevoObjetivo].slice(0, 5);
+  
+          console.log('Nuevo objetivo agregado:', nuevoObjetivo);
+        } else {
+          console.log('No hay más objetivos disponibles para agregar.');
+        }
+      })
+      .catch((error) => {
+        console.error('Error al reemplazar objetivo:', error);
+      });
+  }
+  
+  
 
   async mostrarToast(message: string, color: string = 'warning') {
     const toast = await this.toastController.create({
