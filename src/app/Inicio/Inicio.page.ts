@@ -2,17 +2,18 @@ import { Component } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Usuario } from '../modelos/equipos.models';
 import { addDoc, collection, collectionGroup, Firestore, getDocs, doc, getDoc} from '@angular/fire/firestore';
-
+import { AuthService } from '../servicios/auth.service';
+import { User } from 'firebase/auth';
 @Component({
   selector: 'app-tab1',
   templateUrl: 'Inicio.page.html',
   styleUrls: ['Inicio.page.scss']
 })
 export class Inicio {
-
+  nombreUsuario: string | null = null;
   usuario: Usuario []=[];
   puntajes: any[] = [];
-  constructor(private activeroute: ActivatedRoute, private router: Router, private firestore: Firestore) { 
+  constructor(private activeroute: ActivatedRoute, private router: Router, private firestore: Firestore, private authService: AuthService) { 
     // Nos suscribimos a los parámetros de la ruta
     this.activeroute.queryParams.subscribe(params => {
       // Verificamos si hay una navegación activa y si el estado contiene datos
@@ -62,5 +63,12 @@ export class Inicio {
     }).catch(error => {
       console.error('Error al obtener los puntajes:', error);
     });
+    const user: User | null = this.authService.getCurrentUser();
+    console.log('Usuario actual:', user); // Agregar esto para verificar el usuario
+    if (user) {
+      this.nombreUsuario = user.displayName || 'Usuario'; // Valor por defecto
+    } else {
+      this.nombreUsuario = null; // Si no hay usuario, establecer como null
+    }
   }
 }

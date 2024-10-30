@@ -8,6 +8,7 @@ import { Equipos } from '../modelos/equipos.models';
 import { FirestoreService } from '../servicios/firestore.service';
 import { Clipboard } from '@awesome-cordova-plugins/clipboard/ngx';
 import { Platform } from '@ionic/angular';
+import { Router } from '@angular/router';
 @Component({
   selector: 'app-perfil',
   templateUrl: './perfil.page.html',
@@ -29,7 +30,8 @@ export class PerfilPage implements OnInit {
     private storage: Storage,
     private firestoreService: FirestoreService,
     private clipboard: Clipboard,
-    private platform: Platform
+    private platform: Platform,
+    private router: Router
   ) {}
 
   async ngOnInit() {
@@ -41,6 +43,7 @@ export class PerfilPage implements OnInit {
       this.obtenerDatosEquiposSeguidos(uid);
     } else {
       console.log('No hay usuario autenticado, redirigiendo a la página de inicio de sesión...');
+      this.router.navigate(['']);
     }
     console.log(this.equiposSeguidos);
     

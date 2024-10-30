@@ -61,3 +61,7 @@ ion-item {
 ion-item ion-label {
   font-size:x-large;
 }
+/* Ocultar el ícono de calendario en navegadores Webkit (Chrome, Safari, etc.) */
+ion-input input::-webkit-calendar-picker-indicator {
+  display: none;
+}
