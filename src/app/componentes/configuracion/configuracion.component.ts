@@ -27,10 +27,9 @@ export class ConfiguracionComponent  implements OnInit {
     console.log("entra")
     this.router.navigate(['/tabs/editarrutina']);
   }
-  async cerrarSesion() {
-    await this.authService.signOut();
-    this.router.navigate(['/login']);
-    this.presentToast();
+  cerrarSesion() {
+    this.authService.signOut();
+    this.presentToast() // Llama al método de cierre de sesión
   }
   async presentToast() {
     const toast = await this.toastController.create({

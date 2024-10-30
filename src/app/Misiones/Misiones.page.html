@@ -45,7 +45,7 @@
       </ion-card-header>
     
       <ion-card-content>
-        dias que lleva el usuario
+        Dias que lleva el usuario
       </ion-card-content>
     </ion-card>
   </div>
@@ -56,7 +56,7 @@
       </ion-card-header>
       <ion-list>
         <ion-item *ngFor="let objetivo of objetivos">
-          <ion-label>{{ objetivo.descripcion }}</ion-label>
+          <ion-label>{{ objetivo.descripcion }} {{objetivo.puntos}}</ion-label>
           <ion-checkbox 
             slot="end" 
             (ionChange)="marcarObjetivoComoFinalizado(objetivo.id)">

@@ -5,6 +5,7 @@ import { FirestoreService } from '../servicios/firestore.service';
 import { Storage } from '@angular/fire/storage';
 import { getDownloadURL, ref } from '@angular/fire/storage'; // Usar AngularFireStorage
 import { addDoc, collection, doc, Firestore, getDoc, getDocs, increment, serverTimestamp, setDoc, updateDoc} from '@angular/fire/firestore';
+import { getAuth, onAuthStateChanged } from 'firebase/auth';
 @Component({
   selector: 'app-tab3',
   templateUrl: 'Misiones.page.html',
@@ -35,6 +36,7 @@ export class Misiones implements OnInit {
   ngOnInit() {
     this.cargarEjerciciosDelDia();
     this.cargarObjetivos();
+    this.verificarAutenticacion();
     
   }
 
@@ -141,28 +143,41 @@ export class Misiones implements OnInit {
 
  
 
-async cargarObjetivos() {
-  const currentUser = this.authService.getCurrentUser();
-  if (currentUser) {
-    try {
-      const rutinaId = 'PlyuiOZ5ex4zKxUcZGTO'; // Reemplaza esto con el ID correcto de la rutina
-      const objetivosSnapshot = await getDocs(collection(this.firestore, `Rutinas/${rutinaId}/objetivos`));
-      
-      this.objetivos = objetivosSnapshot.docs.map(doc => ({
-        id: doc.id,
-        ...doc.data()
-      })).slice(0, 5); // Limitar a los primeros 5 objetivos
-
-      console.log('Objetivos cargados:', this.objetivos);
-
-    } catch (error) {
-      this.mostrarToast('Error al cargar los objetivos.', 'danger');
-      console.error('Error al cargar los objetivos:', error);
-    }
-  } else {
-    this.mostrarToast('Debes iniciar sesión para ver tus objetivos.', 'warning');
+  verificarAutenticacion() {
+    const auth = getAuth();
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        // Usuario autenticado, carga los objetivos
+        this.cargarObjetivos();
+      } else {
+        // Usuario no autenticado, redirige a inicio de sesión
+        this.authService.signOut(); // Cierra la sesión si es necesario
+        // Aquí puedes redirigir al usuario a la página de login
+      }
+    });
   }
-}
+
+  cargarObjetivos() {
+    const currentUser = this.authService.getCurrentUser();
+    if (currentUser) {
+      const rutinaId = 'PlyuiOZ5ex4zKxUcZGTO'; // Reemplaza esto con el ID correcto de la rutina
+      getDocs(collection(this.firestore, `Rutinas/${rutinaId}/objetivos`))
+        .then(objetivosSnapshot => {
+          this.objetivos = objetivosSnapshot.docs.map(doc => ({
+            id: doc.id,
+            ...doc.data()
+          })).slice(0, 5); // Limitar a los primeros 5 objetivos
+
+          console.log('Objetivos cargados:', this.objetivos);
+        })
+        .catch(error => {
+          this.mostrarToast('Error al cargar los objetivos.', 'danger');
+          console.error('Error al cargar los objetivos:', error);
+        });
+    } else {
+      this.mostrarToast('Debes iniciar sesión para ver tus objetivos.', 'warning');
+    }
+  }
 
 
  async marcarObjetivoComoFinalizado(objetivoId: string) {

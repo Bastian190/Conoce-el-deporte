@@ -18,7 +18,7 @@
 
   <app-explore-container name="Inicio"></app-explore-container>
   <ion-content [fullscreen]="true" class="ion-padding">
-    <ion-card-title>Bienvenido {{usuario}}</ion-card-title>
+    <ion-card-title *ngIf="nombreUsuario">Bienvenido {{ nombreUsuario }}</ion-card-title>
     <ion-card>
       <ion-card-header>
         <ion-card-title>Noticias</ion-card-title>
