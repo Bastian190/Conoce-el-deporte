@@ -6,7 +6,7 @@ import { Storage } from '@angular/fire/storage';
 import { getDownloadURL, ref } from '@angular/fire/storage'; // Usar AngularFireStorage
 import { addDoc, collection, doc, Firestore, getDoc, getDocs, increment, serverTimestamp, setDoc, updateDoc} from '@angular/fire/firestore';
 import { getAuth, onAuthStateChanged } from 'firebase/auth';
-
+import { DateTime } from 'luxon';
 @Component({
   selector: 'app-tab3',
   templateUrl: 'Misiones.page.html',
@@ -163,14 +163,28 @@ export class Misiones implements OnInit {
     const currentUser = this.authService.getCurrentUser();
     if (currentUser) {
       const rutinaId = 'PlyuiOZ5ex4zKxUcZGTO'; // Reemplaza esto con el ID correcto de la rutina
+      const currentUserId = currentUser.uid;
+      
+      // Obtener la fecha actual en formato YYYY-MM-DD usando Luxon
+      const hoy = DateTime.now().toISODate(); // Obtiene la fecha actual en formato ISO (YYYY-MM-DD)
+  
+      // Obtener objetivos generales de la rutina
       getDocs(collection(this.firestore, `Rutinas/${rutinaId}/objetivos`))
-        .then(objetivosSnapshot => {
-          this.objetivos = objetivosSnapshot.docs.map(doc => ({
+        .then(async objetivosSnapshot => {
+          const objetivos = objetivosSnapshot.docs.map(doc => ({
             id: doc.id,
             ...doc.data()
-          })).slice(0, 5); // Limitar a los primeros 5 objetivos
-
-          console.log('Objetivos cargados:', this.objetivos);
+          }));
+  
+          // Obtener objetivos completados hoy
+          const objetivosCompletadosRef = doc(this.firestore, `usuarios/${currentUserId}/objetivosCompletados/${hoy}`);
+          const objetivosCompletadosDoc = await getDoc(objetivosCompletadosRef);
+          const objetivosCompletadosHoy = objetivosCompletadosDoc.exists() ? objetivosCompletadosDoc.data() : {};
+  
+          // Filtrar los objetivos no completados hoy
+          this.objetivos = objetivos.filter(objetivo => !objetivosCompletadosHoy[objetivo.id]).slice(0, 5); // Limitar a los primeros 5 objetivos
+  
+          console.log('Objetivos cargados para hoy:', this.objetivos);
         })
         .catch(error => {
           this.mostrarToast('Error al cargar los objetivos.', 'danger');
@@ -180,70 +194,75 @@ export class Misiones implements OnInit {
       this.mostrarToast('Debes iniciar sesión para ver tus objetivos.', 'warning');
     }
   }
-  
 
 
   marcarObjetivoComoFinalizado(objetivoId: string): Promise<void> {
     const currentUser = this.authService.getCurrentUser();
-    if (currentUser) {
-      const rutinaId = 'PlyuiOZ5ex4zKxUcZGTO'; // ID de la rutina
-      const objetivoDocRef = doc(this.firestore, `Rutinas/${rutinaId}/objetivos`, objetivoId);
-  
-      return getDoc(objetivoDocRef).then((objetivoDoc) => {
-        if (objetivoDoc.exists()) {
-          const objetivoData = objetivoDoc.data();
-          const puntos = objetivoData['puntaje'] || 0;
-  
-          const puntajesRef = collection(this.firestore, `usuarios/${currentUser.uid}/puntajes`);
-          return getDocs(puntajesRef).then((puntajesSnapshot) => {
-            if (!puntajesSnapshot.empty) {
-              const puntajeDoc = puntajesSnapshot.docs[0];
-              const puntajeRef = doc(this.firestore, `usuarios/${currentUser.uid}/puntajes`, puntajeDoc.id);
-  
-              // Actualizar el documento encontrado
-              return updateDoc(puntajeRef, {
-                puntos: increment(puntos),
-                fecha: serverTimestamp(),
-              }).then(() => {
-                console.log(`Puntaje de ${puntos} sumado al documento existente del usuario.`);
-                return;
-              });
-            } else {
-              // Si no hay documentos en puntajes, crear uno nuevo
-              return addDoc(collection(this.firestore, `usuarios/${currentUser.uid}/puntajes`), {
-                puntos: puntos,
-                fecha: serverTimestamp(),
-              }).then(() => {
-                console.log(`Se creó un nuevo documento de puntaje con ${puntos}.`);
-                return;
-              });
-            }
-          });
-        } else {
-          console.log('Objetivo no encontrado.');
-          return Promise.resolve(); // Retorna un Promise<void> si el objetivo no existe
-        }
-      })
-      .then(() => {
-        // Llamar a reemplazarObjetivo después de marcar el objetivo como finalizado
-        return this.reemplazarObjetivo(objetivoId, rutinaId);
-      })
-      .catch((error) => {
-        this.mostrarToast('Error al marcar el objetivo como finalizado.', 'danger');
-        console.error('Error al marcar objetivo:', error);
-      });
-    } else {
+    if (!currentUser) {
       this.mostrarToast('Debes iniciar sesión para finalizar un objetivo.', 'warning');
       return Promise.resolve(); // Retorna un Promise<void> si no hay un usuario actual
     }
+  
+    const rutinaId = 'PlyuiOZ5ex4zKxUcZGTO'; // ID de la rutina
+    const currentUserId = currentUser.uid;
+    const hoy = DateTime.now().toISODate(); // Fecha actual en formato YYYY-MM-DD
+  
+    // Obtener la referencia del objetivo
+    const objetivoDocRef = doc(this.firestore, `Rutinas/${rutinaId}/objetivos`, objetivoId);
+  
+    return getDoc(objetivoDocRef).then((objetivoDoc) => {
+      if (objetivoDoc.exists()) {
+        const objetivoData = objetivoDoc.data();
+        const puntos = objetivoData['puntaje'] || 0;
+  
+        // Registrar el objetivo completado en Firestore
+        const objetivosCompletadosRef = doc(this.firestore, `usuarios/${currentUserId}/objetivosCompletados/${hoy}`);
+        return setDoc(objetivosCompletadosRef, { [objetivoId]: true }, { merge: true })
+          .then(() => {
+            // Obtener el documento de puntajes del usuario
+            const puntajesRef = collection(this.firestore, `usuarios/${currentUserId}/puntajes`);
+            return getDocs(puntajesRef).then((puntajesSnapshot) => {
+              if (!puntajesSnapshot.empty) {
+                const puntajeDoc = puntajesSnapshot.docs[0];
+                const puntajeRef = doc(this.firestore, `usuarios/${currentUserId}/puntajes`, puntajeDoc.id);
+  
+                // Actualizar el documento encontrado
+                return updateDoc(puntajeRef, {
+                  puntos: increment(puntos),
+                  fecha: serverTimestamp(),
+                }).then(() => {
+                  console.log(`Puntaje de ${puntos} sumado al documento existente del usuario.`);
+                  return;
+                });
+              } else {
+                // Si no hay documentos en puntajes, crear uno nuevo
+                return addDoc(collection(this.firestore, `usuarios/${currentUserId}/puntajes`), {
+                  puntos: puntos,
+                  fecha: serverTimestamp(),
+                }).then(() => {
+                  console.log(`Se creó un nuevo documento de puntaje con ${puntos}.`);
+                  return;
+                });
+              }
+            });
+          })
+          .then(() => {
+            // Llama a la función para reemplazar el objetivo completado en la lista
+            this.reemplazarObjetivo(objetivoId, rutinaId);
+            // Mostrar el mensaje de éxito
+            this.mostrarToast('¡Objetivo completado!', 'success');
+          });
+      } else {
+        console.log('Objetivo no encontrado.');
+        return Promise.resolve(); // Retorna un Promise<void> si el objetivo no existe
+      }
+    })
+    .catch((error) => {
+      console.error('Error al marcar el objetivo como finalizado:', error);
+      this.mostrarToast('Error al completar el objetivo.', 'danger');
+    });
   }
   
-  
-  
-
-
-
-
 
   reemplazarObjetivo(objetivoId: string, rutinaId: string) {
     getDocs(collection(this.firestore, `Rutinas/${rutinaId}/objetivos`))

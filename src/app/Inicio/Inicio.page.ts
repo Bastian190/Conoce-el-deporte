@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Usuario } from '../modelos/equipos.models';
-import { addDoc, collection, collectionGroup, Firestore, getDocs, doc, getDoc} from '@angular/fire/firestore';
+import { addDoc, collection, collectionGroup, Firestore, getDocs, doc, getDoc, onSnapshot} from '@angular/fire/firestore';
 import { AuthService } from '../servicios/auth.service';
 import { User } from 'firebase/auth';
 @Component({
@@ -17,19 +17,21 @@ export class Inicio {
   }
   obtenerPuntajes(): void {
     const puntajesRef = collectionGroup(this.firestore, 'puntajes');
-    
-    getDocs(puntajesRef).then(querySnapshot => {
+
+    // Usar onSnapshot para escuchar cambios en tiempo real
+    onSnapshot(puntajesRef, async (querySnapshot) => {
         const puntajes: any[] = [];
-        
+
         // Iterar sobre cada documento de puntaje
-        const promises = querySnapshot.docs.map(puntajeDoc => {
+        const promises = querySnapshot.docs.map(async (puntajeDoc) => {
             const puntajeData = puntajeDoc.data();
             const usuarioId = puntajeDoc.ref.parent.parent?.id;
 
             if (usuarioId) {
                 const usuarioDocRef = doc(this.firestore, `usuarios/${usuarioId}`);
                 
-                return getDoc(usuarioDocRef).then(usuarioDoc => {
+                try {
+                    const usuarioDoc = await getDoc(usuarioDocRef);
                     if (usuarioDoc.exists()) {
                         const usuarioData = usuarioDoc.data();
                         puntajes.push({
@@ -39,29 +41,25 @@ export class Inicio {
                             apellidoUsuario: usuarioData['apellido'] || ''
                         });
                     }
-                }).catch(error => {
+                } catch (error) {
                     console.error(`Error al obtener datos del usuario ${usuarioId}:`, error);
-                });
-            } else {
-                return Promise.resolve(); // Para evitar problemas si no hay usuarioId
+                }
             }
         });
 
         // Esperar a que todas las promesas se resuelvan
-        Promise.all(promises).then(() => {
-            this.puntajes = puntajes; // Asignar los puntajes una vez que todo se haya completado
-            this.puntajes.sort((a, b) => (b.puntos || 0) - (a.puntos || 0));
-            console.log('Puntajes obtenidos:', this.puntajes); // Verifica los datos aquí
-        });
-    }).catch(error => {
-        console.error('Error al obtener los puntajes:', error);
+        await Promise.all(promises);
+        this.puntajes = puntajes; // Asignar los puntajes una vez que todo se haya completado
+        this.puntajes.sort((a, b) => (b.puntos || 0) - (a.puntos || 0));
+        console.log('Puntajes obtenidos:', this.puntajes); // Verifica los datos aquí
+    }, (error) => {
+        console.error('Error al escuchar los puntajes:', error);
     });
 }
 
 
   ngOnInit() {
     this.obtenerPuntajes(); // Llama a la función para obtener puntajes
-    console.log('Puntajes obtenidos:', this.puntajes); 
     const user: User | null = this.authService.getCurrentUser();
     console.log('Usuario actual:', user); // Agregar esto para verificar el usuario
     if (user) {
