@@ -2,11 +2,10 @@ import { inject, Injectable } from '@angular/core';
 import { collectionData, Firestore, doc, docData,serverTimestamp  } from '@angular/fire/firestore';
 import { collection, CollectionReference, deleteDoc, getDoc, getDocs, query, setDoc, updateDoc, where } from 'firebase/firestore';
 import { catchError, map, Observable, of } from 'rxjs';
-import { Equipos, Logros, Partidos } from '../modelos/equipos.models';
+import { Equipos, Logros, Partidos,Usuario } from '../modelos/equipos.models';
 import { DocumentData } from 'firebase/firestore/lite';
 import { Timestamp } from 'firebase/firestore';
 import { AuthService } from './auth.service'; 
-
 
 @Injectable({
   providedIn: 'root'
@@ -282,7 +281,26 @@ async getIntensidadRutina(userId: string): Promise<any> {
   }
 }
 
+async getUserProfile(userId: string): Promise<Usuario | null> {
+  const userDoc = doc(this.firestore, `usuarios/${userId}`);
+  const docSnap = await getDoc(userDoc);
 
+  if (docSnap.exists()) {
+      const data = docSnap.data() as Usuario;
+
+      // Verificación del tipo de fechaNacimiento
+      if (data.fechaNacimiento instanceof Timestamp) {
+          data.fechaNacimiento = data.fechaNacimiento.toDate(); // Convierte a Date si es un Timestamp
+      } else if (!(data.fechaNacimiento instanceof Date)) {
+          console.error('Tipo de fechaNacimiento no reconocido:', data.fechaNacimiento);
+      }
+
+      return data;
+  } else {
+      console.log('No hay tal documento!');
+      return null;
+  }
+}
 
 
 
