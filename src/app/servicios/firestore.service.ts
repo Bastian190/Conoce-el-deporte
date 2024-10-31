@@ -288,5 +288,5 @@ async getIntensidadRutina(userId: string): Promise<any> {
 
 
   
-  
+
 }
