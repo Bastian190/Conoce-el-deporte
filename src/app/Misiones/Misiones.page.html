@@ -24,46 +24,52 @@
     <ion-card-content>
       <ion-list *ngIf="ejerciciosDelDia && ejerciciosDelDia.length > 0" class="scrollable-list">
         <ion-item *ngFor="let ejercicio of ejerciciosDelDia">
-          <ion-thumbnail slot="start" id="contendor-gif">
+          <ion-thumbnail slot="start" id="contendor-gif" *ngIf="!ejercicio.completado">
             <img id="gif" [src]="ejercicio.gifUrl" alt="GIF de {{ ejercicio.nombre }}" />
           </ion-thumbnail>
-          <ion-label id="label">{{ ejercicio.nombre_ejercicio }}</ion-label>
-          <ion-toggle id="toggle"  labelPlacement="stacked" [enableOnOffLabels]="true">{{ ejercicio.puntos }} Puntos</ion-toggle>
-        </ion-item>
-      </ion-list>
-
-      <ion-item *ngIf="!ejerciciosDelDia || ejerciciosDelDia.length === 0">
-        <ion-label>No hay ejercicios para el día de hoy. ¡Descansa en este día!</ion-label>
-        <img id="descanso" src="assets/descanso.gif" alt="descanso" />
-      </ion-item>
-    </ion-card-content>
-  </ion-card>
-  <div>
-    <ion-card>
-      <ion-card-header>
-        <ion-card-title>Racha</ion-card-title>
-      </ion-card-header>
-    
-      <ion-card-content>
-        Dias que lleva el usuario
-      </ion-card-content>
-    </ion-card>
-  </div>
-  <div>
-    <ion-card>
-      <ion-card-header>
-        <ion-card-title>Objetivos alcanzados</ion-card-title>
-      </ion-card-header>
-      <ion-list>
-        <ion-item *ngFor="let objetivo of objetivos">
-          <ion-label>{{ objetivo.descripcion }} {{objetivo.puntaje}}</ion-label>
-          <ion-checkbox 
-            slot="end" 
-            (ionChange)="marcarObjetivoComoFinalizado(objetivo.id)">
+          <ion-label id="label">
+            <span *ngIf="!ejercicio.completado">{{ ejercicio.nombre_ejercicio }}</span>
+            <span *ngIf="ejercicio.completado">Ejercicio completado</span>
+          </ion-label>
+          <p *ngIf="!ejercicio.completado">
+            <span *ngIf="ejercicio.duracion">{{ ejercicio.duracion }} seg</span>
+            <span *ngIf="!ejercicio.duracion">{{ ejercicio.series }} x {{ ejercicio.repeticiones }} reps</span>
+          </p>
+          <ion-checkbox *ngIf="!ejercicio.completado" labelPlacement="stacked" (ionChange)="completarEjercicio(ejercicio)">
+            {{ ejercicio.puntos }} Puntos
           </ion-checkbox>
         </ion-item>
       </ion-list>
-    </ion-card>
-  </div>
-</ion-content>
+      
 
+      <ion-item *ngIf="!ejerciciosDelDia || ejerciciosDelDia.length === 0">
+        <ion-label>No hay ejercicios para el día de hoy. ¡Descansa en este día!</ion-label>
+        <img id="descanso" src="assets/descanso.gif" alt="Imagen de descanso" />
+      </ion-item>
+    </ion-card-content>
+  </ion-card>
+
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title>Racha</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      Días que lleva el usuario
+    </ion-card-content>
+  </ion-card>
+
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title>Objetivos alcanzados</ion-card-title>
+    </ion-card-header>
+    <ion-list>
+      <ion-item *ngFor="let objetivo of objetivos">
+        <ion-label>{{ objetivo.descripcion }} {{objetivo.puntaje}}</ion-label>
+        <ion-checkbox 
+          slot="end" 
+          (ionChange)="marcarObjetivoComoFinalizado(objetivo.id)">
+        </ion-checkbox>
+      </ion-item>
+    </ion-list>
+  </ion-card>
+</ion-content>

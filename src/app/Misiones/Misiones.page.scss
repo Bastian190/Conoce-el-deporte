@@ -43,7 +43,7 @@
 }
 
 #label {
-  margin: 5px 10px; /* Espaciado alrededor del label */
+  margin:5px; /* Espaciado alrededor del label */
 }
 
 ion-card {
@@ -60,4 +60,12 @@ ion-card {
 #toggle {
   margin-left: auto; /* Empuja el toggle a la derecha */
   font-size: large;
+}
+.custom-toast {
+  background-color: #4CAF50; /* Color de fondo */
+  color: white; /* Color del texto */
+  border-radius: 10px; /* Bordes redondeados */
+  text-align: center; /* Centrar el texto */
+  padding: 10px; /* Espaciado interno */
+  font-size: 16px; /* Tamaño de fuente */
 }
