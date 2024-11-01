@@ -24,7 +24,7 @@
         <ion-card-title>Noticias</ion-card-title>
       </ion-card-header>
       <ion-card-content>
-        <ion-list>
+        <ion-list class="scrollable-list">
           <ion-item>
             <ion-thumbnail slot="start">
               <img alt="Silhouette of mountains" src="https://ionicframework.com/docs/img/demos/thumbnail.svg" />
@@ -57,9 +57,10 @@
     </ion-card>
 
     <ion-list-header>
-      <ion-label>Tabla de clasificación</ion-label>
+      <ion-card-title>Tabla de clasificación</ion-card-title>
     </ion-list-header>
-    <ion-list *ngIf="puntajes.length > 0">
+    
+    <ion-list *ngIf="puntajes.length > 0" class="scrollable-list">
       <ion-item *ngFor="let puntaje of puntajes; let i = index">
         <ion-label>
           {{ i + 1 }}. {{ puntaje.nombreUsuario }} {{ puntaje.apellidoUsuario }} - {{ puntaje.puntos }} puntos
