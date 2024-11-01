@@ -5,7 +5,8 @@ import { EquipoComponent } from '../equipo/equipo.component';
 import { ConfiguracionComponent } from '../componentes/configuracion/configuracion.component';
 import { EditarperfilComponent } from '../componentes/editarperfil/editarperfil.component';
 import { EditarrutinaComponent } from '../componentes/editarrutina/editarrutina.component';
-import { RegistroRutinaComponent } from '../registro-rutina/registro-rutina.component';
+
+import { ModificarEquipoComponent } from '../componentes/modificar-equipo/modificar-equipo.component';
 const routes: Routes = [
   {
     path: '',
@@ -42,6 +43,10 @@ const routes: Routes = [
       {
         path: 'editarrutina',
         component: EditarrutinaComponent
+      },
+      {
+        path:'modificarEquipo',
+        component: ModificarEquipoComponent
       },
 
       {

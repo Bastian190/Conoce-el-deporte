@@ -117,7 +117,7 @@ export class Misiones implements OnInit {
             this.ejerciciosDelDia.forEach(ejercicio => {
                 // Verifica si el ejercicio ha sido completado
                 const completado = ejerciciosCompletados.some((completado: { id: string }) => completado.id === ejercicio.id) || 
-                                   ejerciciosCompletadosGuardados.some((completado: { ejercicioId: string }) => completado.ejercicioId === ejercicio.id);
+                                  ejerciciosCompletadosGuardados.some((completado: { ejercicioId: string }) => completado.ejercicioId === ejercicio.id);
                 ejercicio.completado = completado;
 
                 // Agregar a la lista de completados si es necesario
@@ -275,7 +275,7 @@ private async guardarEjercicioCompletado(ejercicio: any, userId: string) {
     const currentUserId = currentUser.uid;
     const hoy = DateTime.now().toISODate(); // Fecha actual en formato YYYY-MM-DD
   
-    // Obtener la referencia del objetivo
+    // Obtener la referencia del objetivo 
     const objetivoDocRef = doc(this.firestore, `Rutinas/${rutinaId}/objetivos`, objetivoId);
   
     return getDoc(objetivoDocRef).then((objetivoDoc) => {
