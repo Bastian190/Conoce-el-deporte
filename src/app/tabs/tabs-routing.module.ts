@@ -7,6 +7,7 @@ import { EditarperfilComponent } from '../componentes/editarperfil/editarperfil.
 import { EditarrutinaComponent } from '../componentes/editarrutina/editarrutina.component';
 
 import { ModificarEquipoComponent } from '../componentes/modificar-equipo/modificar-equipo.component';
+import { NotificacionesComponent } from '../componentes/notificaciones/notificaciones.component';
 const routes: Routes = [
   {
     path: '',
@@ -47,6 +48,10 @@ const routes: Routes = [
       {
         path:'modificarEquipo',
         component: ModificarEquipoComponent
+      },
+      {
+        path:'Notificaciones',
+        component: NotificacionesComponent
       },
 
       {

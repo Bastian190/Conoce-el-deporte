@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Usuario } from '../modelos/equipos.models';
-import { addDoc, collection, collectionGroup, Firestore, getDocs, doc, getDoc, onSnapshot} from '@angular/fire/firestore';
+import { addDoc, collection, collectionGroup, Firestore, getDocs, doc, getDoc, onSnapshot, collectionData} from '@angular/fire/firestore';
 import { AuthService } from '../servicios/auth.service';
 import { User } from 'firebase/auth';
 @Component({
@@ -13,6 +13,7 @@ export class Inicio {
   nombreUsuario: string | null = null;
   usuario: Usuario []=[];
   puntajes: any[] = [];
+  notificaciones: any[] = [];
   constructor(private activeroute: ActivatedRoute, private router: Router, private firestore: Firestore, private authService: AuthService) {
   }
   obtenerPuntajes(): void {
@@ -67,5 +68,15 @@ export class Inicio {
     } else {
       this.nombreUsuario = 'Usuario'; // Si no hay usuario, establecer como null
     }
+    this.obtenerNotificaciones();
+  }
+ 
+
+  async obtenerNotificaciones() {
+    const notificacionesCollection = collection(this.firestore, 'notificaciones');
+    collectionData(notificacionesCollection, { idField: 'id' }).subscribe((data) => {
+      this.notificaciones = data;
+      console.log('Notificaciones: ', this.notificaciones); // Para verificar que se carguen correctamente
+    });
   }
 }
