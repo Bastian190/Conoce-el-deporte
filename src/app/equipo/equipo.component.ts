@@ -23,7 +23,7 @@ export class EquipoComponent  implements OnInit {
   partidos: Partidos[]=[];
   esEquipoSeguido: boolean = false;
  // Array para almacenar los partidos
-  constructor(private router: Router, private firestoreService:FirestoreService, private route: ActivatedRoute,private authService: AuthService) { }
+  constructor(private router: Router, private firestoreService:FirestoreService, private route: ActivatedRoute,public authService: AuthService) { }
 
   // Método para navegar a la página
   irAPaginaDestino() {
@@ -60,6 +60,13 @@ export class EquipoComponent  implements OnInit {
           }
         });
       }
+    }
+    if (this.authService.esAdministrador()) {
+      console.log("Usuario con acceso de administrador");
+      // Muestra funcionalidades de administrador
+    } else {
+      console.log("Usuario con acceso estándar");
+      // Muestra funcionalidades estándar
     }
   }
   

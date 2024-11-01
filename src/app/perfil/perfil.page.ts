@@ -25,7 +25,7 @@ export class PerfilPage implements OnInit {
 
   constructor(
     private navController: NavController,
-    private authService: AuthService, // Servicio de autenticación
+    public authService: AuthService, // Servicio de autenticación
     private firestore: Firestore, // Firestore para consultas
     private storage: Storage,
     private firestoreService: FirestoreService,
@@ -34,9 +34,9 @@ export class PerfilPage implements OnInit {
     private router: Router
   ) {}
 
-  async ngOnInit() {
+  ngOnInit() {
     this.obtenerDatosUsuario();
-    const user = await this.authService.getCurrentUser();
+    const user = this.authService.getCurrentUser();
     
     if (user) {
       const uid = user.uid; // Aquí puedes acceder a uid
@@ -46,6 +46,14 @@ export class PerfilPage implements OnInit {
       this.router.navigate(['']);
     }
     console.log(this.equiposSeguidos);
+    
+    if (this.authService.esAdministrador()) {
+      console.log("Usuario con acceso de administrador");
+      // Muestra funcionalidades de administrador
+    } else {
+      console.log("Usuario con acceso estándar");
+      // Muestra funcionalidades estándar
+    }
     
   }
 
