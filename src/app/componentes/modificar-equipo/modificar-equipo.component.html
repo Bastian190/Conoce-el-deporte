@@ -1,0 +1,38 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-button slot="start" fill="clear" >
+      <ion-icon id="back" name="arrow-back"></ion-icon>
+    </ion-button>
+    <ion-title id="titulo">Edita tu equipo</ion-title>
+  </ion-toolbar>
+</ion-header>
+<ion-content id="contenido">
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title>Selecciona el equipo que quieras editar</ion-card-title>
+    </ion-card-header>
+  
+    <ion-card-content>
+      aqui van los equipos del usuario administrador
+    </ion-card-content>
+
+  </ion-card>
+  <ion-list>
+    <ion-item>
+      <ion-select placeholder="Select a Fruit">
+        <div slot="label">aqui sale la seleccion del lugar que quiera editar <ion-text color="danger">(Required)</ion-text></div>
+        <ion-select-option value="apple">descripcion</ion-select-option>
+        <ion-select-option value="banana">lugar</ion-select-option>
+        <ion-select-option value="orange">partidos</ion-select-option>
+        <ion-select-option value="orange">logros</ion-select-option>
+      </ion-select>
+    </ion-item>
+  </ion-list>
+  <ion-item lines="full">
+    <ion-label position="stacked">Escribe lo que quieras editar</ion-label>
+    <ion-input type="text"  minlength="3" maxlength="200">
+    </ion-input>
+  </ion-item>
+
+  <ion-button fill="clear">Editar</ion-button>
+</ion-content>

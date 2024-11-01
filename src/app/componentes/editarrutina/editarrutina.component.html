@@ -10,21 +10,32 @@
   <ion-card-header>
     <ion-card-title id="titulo2">Seleccione el día que quiere editar rutina</ion-card-title>
   </ion-card-header>
-  <ion-list >
-    <ion-item >
-      <ion-select label-placement="stacked" (ionChange)="onSelect($event.detail.value)">
-        <ion-select-option *ngFor="let dia of diasDeLaSemana" [value]="dia">
-          {{ dia }}
-        </ion-select-option>
-      </ion-select>
-    </ion-item>
+  <ion-list>
     <ion-item>
-      <ion-select label-placement="stacked" >
-        <ion-select-option *ngFor="let rutina of rutina" [value]="rutina.nombre_tipo_rutina">
-          {{ rutina.nombre_tipo_rutina }}
+        <ion-select label-placement="stacked" (ionChange)="onSelect($event.detail.value)">
+            <ion-select-option *ngFor="let dia of diasDeLaSemana" [value]="dia">
+                {{ dia }}
+            </ion-select-option>
+        </ion-select>
+    </ion-item>
+    <ion-item *ngIf="todasLasRutinas['disponibles'] && todasLasRutinas['disponibles'].length > 0">
+      <ion-label>Selecciona una rutina</ion-label>
+      <ion-select interface="popover" (ionChange)="seleccionarRutina($event.detail.value)">
+        <ion-select-option *ngFor="let rutina of todasLasRutinas['disponibles']" [value]="rutina">
+          {{ rutina }}
         </ion-select-option>
       </ion-select>
     </ion-item>
-  </ion-list>
- <ion-button>Editar rutina</ion-button>
+
+  <ion-item *ngIf="todasLasRutinas['disponibles']?.length === 0">
+      <ion-label>No hay rutinas disponibles.</ion-label>
+  </ion-item>
+  
+</ion-list>
+
+<ion-button 
+    (click)="actualizarRutina(diaSeleccionado, rutinaSeleccionada)">
+    Editar rutina
+</ion-button>
+
 </ion-card>
