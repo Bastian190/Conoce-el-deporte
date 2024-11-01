@@ -55,9 +55,11 @@
       </ion-card-content>
     </div>
   </ion-card>
+  <ion-card *ngIf="authService.esAdministrador()">
 
+  </ion-card>
   <!-- Notificaciones -->
-  <ion-card id="notificaciones">
+  <ion-card id="notificaciones"*ngIf="!authService.esAdministrador()">
     <ion-card-header>
       <ion-card-title>Agrega a tus favoritos</ion-card-title>
     </ion-card-header>
