@@ -73,16 +73,20 @@ export class EquipoComponent  implements OnInit {
   private obtenerLogrosYPartidos(equipoId: string) {
     // Obtener logros del equipo por equipoId
     this.firestoreService.getLogrosPorEquipo(equipoId).subscribe(logros => {
-      this.logros = logros;
+      this.logros = logros.map(logro => ({
+        ...logro,
+        fecha: logro.fecha ? new Date(logro.fecha) : null // Convertir cadena a Date
+      }));
       console.log('Logros:', this.logros);
     });
   
     // Obtener partidos del equipo por equipoId
     this.firestoreService.getPartidosPorEquipo(equipoId).subscribe(partidos => {
-      this.partidos = partidos;
+      this.partidos = partidos; // Asegúrate de que los partidos también se manejen correctamente
       console.log('Partidos:', this.partidos);
     });
   }
+  
   
   public alertButtons = [
     {

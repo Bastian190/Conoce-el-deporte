@@ -25,7 +25,7 @@ export interface Partidos{
     ubicacion: string;
 }
 export interface Logros{
-    fecha: Timestamp;
+    fecha: Date | null;
     logro: string;
 }
 export interface Usuario {

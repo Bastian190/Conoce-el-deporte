@@ -7,6 +7,7 @@ import { EditarperfilComponent } from '../componentes/editarperfil/editarperfil.
 import { EditarrutinaComponent } from '../componentes/editarrutina/editarrutina.component';
 
 import { ModificarEquipoComponent } from '../componentes/modificar-equipo/modificar-equipo.component';
+import { AgregarLogrosYPartidosComponent } from '../componentes/agregar-logros-ypartidos/agregar-logros-ypartidos.component';
 const routes: Routes = [
   {
     path: '',
@@ -47,6 +48,10 @@ const routes: Routes = [
       {
         path:'modificarEquipo',
         component: ModificarEquipoComponent
+      },
+      {
+        path:'AgregarLogrosPartidos',
+        component:AgregarLogrosYPartidosComponent
       },
 
       {
