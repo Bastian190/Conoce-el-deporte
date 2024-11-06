@@ -12,6 +12,9 @@ export const environment = {
     messagingSenderId: "654408239881",
     appId: "1:654408239881:web:2e6e71367c8955372121d8",
     measurementId: "G-CL7JHWEBVW"
+  },
+  onesignal: {
+    appId: "7595a2d0-2bf1-41f9-a876-3434e0f2bfd8" 
   }
 };
 
