@@ -7,14 +7,16 @@
   </ion-toolbar>
 </ion-header>
 
-<ion-content class="ion-padding">
-  <form>
-    <ion-item>
-      <ion-label position="stacked">Correo Electrónico</ion-label>
-      <ion-input type="email" placeholder="Ingresa tu correo"></ion-input>
-    </ion-item>
 
-    <ion-button expand="full" type="submit">Enviar</ion-button>
-  </form>
+<ion-content class="ion-padding">
+  <ion-card>
+    <ion-card-content>
+      <ion-item>
+        <ion-label class="titu" position="floating">Correo electrónico</ion-label>
+        <ion-input class="custom-input" [(ngModel)]="email" type="email" placeholder="Ingresa tu correo"></ion-input>
+      </ion-item>
+      <ion-button shape="round" expand="full" (click)="sendPasswordResetEmail()">Enviar correo de recuperación</ion-button>
+    </ion-card-content>
+  </ion-card>
 </ion-content>
 

@@ -5,8 +5,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { AuthService } from '../../servicios/auth.service'; // Asegúrate de que la ruta sea correcta
 import { Usuario } from '../../modelos/equipos.models'; // Asegúrate de que la ruta sea correcta
 import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage';
-
-
+import { getAuth, sendEmailVerification,User } from 'firebase/auth'; // Importa el método sendEmailVerification
 
 @Component({
   selector: 'app-registro',
@@ -36,7 +35,7 @@ export class RegistroComponent implements OnInit {
       altura: ['', [Validators.min(0)]],
       peso: ['', [Validators.min(0)]],
       correo: ['', [Validators.required, Validators.email]],
-      date: ['', [Validators.required, ]],
+      date: ['', [Validators.required]],
       sex: ['', [Validators.required]],
       password: ['', [Validators.required, Validators.minLength(6)]],
       passwordRepeat: ['', [Validators.required, Validators.minLength(6)]]
@@ -59,7 +58,6 @@ export class RegistroComponent implements OnInit {
     }
   
     const fechaNacimiento = new Date(this.registroForm.value.date);
-    // Llamamos a subirFotoPerfil y esperamos la URL o undefined
     const fotoPerfilUrl = await this.subirFotoPerfil();
   
     const usuario: Usuario = {
@@ -70,20 +68,50 @@ export class RegistroComponent implements OnInit {
       altura: this.registroForm.value.altura,
       peso: this.registroForm.value.peso,
       correo: this.registroForm.value.correo,
-      ...(fotoPerfilUrl && { fotoPerfil: fotoPerfilUrl }) // Carga la foto de perfil opcional
+      ...(fotoPerfilUrl && { fotoPerfil: fotoPerfilUrl })
     };
   
     try {
-
+      // Registra al usuario en Firebase
       await this.authService.registrarUsuario(usuario, password);
   
-      this.mostrarToast('Registro exitoso', 'success');
-      this.router.navigate(['registroRutina']);
+      // Envía el correo de verificación
+      const auth = getAuth();
+      const user = auth.currentUser;
+  
+      if (user) {
+        await sendEmailVerification(user); // Envía el enlace de verificación al correo
+  
+        this.mostrarToast('Registro exitoso, verifica tu correo electrónico antes de iniciar sesión.', 'success');
+  
+        // Esperar a que el correo esté verificado
+        await this.esperarVerificacionCorreo(user);
+  
+        // Navegación a la página de registro de rutina
+        this.router.navigate(['registroRutina']);
+      } else {
+        this.mostrarToast('Error: No se pudo obtener el usuario autenticado.');
+      }
   
     } catch (error: any) {
       console.error('Error al registrar el usuario:', error);
       this.mostrarToast('Error al registrar el usuario: ' + (error.message || error));
     }
+  }
+  
+
+  async esperarVerificacionCorreo(user: User) {
+    return new Promise<void>((resolve) => {
+      const interval = setInterval(async () => {
+        await user.reload(); // Recarga el usuario para obtener el estado actualizado
+        const updatedUser = getAuth().currentUser; // Obtén el usuario actualizado
+
+        if (updatedUser?.emailVerified) {
+          clearInterval(interval); // Detenemos el intervalo
+          resolve(); // Resolvemos la promesa
+        }
+      }, 3000); // Comprueba cada 3 segundos
+    });
   }
   
   async subirFotoPerfil(): Promise<string | undefined> {
@@ -107,7 +135,8 @@ export class RegistroComponent implements OnInit {
     return undefined;
   }
   
-
+  
+  
   async mostrarToast(message: string, color: string = 'warning') {
     const toast = await this.toastController.create({
       message,
@@ -150,7 +179,6 @@ export class RegistroComponent implements OnInit {
     return true;
   }
   
-
   cargarFoto(event: Event) {
     const input = event.target as HTMLInputElement;
     if (input.files && input.files.length > 0) {
@@ -162,7 +190,8 @@ export class RegistroComponent implements OnInit {
       reader.readAsDataURL(file); // Lee el archivo como Data URL
     }
   }
+
   irAPaginaDestino1() {
     this.router.navigate(['login']); // Cambia 'login' por la ruta correcta de tu página de inicio de sesión
-}
+  }
 }

@@ -8,6 +8,7 @@ import { EditarrutinaComponent } from '../componentes/editarrutina/editarrutina.
 
 import { ModificarEquipoComponent } from '../componentes/modificar-equipo/modificar-equipo.component';
 import { AgregarLogrosYPartidosComponent } from '../componentes/agregar-logros-ypartidos/agregar-logros-ypartidos.component';
+import { NotificacionesComponent } from '../componentes/notificaciones/notificaciones.component';
 const routes: Routes = [
   {
     path: '',
@@ -53,6 +54,10 @@ const routes: Routes = [
         path:'AgregarLogrosPartidos',
         component:AgregarLogrosYPartidosComponent
       },
+      {
+        path:'Notificaciones',
+        component: NotificacionesComponent
+      }.
 
       {
         path: '',
