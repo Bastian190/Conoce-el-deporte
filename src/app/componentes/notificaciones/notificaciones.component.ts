@@ -79,6 +79,9 @@ export class NotificacionesComponent {
       }
     });
   }
+  
+  
+
 
   irAPaginaDestino() {
     this.router.navigate(['/tabs/perfil']);

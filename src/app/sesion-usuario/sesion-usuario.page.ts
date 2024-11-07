@@ -4,7 +4,10 @@ import { NavigationExtras, Router } from '@angular/router';
 import { ToastController } from '@ionic/angular';
 import { AuthService } from '../servicios/auth.service'; // Asegúrate de que el path es correcto
 import { getAuth } from 'firebase/auth';
-import { doc, Firestore, getDoc } from 'firebase/firestore';
+import { doc, getDoc } from 'firebase/firestore';
+import { NotificacionService } from '../servicios/notificaciones-service.service';
+import { Firestore } from '@angular/fire/firestore';
+
 
 @Component({
   selector: 'app-sesion-usuario',

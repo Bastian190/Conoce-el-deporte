@@ -5,11 +5,7 @@ const config: CapacitorConfig = {
   appName: 'ConoceElDeporte',
   webDir: 'www',
   bundledWebRuntime: false,
-  plugins: {
-    OneSignal: {
-      appId: '7595a2d0-2bf1-41f9-a876-3434e0f2bfd8',  // Sustituye con tu App ID de OneSignal
-    },
-  },
+
 };
 
 export default config;
