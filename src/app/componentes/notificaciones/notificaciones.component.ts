@@ -78,32 +78,6 @@ export class NotificacionesComponent {
   
   
 
-  
-  
-
-  async enviarNotificacionPush(notificacion: any) {
-    // Obtener todos los usuarios
-    const usuariosRef = collection(this.firestore, 'usuarios');
-    const usuariosSnapshot = await getDocs(usuariosRef);
-
-    for (const usuarioDoc of usuariosSnapshot.docs) {
-      const usuarioData = usuarioDoc.data();
-
-      // Verificar si el usuario sigue el equipo y el tipo de notificación
-      if (usuarioData['equiposSeguidos']?.[notificacion.equipoId] && // Cambiado a notación de corchetes
-          usuarioData['equiposSeguidos'][notificacion.equipoId]['tipoNotificacion'] === notificacion.tipo) { // Cambiado a notación de corchetes
-
-        const fcmToken = usuarioData['fcmToken']; // Cambiado a notación de corchetes
-        // Aquí deberías implementar la lógica para enviar la notificación push utilizando el token proporcionado
-        await this.enviarNotificacionConToken(fcmToken, notificacion);
-      }
-    }
-  }
-
-  async enviarNotificacionConToken(token: string, notificacion: any) {
-    // Lógica para enviar la notificación a través de FCM usando el token
-    // Requiere implementación del servidor que envíe notificaciones a FCM
-  }
 
   irAPaginaDestino() {
     this.router.navigate(['/tabs/perfil']);

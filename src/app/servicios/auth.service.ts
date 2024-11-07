@@ -6,7 +6,7 @@ import { Usuario } from '../modelos/equipos.models';
 import { getAuth, onAuthStateChanged, setPersistence, browserLocalPersistence } from 'firebase/auth';
 import { Router } from '@angular/router';
 import { Observable, of } from 'rxjs';
-
+import { NotificacionService } from './notificaciones-service.service';
 @Injectable({
   providedIn: 'root'
 })
@@ -17,7 +17,7 @@ export class AuthService {
   user: any = null;
 
   constructor(private auth: Auth, private firestore: Firestore,
-              private storage: Storage, private router: Router) {
+              private storage: Storage, private router: Router, private notificationService: NotificacionService) {
     // Inicializa el observable de usuario
     this.user$ = new Observable<User | null>(observer => {
       const auth = getAuth();
@@ -105,12 +105,17 @@ export class AuthService {
       return this.isAdmin;
     }
   
-  async registrarUsuario(usuario: Usuario, password: string): Promise<void> {
-    const { correo } = usuario;
-    const userCredential = await createUserWithEmailAndPassword(this.auth, correo, password);
-    const userRef = doc(this.firestore, `usuarios/${userCredential.user.uid}`);
-    await setDoc(userRef, { ...usuario, uid: userCredential.user.uid });
-  }
+    async registrarUsuario(usuario: Usuario, password: string): Promise<void> {
+      const { correo } = usuario;
+      const userCredential = await createUserWithEmailAndPassword(this.auth, correo, password);
+      const userRef = doc(this.firestore, `usuarios/${userCredential.user.uid}`);
+      
+      // Guarda los datos del usuario en Firestore con su UID
+      await setDoc(userRef, { ...usuario, uid: userCredential.user.uid });
+      
+      // Inicializa las notificaciones para generar y guardar el token en Firestore
+      await this.notificationService.initPushNotifications();
+    }
 
   getCurrentUser(): User | null {
     return this.auth.currentUser;
@@ -131,3 +136,5 @@ export class AuthService {
     return user ? user.uid : null;
   }
 }
+export { Auth };
+

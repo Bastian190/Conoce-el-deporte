@@ -1,45 +1,48 @@
 import { Injectable } from '@angular/core';
-import { Firestore } from '@angular/fire/firestore';
-import { OneSignal } from '@awesome-cordova-plugins/onesignal';
-import { collection, doc, onSnapshot, setDoc } from 'firebase/firestore';
+import { Platform } from '@ionic/angular';
+import { PushNotifications } from '@capacitor/push-notifications';
+import { doc, Firestore, setDoc } from '@angular/fire/firestore';
+import {Auth} from '@angular/fire/auth';
+import { Capacitor } from '@capacitor/core';
 
-import { environment } from 'src/environments/environment';
-import { AuthService } from './auth.service';
-import { getAuth } from 'firebase/auth';
 @Injectable({
   providedIn: 'root',
 })
 export class NotificacionService {
-  constructor(private firestore: Firestore) {}
+  constructor(private firestore: Firestore, private auth: Auth) {}
 
-  // Inicializa OneSignal y guarda el token de notificación
-  async obtenerYGuardarToken() {
-    try {
-      // Obtén el token de OneSignal
-      OneSignal.getIds().then((ids) => {
-        const token = ids.userId;
-        if (token) {
-          console.log('Token de OneSignal:', token);
+  async initPushNotifications() {
 
-          // Obtener el UID del usuario autenticado
-          const user = getAuth().currentUser;
-          if (user) {
-            // Guarda el token de OneSignal en Firestore bajo el usuario autenticado
-            const userRef = doc(this.firestore, `usuarios/${user.uid}`);
-            setDoc(userRef, { notificationToken: token }, { merge: true }).then(() => {
-              console.log('Token guardado correctamente en Firestore');
-            }).catch((error) => {
-              console.error('Error guardando el token en Firestore:', error);
-            });
-          } else {
-            console.log('Usuario no autenticado');
-          }
-        } else {
-          console.log('No se pudo obtener el token de OneSignal');
+
+    if (Capacitor.isNativePlatform()) {
+      PushNotifications.requestPermissions().then(result => {
+        if (result.receive === 'granted') {
+          PushNotifications.register();
         }
       });
+
+      PushNotifications.addListener('registration', (token) => {
+        console.log('Push registration success, token: ' + token.value);
+      });
+
+      PushNotifications.addListener('registrationError', (error) => {
+        console.error('Push registration error: ', error);
+      });
+
+      PushNotifications.addListener('pushNotificationReceived', (notification) => {
+        console.log('Push received: ', notification);
+      });
+    } else {
+      console.warn("PushNotifications no está disponible en la plataforma web.");
+    }
+  }
+  private async saveToken(userId: string, token: string) {
+    try {
+      const tokenRef = doc(this.firestore, `usuarios/${userId}`);
+      await setDoc(tokenRef, { fcmToken: token }, { merge: true });
+      console.log('Token guardado exitosamente en Firestore');
     } catch (error) {
-      console.error('Error al obtener el token de OneSignal:', error);
+      console.error('Error al guardar el token en Firestore:', error);
     }
   }
 }

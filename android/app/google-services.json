@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "654408239881",
+    "project_id": "conoce-eldeporte",
+    "storage_bucket": "conoce-eldeporte.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:654408239881:android:6b928f4fccf8307a2121d8",
+        "android_client_info": {
+          "package_name": "Conoce_el.Deporte"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB7IBXj2WL1LPa5ldB8S17xElJHdmpklag"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
