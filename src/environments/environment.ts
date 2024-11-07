@@ -14,7 +14,8 @@ export const environment = {
     measurementId: "G-CL7JHWEBVW"
   },
   onesignal: {
-    appId: "7595a2d0-2bf1-41f9-a876-3434e0f2bfd8" 
+    appId: "7595a2d0-2bf1-41f9-a876-3434e0f2bfd8",
+    restApiKey: 'MTc3OTMxNjUtYTI3MC00MWU0LTkwZGYtOWZlZTZiOWQ5NTdl' 
   }
 };
 
