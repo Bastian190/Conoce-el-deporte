@@ -1,10 +1,14 @@
 import { Component } from '@angular/core';
 import { collectionData, Firestore } from '@angular/fire/firestore';
 import { collection, getDocs, addDoc, doc, getDoc } from 'firebase/firestore';
-import { PushNotifications } from '@capacitor/push-notifications';
 import { Router } from '@angular/router';
 import { AuthService } from 'src/app/servicios/auth.service';
 import { ToastController } from '@ionic/angular';
+import { environment } from 'src/environments/environment';
+import { HttpClient } from '@angular/common/http';
+import { Platform } from '@ionic/angular';
+import { NotificationService } from 'src/app/servicios/notificaciones-service.service';
+declare var OneSignal: any;
 
 @Component({
   selector: 'app-notificaciones',
@@ -12,16 +16,46 @@ import { ToastController } from '@ionic/angular';
   styleUrls: ['./notificaciones.component.scss'],
 })
 export class NotificacionesComponent {
-  equipos: any[] = []; // Lista de equipos que administra el administrador
+  equipos: any[] = [];
   equipoSeleccionado: string = '';
   tipoNotificacion: string = '';
   mensajeNotificacion: string = '';
   equipoNombreSeleccionado: string = '';
 
-  constructor(private firestore: Firestore, private router: Router, private authService: AuthService,private toastController: ToastController ) {}
-    
-  ngOnInit(){
-    this.obtenerEquiposAdministrados(); // Cargar equipos de los administradores
+  constructor(private firestore: Firestore, private router: Router, private authService: AuthService,
+    private toastController: ToastController, private http: HttpClient, private platform: Platform, private notificationService: NotificationService) {}
+
+  ngOnInit(): void {
+    this.obtenerEquiposAdministrados();
+    this.platform.ready().then(() => {
+      this.initializeOneSignal();
+    });
+  }
+
+  initializeOneSignal() {
+    OneSignal.setAppId(environment.oneSignalAppId);
+
+    // Solicita permiso para las notificaciones push
+    OneSignal.promptForPushNotificationsWithUserResponse((accepted: boolean) => {
+      console.log("Permiso para notificaciones aceptado:", accepted);
+    });
+
+    // Obtén el estado del dispositivo
+    OneSignal.getDeviceState().then((deviceState: { userId: string }) => {
+      if (deviceState && deviceState.userId) {
+        console.log("OneSignal Player ID:", deviceState.userId);
+      }
+    });
+
+    // Manejar la notificación recibida
+    OneSignal.handleNotificationReceived((data: { title?: string; body?: string; }) => {
+      console.log("Notificación recibida:", data);
+    });
+
+    // Manejar la notificación abierta
+    OneSignal.handleNotificationOpened((data: { notification: { title?: string; body?: string; }; }) => {
+      console.log("Notificación abierta:", data);
+    });
   }
 
   async obtenerEquiposAdministrados() {
@@ -34,40 +68,37 @@ export class NotificacionesComponent {
   
     const adminCollection = collection(this.firestore, `usuarios/${currentUser.uid}/administracion`);
   
-    // Suscribirse a los datos de la colección de administración
     collectionData(adminCollection, { idField: 'id' }).subscribe({
       next: async (administracion) => {
-        this.equipos = []; // Limpiar la lista de equipos antes de cargar nuevos datos
+        this.equipos = [];
   
-        // Recorremos cada documento de administración
         for (const docAdmin of administracion) {
-          const equipoRef = docAdmin['id_equipo']; // Asegúrate de que este campo es correcto
+          const equipoRef = docAdmin['id_equipo'];
   
           if (equipoRef && equipoRef.id) {
-            const equipoId = equipoRef.id; // Obtén el ID de la referencia
-            console.log(`Buscando equipo con ID: ${equipoId}`); // Log para depuración
+            const equipoId = equipoRef.id;
+            console.log(`Buscando equipo con ID: ${equipoId}`);
   
             const equipoDocRef = doc(this.firestore, `Equipos/${equipoId}`);
             const equipoDoc = await getDoc(equipoDocRef);
   
             if (equipoDoc.exists()) {
               const equipoData = equipoDoc.data();
-              // Asegúrate de que equipoData sea un objeto antes de usar el operador spread
               if (equipoData) {
-                this.equipos.push({ id: equipoDoc.id, ...equipoData }); // Agregamos el equipo a la lista
-                console.log(`Equipo encontrado: ${equipoData['nombre']}`); // Log para confirmar el equipo
+                this.equipos.push({ id: equipoDoc.id, ...equipoData });
+                console.log(`Equipo encontrado: ${equipoData['nombre']}`);
               } else {
                 console.error("Los datos del equipo son nulos o indefinidos.");
               }
             } else {
-              console.error(`El documento del equipo con ID ${equipoId} no existe.`); // Log de error
+              console.error(`El documento del equipo con ID ${equipoId} no existe.`);
             }
           } else {
             console.error("El ID del equipo es inválido.");
           }
         }
   
-        console.log('Equipos administrados: ', this.equipos); // Para verificar que se están cargando correctamente
+        console.log('Equipos administrados: ', this.equipos);
       },
       error: (error) => {
         console.error("Error al obtener equipos: ", error);
@@ -75,55 +106,25 @@ export class NotificacionesComponent {
       }
     });
   }
-  
-  
-
-  
-  
-
-  async enviarNotificacionPush(notificacion: any) {
-    // Obtener todos los usuarios
-    const usuariosRef = collection(this.firestore, 'usuarios');
-    const usuariosSnapshot = await getDocs(usuariosRef);
-
-    for (const usuarioDoc of usuariosSnapshot.docs) {
-      const usuarioData = usuarioDoc.data();
-
-      // Verificar si el usuario sigue el equipo y el tipo de notificación
-      if (usuarioData['equiposSeguidos']?.[notificacion.equipoId] && // Cambiado a notación de corchetes
-          usuarioData['equiposSeguidos'][notificacion.equipoId]['tipoNotificacion'] === notificacion.tipo) { // Cambiado a notación de corchetes
-
-        const fcmToken = usuarioData['fcmToken']; // Cambiado a notación de corchetes
-        // Aquí deberías implementar la lógica para enviar la notificación push utilizando el token proporcionado
-        await this.enviarNotificacionConToken(fcmToken, notificacion);
-      }
-    }
-  }
-
-  async enviarNotificacionConToken(token: string, notificacion: any) {
-    // Lógica para enviar la notificación a través de FCM usando el token
-    // Requiere implementación del servidor que envíe notificaciones a FCM
-  }
 
   irAPaginaDestino() {
     this.router.navigate(['/tabs/perfil']);
   }
-  // Aquí puedes agregar la función mostrarToast
+
   async mostrarToast(mensaje: string, color: string) {
     const toast = await this.toastController.create({
       message: mensaje,
-      duration: 2000, // Duración en milisegundos
-      color: color, // Color del toast (puede ser 'primary', 'secondary', 'tertiary', 'success', 'warning', 'danger', 'dark')
-      position: 'bottom', // Posición del toast
+      duration: 2000,
+      color: color,
+      position: 'bottom',
     });
-    toast.present(); // Mostrar el toast
+    toast.present();
   }
 
-   // Método que se llama cuando el equipo seleccionado cambia
-   onEquipoChange(equipoId: string) {
+  onEquipoChange(equipoId: string) {
     const equipo = this.equipos.find(e => e.id === equipoId);
     if (equipo) {
-      this.equipoNombreSeleccionado = equipo.nombre_fantasia; // Almacena el nombre del equipo seleccionado
+      this.equipoNombreSeleccionado = equipo.nombre_fantasia;
     }
   }
 
@@ -135,26 +136,78 @@ export class NotificacionesComponent {
 
     const notificacionData = {
       notificacion: this.mensajeNotificacion,
-      equipo_notificacion: this.equipoNombreSeleccionado, // Usa el nombre del equipo (nombre_fantasia)
+      equipo_notificacion: this.equipoNombreSeleccionado,
       tipo: this.tipoNotificacion,
-      fecha: new Date(), // Almacena la fecha de envío
+      fecha: new Date(),
     };
 
     const notificacionesCollection = collection(this.firestore, 'notificaciones');
 
     try {
       await addDoc(notificacionesCollection, notificacionData);
-      this.mostrarToast('Notificación enviada exitosamente.', 'success');
-      // Limpiar los campos después de enviar
+      this.mostrarToast('Notificación guardada en Firestore.', 'success');
+
+      await this.enviarNotificacionPush({
+        mensaje: this.mensajeNotificacion,
+        equipoId: this.equipoSeleccionado,
+        tipo: this.tipoNotificacion
+      });
+
       this.equipoSeleccionado = '';
       this.tipoNotificacion = '';
       this.mensajeNotificacion = '';
-      this.equipoNombreSeleccionado = ''; // Limpiar el nombre del equipo
+      this.equipoNombreSeleccionado = '';
     } catch (error) {
       console.error('Error al enviar la notificación: ', error);
       this.mostrarToast('Ocurrió un error al enviar la notificación.', 'danger');
     }
   }
 
+  async enviarNotificacionPush(notificacion: any) {
+    const usuariosRef = collection(this.firestore, 'usuarios');
+    const usuariosSnapshot = await getDocs(usuariosRef);
 
+    console.log(`Total usuarios encontrados: ${usuariosSnapshot.docs.length}`);
+
+    let usuariosParaNotificar = [];
+
+    for (const usuarioDoc of usuariosSnapshot.docs) {
+      const usuarioData = usuarioDoc.data();
+      const usuarioId = usuarioDoc.id;
+      const equiposSeguidosRef = collection(this.firestore, `usuarios/${usuarioId}/equiposSeguidos`);
+      const equiposSeguidosSnapshot = await getDocs(equiposSeguidosRef);
+
+      for (const equipoDoc of equiposSeguidosSnapshot.docs) {
+        const equipoData = equipoDoc.data();
+        const equipoId = equipoData['equipoId'];
+
+        if (equipoId === notificacion.equipoId) {
+          const tipoNotificacion = equipoData['tipoNotificacion'];
+
+          if (
+            tipoNotificacion === 'todos' ||
+            tipoNotificacion === notificacion.tipo
+          ) {
+            const fcmToken = usuarioData['fcmToken'];
+            if (fcmToken) {
+              usuariosParaNotificar.push(fcmToken);
+              console.log(`Usuario con FCM token encontrado: ${fcmToken}`);
+            }
+          }
+        }
+      }
+    }
+
+    if (usuariosParaNotificar.length === 0) {
+      console.log('No hay usuarios para enviar la notificación');
+    } else {
+      console.log(`Enviando notificación a ${usuariosParaNotificar.length} usuarios.`);
+      try {
+        await this.notificationService.enviarNotificacion(usuariosParaNotificar, notificacion);
+        console.log('Notificación enviada exitosamente.');
+      } catch (error) {
+        console.error('Error al enviar la notificación FCM:', error);
+      }
+    }
+  }
 }
