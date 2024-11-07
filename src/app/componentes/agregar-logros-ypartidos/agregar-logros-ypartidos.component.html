@@ -1,0 +1,65 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-button slot="start" fill="clear" (click)="irAPaginaDestino()">
+      <ion-icon id="back" name="arrow-back"></ion-icon>
+    </ion-button>
+    <ion-title id="titulo">Agrega datos a tu equipo</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content id="contenido">
+  <ion-card>
+    <ion-list>
+      <ion-item *ngFor="let equipo of equipos">
+        <ion-label>{{ equipo.nombre_fantasia }}</ion-label>
+        <ion-checkbox slot="start" [checked]="equipoSeleccionadoId === equipo.id" (ionChange)="seleccionarEquipo(equipo)"></ion-checkbox>
+      </ion-item>
+    </ion-list>
+  </ion-card>
+
+  <ion-card>
+    <ion-item>
+      <ion-select [(ngModel)]="campoSeleccionado" label="Seleccione qué quiere agregar" label-placement="floating">
+        <ion-select-option value="Logros">Logros</ion-select-option>
+        <ion-select-option value="Partidos">Partidos</ion-select-option>
+      </ion-select>
+    </ion-item>
+  
+    <!-- Campos para agregar Logros -->
+    <ion-item *ngIf="campoSeleccionado === 'Logros'">
+      <ion-label position="stacked">Logro</ion-label>
+      <ion-input [(ngModel)]="nuevoLogro" placeholder="Escriba cuál es el nuevo logro" label-placement="floating" type="text"></ion-input>
+    </ion-item>
+  
+    <ion-item *ngIf="campoSeleccionado === 'Logros'">
+      <ion-label>Selecciona la fecha en la que se consiguió el logro</ion-label>
+      <ion-datetime [(ngModel)]="fechaLogro" presentation="date"></ion-datetime>
+    </ion-item>
+  
+    <!-- Campos para agregar Partidos -->
+    <ion-item *ngIf="campoSeleccionado === 'Partidos'">
+      <ion-label position="stacked">Contrincante</ion-label>
+      <ion-input [(ngModel)]="nuevoPartidoContrincante" placeholder="Escriba el nombre del contrincante" label-placement="floating" type="text"></ion-input>
+    </ion-item>
+  
+    <ion-item *ngIf="campoSeleccionado === 'Partidos'">
+      <ion-label position="stacked">Ubicación</ion-label>
+      <ion-input [(ngModel)]="nuevoPartidoUbicacion" placeholder="Escriba dónde fue la ubicación del partido" label-placement="floating" type="text"></ion-input>
+    </ion-item>
+  
+    <ion-item *ngIf="campoSeleccionado === 'Partidos'">
+      <ion-select [(ngModel)]="resultadoPartido" label="Seleccione el resultado del partido" label-placement="floating">
+        <ion-select-option value="Ganado">Ganado</ion-select-option>
+        <ion-select-option value="Perdido">Perdido</ion-select-option>
+      </ion-select>
+    </ion-item>
+  
+    <ion-item *ngIf="campoSeleccionado === 'Partidos'">
+      <ion-label>Selecciona la fecha en la que se realizó el partido</ion-label>
+      <ion-datetime [(ngModel)]="fechaPartido" presentation="date"></ion-datetime>
+    </ion-item>
+  
+    <ion-button expand="full" (click)="agregarDato()">Agregar</ion-button>
+  </ion-card>
+  
+</ion-content>

@@ -24,9 +24,12 @@
         <ion-card-title>Logros</ion-card-title>
       </ion-card-header>
       <ion-card-content *ngFor="let logro of logros">
-        {{ logro.logro }}: {{ logro.fecha ? (logro.fecha.toDate() | date) : 'Fecha no disponible' }}
+        {{ logro.logro }}: {{ logro.fecha ? (logro.fecha | date:'shortDate') : 'Fecha no disponible' }}
       </ion-card-content>
     </div>
+    
+    
+    
 
     <!-- Tabla de partidos -->
     <div *ngIf="partidos && partidos.length > 0" class="section">

@@ -3,6 +3,9 @@ import { AlertController } from '@ionic/angular';
 import { NavigationExtras, Router } from '@angular/router';
 import { ToastController } from '@ionic/angular';
 import { AuthService } from '../servicios/auth.service'; // Asegúrate de que el path es correcto
+import { getAuth } from 'firebase/auth';
+import { doc, Firestore, getDoc } from 'firebase/firestore';
+import { NotificacionService } from '../servicios/notificaciones-service.service';
 
 @Component({
   selector: 'app-sesion-usuario',
@@ -18,10 +21,13 @@ export class SesionUsuarioPage implements OnInit {
     private alertController: AlertController,
     public toastController: ToastController,
     private router: Router,
-    private authService: AuthService // Inyectar el servicio
+    private authService: AuthService,
+    private notificacionService: NotificacionService,
+    private firestore: Firestore // Inyectar el servicio
   ) {}
 
   ngOnInit() {}
+
 
   validar(user: string, pasword: string) {
     if (user == null) {
@@ -45,6 +51,7 @@ export class SesionUsuarioPage implements OnInit {
     if (this.result === 3) {
       this.authService.signIn(this.usuario, this.password).then(() => {
         console.log(this.password)
+        this.verificarYObtenerToken();
         let navigationExtras: NavigationExtras = {
           state: { usuario: this.usuario }
         };
@@ -93,5 +100,23 @@ export class SesionUsuarioPage implements OnInit {
       buttons: ['OK'],
     });
     await alert.present();
+  }
+  async verificarYObtenerToken() {
+    const user = getAuth().currentUser;
+    
+    if (user) {
+      const userRef = doc(this.firestore, `usuarios/${user.uid}`);
+      
+      // Comprobar si el usuario ya tiene un token de notificación en Firestore
+      const userDoc = await getDoc(userRef);
+      
+      if (!userDoc.exists()) {
+        console.log('Usuario no tiene token, generando uno...');
+        // Si no tiene token, genera uno nuevo
+        await this.notificacionService.obtenerYGuardarToken();
+      } else {
+        console.log('El usuario ya tiene un token');
+      }
+    }
   }
 }
