@@ -8,7 +8,7 @@ import { environment } from 'src/environments/environment';
 import { HttpClient } from '@angular/common/http';
 import { Platform } from '@ionic/angular';
 import { NotificationService } from 'src/app/servicios/notificaciones-service.service';
-declare var OneSignal: any;
+
 
 @Component({
   selector: 'app-notificaciones',
@@ -27,36 +27,9 @@ export class NotificacionesComponent {
 
   ngOnInit(): void {
     this.obtenerEquiposAdministrados();
-    this.platform.ready().then(() => {
-      this.initializeOneSignal();
-    });
   }
 
-  initializeOneSignal() {
-    OneSignal.setAppId(environment.oneSignalAppId);
-
-    // Solicita permiso para las notificaciones push
-    OneSignal.promptForPushNotificationsWithUserResponse((accepted: boolean) => {
-      console.log("Permiso para notificaciones aceptado:", accepted);
-    });
-
-    // Obtén el estado del dispositivo
-    OneSignal.getDeviceState().then((deviceState: { userId: string }) => {
-      if (deviceState && deviceState.userId) {
-        console.log("OneSignal Player ID:", deviceState.userId);
-      }
-    });
-
-    // Manejar la notificación recibida
-    OneSignal.handleNotificationReceived((data: { title?: string; body?: string; }) => {
-      console.log("Notificación recibida:", data);
-    });
-
-    // Manejar la notificación abierta
-    OneSignal.handleNotificationOpened((data: { notification: { title?: string; body?: string; }; }) => {
-      console.log("Notificación abierta:", data);
-    });
-  }
+  
 
   async obtenerEquiposAdministrados() {
     const currentUser = this.authService.getCurrentUser();
@@ -203,7 +176,6 @@ export class NotificacionesComponent {
     } else {
       console.log(`Enviando notificación a ${usuariosParaNotificar.length} usuarios.`);
       try {
-        await this.notificationService.enviarNotificacion(usuariosParaNotificar, notificacion);
         console.log('Notificación enviada exitosamente.');
       } catch (error) {
         console.error('Error al enviar la notificación FCM:', error);
