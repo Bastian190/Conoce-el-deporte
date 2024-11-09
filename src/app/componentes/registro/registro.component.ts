@@ -6,6 +6,8 @@ import { AuthService } from '../../servicios/auth.service'; // Asegúrate de que
 import { Usuario } from '../../modelos/equipos.models'; // Asegúrate de que la ruta sea correcta
 import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { getAuth, sendEmailVerification,User } from 'firebase/auth'; // Importa el método sendEmailVerification
+import { NotificacionService } from 'src/app/servicios/notificaciones-service.service';
+import { PushNotifications } from '@capacitor/push-notifications';
 
 @Component({
   selector: 'app-registro',
@@ -23,7 +25,8 @@ export class RegistroComponent implements OnInit {
     private router: Router,
     private toastController: ToastController,
     private alertController: AlertController,
-    private authService: AuthService, // Inyectar el servicio
+    private authService: AuthService,
+    private notificacionService: NotificacionService // Inyectar el servicio
   ) {
     this.storage = getStorage(); // Inicializa el almacenamiento
   }
@@ -83,7 +86,7 @@ export class RegistroComponent implements OnInit {
         await sendEmailVerification(user); // Envía el enlace de verificación al correo
   
         this.mostrarToast('Registro exitoso, verifica tu correo electrónico antes de iniciar sesión.', 'success');
-  
+        await this.notificacionService.initPushNotifications();
         // Esperar a que el correo esté verificado
         await this.esperarVerificacionCorreo(user);
   
@@ -98,6 +101,8 @@ export class RegistroComponent implements OnInit {
       this.mostrarToast('Error al registrar el usuario: ' + (error.message || error));
     }
   }
+  
+  
   
 
   async esperarVerificacionCorreo(user: User) {

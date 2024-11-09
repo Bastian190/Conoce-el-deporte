@@ -5,6 +5,9 @@ import { PushNotifications } from '@capacitor/push-notifications';
 import { Router } from '@angular/router';
 import { AuthService } from 'src/app/servicios/auth.service';
 import { ToastController } from '@ionic/angular';
+import { NotificacionService } from 'src/app/servicios/notificaciones-service.service';
+import { HttpClient } from '@angular/common/http';
+
 
 @Component({
   selector: 'app-notificaciones',
@@ -18,7 +21,7 @@ export class NotificacionesComponent {
   mensajeNotificacion: string = '';
   equipoNombreSeleccionado: string = '';
 
-  constructor(private firestore: Firestore, private router: Router, private authService: AuthService,private toastController: ToastController ) {}
+  constructor(private firestore: Firestore, private router: Router, private authService: AuthService,private toastController: ToastController,private notificacionService: NotificacionService, private http: HttpClient ) {}
     
   ngOnInit(){
     this.obtenerEquiposAdministrados(); // Cargar equipos de los administradores
@@ -75,8 +78,6 @@ export class NotificacionesComponent {
       }
     });
   }
-  
-  
 
 
   irAPaginaDestino() {
@@ -106,29 +107,41 @@ export class NotificacionesComponent {
       this.mostrarToast('Por favor completa todos los campos.', 'warning');
       return;
     }
-
+  
     const notificacionData = {
       notificacion: this.mensajeNotificacion,
       equipo_notificacion: this.equipoNombreSeleccionado, // Usa el nombre del equipo (nombre_fantasia)
       tipo: this.tipoNotificacion,
       fecha: new Date(), // Almacena la fecha de envío
+      equipoId: this.equipoSeleccionado, // ID del equipo para realizar el filtro
     };
-
+  
     const notificacionesCollection = collection(this.firestore, 'notificaciones');
-
+  
     try {
-      await addDoc(notificacionesCollection, notificacionData);
+      // Guardamos la notificación en la colección 'notificaciones'
+      const docRef = await addDoc(notificacionesCollection, notificacionData);
+      await this.notificacionService.enviarNotificacionesMasivas(this.equipoNombreSeleccionado, this.mensajeNotificacion)
       this.mostrarToast('Notificación enviada exitosamente.', 'success');
+      
       // Limpiar los campos después de enviar
       this.equipoSeleccionado = '';
       this.tipoNotificacion = '';
       this.mensajeNotificacion = '';
       this.equipoNombreSeleccionado = ''; // Limpiar el nombre del equipo
+  
+      // Ahora enviamos las notificaciones push a los usuarios suscritos a este equipo
+      
     } catch (error) {
       console.error('Error al enviar la notificación: ', error);
       this.mostrarToast('Ocurrió un error al enviar la notificación.', 'danger');
     }
   }
-
-
+  
+  
+  
 }
+
+  
+
+

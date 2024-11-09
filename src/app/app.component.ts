@@ -5,6 +5,7 @@ import { PushNotifications } from '@capacitor/push-notifications';
 import { Firestore } from '@angular/fire/firestore';
 import { doc, setDoc } from 'firebase/firestore';
 import { NotificacionService } from './servicios/notificaciones-service.service';
+import { async } from 'rxjs';
 @Component({
   selector: 'app-root',
   templateUrl: 'app.component.html',
@@ -16,8 +17,7 @@ export class AppComponent implements OnInit {
   ngOnInit() {
     // Verifica la autenticación al iniciar la aplicación
     this.authService.verificarAutenticacion();
-    
-
+    this.notificacionService.initPushNotifications();
   }
 
 
