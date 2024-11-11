@@ -10,7 +10,6 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { initializeApp, provideFirebaseApp } from '@angular/fire/app';
 import { getAuth, provideAuth } from '@angular/fire/auth';
-import { getFirestore, provideFirestore } from '@angular/fire/firestore';
 import { getFunctions, provideFunctions } from '@angular/fire/functions';
 import { getMessaging, provideMessaging } from '@angular/fire/messaging';
 import { getStorage, provideStorage } from '@angular/fire/storage';
@@ -24,8 +23,7 @@ import { AgregarLogrosYPartidosModule } from './componentes/agregar-logros-ypart
 import { NotificacionesModule } from './componentes/notificaciones/notificaciones.module';
 import { NotificacionService } from './servicios/notificaciones-service.service';
 import { HttpClientModule } from '@angular/common/http';
-
-
+import { getFirestore, provideFirestore } from '@angular/fire/firestore';
 @NgModule({
   declarations: [AppComponent],
   imports: [BrowserModule, IonicModule.forRoot(), AppRoutingModule,EquiposModule,EditarperfilModule,EditarrutinaModule,registroModule,RegistroRutinaModule, ReactiveFormsModule,recuperarModule,AngularFireAuthModule,ModificarEquipoModule,NotificacionesModule, AgregarLogrosYPartidosModule,HttpClientModule],

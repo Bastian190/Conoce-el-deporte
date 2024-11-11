@@ -10,3 +10,4 @@ export const environment = {
     measurementId: "G-CL7JHWEBVW"
   }
 };
+

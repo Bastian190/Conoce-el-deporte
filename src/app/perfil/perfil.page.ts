@@ -37,16 +37,16 @@ export class PerfilPage implements OnInit {
   ngOnInit() {
     this.obtenerDatosUsuario();
     const user = this.authService.getCurrentUser();
-    
-    if (user) {
-      const uid = user.uid; // Aquí puedes acceder a uid
-      this.obtenerDatosEquiposSeguidos(uid);
+    const uid = user ? user.uid : null;
+
+    if (user && uid) {
+      this.obtenerDatosEquiposSeguidosTiempoReal(uid); // Llamamos a la función para obtener los equipos seguidos en tiempo real
     } else {
       console.log('No hay usuario autenticado, redirigiendo a la página de inicio de sesión...');
       this.router.navigate(['']);
     }
-    console.log(this.equiposSeguidos);
-    
+
+    // Verificación de permisos de administrador
     if (this.authService.esAdministrador()) {
       console.log("Usuario con acceso de administrador");
       // Muestra funcionalidades de administrador
@@ -57,40 +57,51 @@ export class PerfilPage implements OnInit {
     
   }
 
-  obtenerDatosEquiposSeguidos(uid: string) {
-    this.equiposSeguidos = []; // Inicializa la lista de equipos seguidos
+  suscripcionEquiposSeguidos: any; // Para almacenar la suscripción y cancelarla si es necesario
 
-    this.firestoreService.obtenerEquiposSeguidos(uid)
-        .then(equiposIdsSeguidos => {
-            console.log('Equipos seguidos IDs:', equiposIdsSeguidos); // Verifica los IDs
-
-            if (equiposIdsSeguidos.length === 0) {
-                console.log('El usuario no sigue a ningún equipo.');
-                return; // Si no hay equipos, salir de la función
-            }
-
-            // Itera sobre los IDs de equipos seguidos
-            equiposIdsSeguidos.forEach(equipoId => {
-                this.firestoreService.obtenerDatosEquipo(equipoId)
-                    .then(equipoData => {
-                        if (equipoData) {
-                            equipoData.id = equipoId; // Asegúrate de que el id esté presente
-                            this.equiposSeguidos.push(equipoData);
-                            console.log('Equipo cargado:', equipoData);
-                        }
-                    })
-                    .catch(error => {
-                        console.error(`Error al obtener datos del equipo ${equipoId}:`, error);
-                    });
-            });
-        })
-        .then(() => {
-            console.log('Equipos seguidos cargados:', this.equiposSeguidos);
-        })
-        .catch(error => {
-            console.error('Error al obtener equipos seguidos:', error);
-        });
+ngOnDestroy() {
+  if (this.suscripcionEquiposSeguidos) {
+    this.suscripcionEquiposSeguidos(); // Llamada al unsubscribe para detener la escucha
+  }
 }
+
+// Obtener los equipos seguidos en tiempo real
+obtenerDatosEquiposSeguidosTiempoReal(uid: string) {
+  this.suscripcionEquiposSeguidos = this.firestoreService.obtenerEquiposSeguidos(uid)
+    .subscribe(async (equiposIdsSeguidos: string[]) => {
+      console.log('Equipos seguidos IDs en tiempo real:', equiposIdsSeguidos);
+
+      if (equiposIdsSeguidos.length === 0) {
+        console.log('El usuario no sigue a ningún equipo.');
+        this.equiposSeguidos = []; // Limpia la lista si no hay equipos
+        return;
+      }
+
+      // Usa Promise.all para cargar los datos de los equipos seguidos
+      const equiposData = await Promise.all(
+        equiposIdsSeguidos.map(async (equipoId) => {
+          try {
+            const equipoData = await this.firestoreService.obtenerDatosEquipo(equipoId);
+            if (equipoData) {
+              equipoData.id = equipoId;
+              return equipoData;
+            }
+            return null; // Retorna null si no se pudo cargar el equipo
+          } catch (error) {
+            console.error(`Error al obtener datos del equipo ${equipoId}:`, error);
+            return null;
+          }
+        })
+      );
+
+      // Filtra los valores null o undefined y actualiza `equiposSeguidos`
+      this.equiposSeguidos = equiposData.filter((equipo): equipo is Equipos => equipo !== null && equipo !== undefined);
+      console.log('Equipos seguidos actualizados en tiempo real:', this.equiposSeguidos);
+    });
+}
+
+
+
 
 
   

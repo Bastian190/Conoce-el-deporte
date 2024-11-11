@@ -24,7 +24,6 @@ export class SesionUsuarioPage implements OnInit {
     public toastController: ToastController,
     private router: Router,
     private authService: AuthService,
-    private notificacionService: NotificacionService,
     private firestore: Firestore // Inyectar el servicio
   ) {}
 

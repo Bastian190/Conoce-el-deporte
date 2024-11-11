@@ -13,7 +13,7 @@ import { lastValueFrom } from 'rxjs';
 
 
 @Injectable({
-  providedIn: 'root',
+  providedIn: 'root'
 })
 export class NotificacionService {
   constructor(@Inject(Firestore) private firestore: Firestore, private http: HttpClient) {

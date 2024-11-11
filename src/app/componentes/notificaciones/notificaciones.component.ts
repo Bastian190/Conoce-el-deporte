@@ -1,7 +1,6 @@
 import { Component } from '@angular/core';
 import { collectionData, Firestore } from '@angular/fire/firestore';
 import { collection, getDocs, addDoc, doc, getDoc } from 'firebase/firestore';
-import { PushNotifications } from '@capacitor/push-notifications';
 import { Router } from '@angular/router';
 import { AuthService } from 'src/app/servicios/auth.service';
 import { ToastController } from '@ionic/angular';
@@ -15,7 +14,7 @@ import { HttpClient } from '@angular/common/http';
   styleUrls: ['./notificaciones.component.scss'],
 })
 export class NotificacionesComponent {
-  equipos: any[] = []; // Lista de equipos que administra el administrador
+  equipos: any[] = [];
   equipoSeleccionado: string = '';
   tipoNotificacion: string = '';
   mensajeNotificacion: string = '';
@@ -27,6 +26,8 @@ export class NotificacionesComponent {
     this.obtenerEquiposAdministrados(); // Cargar equipos de los administradores
   }
 
+  
+
   async obtenerEquiposAdministrados() {
     const currentUser = this.authService.getCurrentUser();
   
@@ -37,40 +38,37 @@ export class NotificacionesComponent {
   
     const adminCollection = collection(this.firestore, `usuarios/${currentUser.uid}/administracion`);
   
-    // Suscribirse a los datos de la colección de administración
     collectionData(adminCollection, { idField: 'id' }).subscribe({
       next: async (administracion) => {
-        this.equipos = []; // Limpiar la lista de equipos antes de cargar nuevos datos
+        this.equipos = [];
   
-        // Recorremos cada documento de administración
         for (const docAdmin of administracion) {
-          const equipoRef = docAdmin['id_equipo']; // Asegúrate de que este campo es correcto
+          const equipoRef = docAdmin['id_equipo'];
   
           if (equipoRef && equipoRef.id) {
-            const equipoId = equipoRef.id; // Obtén el ID de la referencia
-            console.log(`Buscando equipo con ID: ${equipoId}`); // Log para depuración
+            const equipoId = equipoRef.id;
+            console.log(`Buscando equipo con ID: ${equipoId}`);
   
             const equipoDocRef = doc(this.firestore, `Equipos/${equipoId}`);
             const equipoDoc = await getDoc(equipoDocRef);
   
             if (equipoDoc.exists()) {
               const equipoData = equipoDoc.data();
-              // Asegúrate de que equipoData sea un objeto antes de usar el operador spread
               if (equipoData) {
-                this.equipos.push({ id: equipoDoc.id, ...equipoData }); // Agregamos el equipo a la lista
-                console.log(`Equipo encontrado: ${equipoData['nombre']}`); // Log para confirmar el equipo
+                this.equipos.push({ id: equipoDoc.id, ...equipoData });
+                console.log(`Equipo encontrado: ${equipoData['nombre']}`);
               } else {
                 console.error("Los datos del equipo son nulos o indefinidos.");
               }
             } else {
-              console.error(`El documento del equipo con ID ${equipoId} no existe.`); // Log de error
+              console.error(`El documento del equipo con ID ${equipoId} no existe.`);
             }
           } else {
             console.error("El ID del equipo es inválido.");
           }
         }
   
-        console.log('Equipos administrados: ', this.equipos); // Para verificar que se están cargando correctamente
+        console.log('Equipos administrados: ', this.equipos);
       },
       error: (error) => {
         console.error("Error al obtener equipos: ", error);
@@ -83,22 +81,21 @@ export class NotificacionesComponent {
   irAPaginaDestino() {
     this.router.navigate(['/tabs/perfil']);
   }
-  // Aquí puedes agregar la función mostrarToast
+
   async mostrarToast(mensaje: string, color: string) {
     const toast = await this.toastController.create({
       message: mensaje,
-      duration: 2000, // Duración en milisegundos
-      color: color, // Color del toast (puede ser 'primary', 'secondary', 'tertiary', 'success', 'warning', 'danger', 'dark')
-      position: 'bottom', // Posición del toast
+      duration: 2000,
+      color: color,
+      position: 'bottom',
     });
-    toast.present(); // Mostrar el toast
+    toast.present();
   }
 
-   // Método que se llama cuando el equipo seleccionado cambia
-   onEquipoChange(equipoId: string) {
+  onEquipoChange(equipoId: string) {
     const equipo = this.equipos.find(e => e.id === equipoId);
     if (equipo) {
-      this.equipoNombreSeleccionado = equipo.nombre_fantasia; // Almacena el nombre del equipo seleccionado
+      this.equipoNombreSeleccionado = equipo.nombre_fantasia;
     }
   }
 
@@ -110,7 +107,7 @@ export class NotificacionesComponent {
   
     const notificacionData = {
       notificacion: this.mensajeNotificacion,
-      equipo_notificacion: this.equipoNombreSeleccionado, // Usa el nombre del equipo (nombre_fantasia)
+      equipo_notificacion: this.equipoNombreSeleccionado,
       tipo: this.tipoNotificacion,
       fecha: new Date(), // Almacena la fecha de envío
       equipoId: this.equipoSeleccionado, // ID del equipo para realizar el filtro

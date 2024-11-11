@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthService } from './servicios/auth.service'; 
-import { PushNotifications } from '@capacitor/push-notifications';
 import { Firestore } from '@angular/fire/firestore';
 import { doc, setDoc } from 'firebase/firestore';
 import { NotificacionService } from './servicios/notificaciones-service.service';

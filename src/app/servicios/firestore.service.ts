@@ -1,6 +1,6 @@
 import { inject, Injectable } from '@angular/core';
 import { collectionData, Firestore, doc, docData,serverTimestamp  } from '@angular/fire/firestore';
-import { collection, CollectionReference, deleteDoc, getDoc, getDocs, query, setDoc, updateDoc, where } from 'firebase/firestore';
+import { collection, CollectionReference, deleteDoc, getDoc, getDocs, onSnapshot, query, setDoc, updateDoc, where } from 'firebase/firestore';
 import { catchError, map, Observable, of } from 'rxjs';
 import { Equipos, Logros, Partidos,Usuario } from '../modelos/equipos.models';
 import { DocumentData } from 'firebase/firestore/lite';
@@ -164,19 +164,23 @@ export class FirestoreService {
     }
   }
 
-  // Función para obtener los equipos seguidos por el usuario
-  async obtenerEquiposSeguidos(uid: string): Promise<string[]> {
+  obtenerEquiposSeguidos(uid: string): Observable<string[]> {
     const equiposSeguidosRef = collection(this.firestore, `usuarios/${uid}/equiposSeguidos`);
-    const equiposSeguidosSnapshot = await getDocs(equiposSeguidosRef);
-
-    const equiposSeguidos: string[] = [];
-
-    equiposSeguidosSnapshot.forEach((doc) => {
-      equiposSeguidos.push(doc.data()['equipoId']); // Agrega el ID de cada equipo seguido
+  
+    // Usamos onSnapshot para obtener los cambios en tiempo real
+    return new Observable<string[]>((observer) => {
+      const unsubscribe = onSnapshot(equiposSeguidosRef, (snapshot) => {
+        const equiposIdsSeguidos = snapshot.docs.map(doc => doc.data()['equipoId']);
+        observer.next(equiposIdsSeguidos);  // Emitimos los IDs de equipos seguidos
+      }, (error) => {
+        observer.error(error);  // Manejo de errores
+      });
+  
+      // Devuelve la función de cancelación cuando ya no necesites escuchar
+      return () => unsubscribe();
     });
-
-    return equiposSeguidos;
   }
+  
 
   // Función para obtener los datos completos del equipo a partir de su ID
   async obtenerDatosEquipo(equipoId: string): Promise<Equipos | null> {

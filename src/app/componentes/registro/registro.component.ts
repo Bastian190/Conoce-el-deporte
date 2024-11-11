@@ -8,7 +8,9 @@ import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { getAuth, sendEmailVerification,User } from 'firebase/auth'; // Importa el método sendEmailVerification
 import { NotificacionService } from 'src/app/servicios/notificaciones-service.service';
 import { PushNotifications } from '@capacitor/push-notifications';
-
+import { doc, updateDoc } from 'firebase/firestore';
+import { getMessaging, getToken } from 'firebase/messaging';
+import { collectionData, Firestore } from '@angular/fire/firestore';
 @Component({
   selector: 'app-registro',
   templateUrl: './registro.component.html',
@@ -26,7 +28,8 @@ export class RegistroComponent implements OnInit {
     private toastController: ToastController,
     private alertController: AlertController,
     private authService: AuthService,
-    private notificacionService: NotificacionService // Inyectar el servicio
+    private notificacionService: NotificacionService, // Inyectar el servicio
+    private firestore: Firestore,
   ) {
     this.storage = getStorage(); // Inicializa el almacenamiento
   }
@@ -44,6 +47,23 @@ export class RegistroComponent implements OnInit {
       passwordRepeat: ['', [Validators.required, Validators.minLength(6)]]
     });
   }
+  async obtenerTokenFCM() {
+    const messaging = getMessaging(); // Inicializa el mensajería
+    try {
+      const currentToken = await getToken(messaging, { vapidKey: 'TU_CLAVE_VAPID' });
+      if (currentToken) {
+        console.log('Token de FCM obtenido:', currentToken);
+        return currentToken;
+      } else {
+        console.log('No se pudo obtener el token de FCM. Asegúrate de que se hayan otorgado los permisos de notificación.');
+        return null; // Retorna null si no se obtiene el token
+      }
+    } catch (error) {
+      console.error('Error al obtener el token de FCM:', error);
+      return null; // Maneja el error y retorna null
+    }
+  }
+  
 
   async registrar() {
     if (!this.validarFormulario()) {
@@ -78,17 +98,27 @@ export class RegistroComponent implements OnInit {
       // Registra al usuario en Firebase
       await this.authService.registrarUsuario(usuario, password);
   
-      // Envía el correo de verificación
+      // Obtén el usuario actual después del registro
       const auth = getAuth();
-      const user = auth.currentUser;
+      const currentUser = auth.currentUser;
   
-      if (user) {
-        await sendEmailVerification(user); // Envía el enlace de verificación al correo
+      if (currentUser) {
+        // Obtén el token FCM para notificaciones
+        const fcmToken = await this.obtenerTokenFCM();
+        
+        if (fcmToken) {
+          // Almacena el token en Firestore
+          const userDocRef = doc(this.firestore, `usuarios/${currentUser.uid}`);
+          await updateDoc(userDocRef, { fcmToken: fcmToken });
+          console.log('Token de FCM guardado en Firestore');
+        }
   
+        // Envía el correo de verificación
+        await sendEmailVerification(currentUser);
         this.mostrarToast('Registro exitoso, verifica tu correo electrónico antes de iniciar sesión.', 'success');
         await this.notificacionService.initPushNotifications();
         // Esperar a que el correo esté verificado
-        await this.esperarVerificacionCorreo(user);
+        await this.esperarVerificacionCorreo(currentUser);
   
         // Navegación a la página de registro de rutina
         this.router.navigate(['registroRutina']);
