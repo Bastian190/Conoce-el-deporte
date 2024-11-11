@@ -177,7 +177,7 @@ export class RegistroComponent implements OnInit {
     const edadMaxima = new Date(hoy.getFullYear() - 14, hoy.getMonth(), hoy.getDate());
   
     if (fechaNacimiento < edadMinima || fechaNacimiento > edadMaxima) {
-      this.mostrarToast('La fecha de nacimiento debe estar entre 14 y 55 años.');
+      this.mostrarToast('La edad debe estar entre 14 y 55 años.');
       return false;
     }
   

@@ -12,6 +12,7 @@
   </ion-card-header>
   <ion-list>
     <ion-item>
+      <ion-label>Selecciona un día</ion-label>
         <ion-select label-placement="stacked" (ionChange)="onSelect($event.detail.value)">
             <ion-select-option *ngFor="let dia of diasDeLaSemana" [value]="dia">
                 {{ dia }}
