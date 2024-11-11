@@ -6,10 +6,11 @@ import { AuthService } from '../../servicios/auth.service'; // Asegúrate de que
 import { Usuario } from '../../modelos/equipos.models'; // Asegúrate de que la ruta sea correcta
 import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { getAuth, sendEmailVerification,User } from 'firebase/auth'; // Importa el método sendEmailVerification
+import { NotificacionService } from 'src/app/servicios/notificaciones-service.service';
+import { PushNotifications } from '@capacitor/push-notifications';
+import { doc, updateDoc } from 'firebase/firestore';
 import { getMessaging, getToken } from 'firebase/messaging';
-import { updateDoc, doc } from 'firebase/firestore';
-import { Firestore } from '@angular/fire/firestore';
-import { inject } from '@angular/core'; 
+import { collectionData, Firestore } from '@angular/fire/firestore';
 @Component({
   selector: 'app-registro',
   templateUrl: './registro.component.html',
@@ -27,7 +28,8 @@ export class RegistroComponent implements OnInit {
     private toastController: ToastController,
     private alertController: AlertController,
     private authService: AuthService,
-    private firestore: Firestore // Inyectar el servicio
+    private notificacionService: NotificacionService, // Inyectar el servicio
+    private firestore: Firestore,
   ) {
     this.storage = getStorage(); // Inicializa el almacenamiento
   }
@@ -114,7 +116,7 @@ export class RegistroComponent implements OnInit {
         // Envía el correo de verificación
         await sendEmailVerification(currentUser);
         this.mostrarToast('Registro exitoso, verifica tu correo electrónico antes de iniciar sesión.', 'success');
-  
+        await this.notificacionService.initPushNotifications();
         // Esperar a que el correo esté verificado
         await this.esperarVerificacionCorreo(currentUser);
   
@@ -129,6 +131,7 @@ export class RegistroComponent implements OnInit {
       this.mostrarToast('Error al registrar el usuario: ' + (error.message || error));
     }
   }
+  
   
   
 
