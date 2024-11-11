@@ -54,7 +54,8 @@
     </ion-card-header>
     <ion-list>
       <ion-item *ngFor="let objetivo of objetivos">
-        <ion-label>{{ objetivo.descripcion }} {{objetivo.puntaje}}</ion-label>
+        <ion-label>{{ objetivo.descripcion }}</ion-label>
+        <ion-label  id="puntos">{{objetivo.puntaje}} Puntos</ion-label>
         <ion-checkbox 
           slot="end" 
           (ionChange)="marcarObjetivoComoFinalizado(objetivo.id)">

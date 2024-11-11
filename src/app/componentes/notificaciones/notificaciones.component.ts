@@ -7,7 +7,7 @@ import { ToastController } from '@ionic/angular';
 import { environment } from 'src/environments/environment';
 import { HttpClient } from '@angular/common/http';
 import { Platform } from '@ionic/angular';
-import { NotificationService } from 'src/app/servicios/notificaciones-service.service';
+import { NotificacionService } from 'src/app/servicios/notificaciones-service.service';
 
 
 @Component({
@@ -23,7 +23,7 @@ export class NotificacionesComponent {
   equipoNombreSeleccionado: string = '';
 
   constructor(private firestore: Firestore, private router: Router, private authService: AuthService,
-    private toastController: ToastController, private http: HttpClient, private platform: Platform, private notificationService: NotificationService) {}
+    private toastController: ToastController, private http: HttpClient, private platform: Platform, private notificationService: NotificacionService) {}
 
   ngOnInit(): void {
     this.obtenerEquiposAdministrados();

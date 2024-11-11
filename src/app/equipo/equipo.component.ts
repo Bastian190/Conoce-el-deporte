@@ -16,12 +16,12 @@ import { AuthService } from '../servicios/auth.service';
 })
 
 export class EquipoComponent  implements OnInit {
-  tipoNotificacion: string = 'todos'; // Valor por defecto
+  public tipoNotificacion: string | null = null; // Valor por defecto
   equipo: Equipos | null = null;
   nombreEquipo: string | null = null;
   logros: Logros[]=[];
   partidos: Partidos[]=[];
-  esEquipoSeguido: boolean = false;
+  esEquipoSeguido: { [equipoId: string]: boolean } = {};
  // Array para almacenar los partidos
   constructor(private router: Router, private firestoreService:FirestoreService, private route: ActivatedRoute,public authService: AuthService) { }
 
@@ -88,16 +88,20 @@ export class EquipoComponent  implements OnInit {
   }
   
   
+  // Definición de botones e inputs del alert
   public alertButtons = [
     {
       text: 'Aceptar',
       handler: (data: string) => {
-        // Llama al método para seguir el equipo y guardar la selección
-        this.tipoNotificacion = data; // Asignar la selección del usuario
-        this.seguirEquipo(this.tipoNotificacion);
+        this.tipoNotificacion = data; // Asigna la opción seleccionada a `tipoNotificacion`
+        
+        if (this.tipoNotificacion) {
+          this.seguirEquipo(this.tipoNotificacion); // Llama a seguirEquipo con la opción seleccionada
+        }
       }
     }
   ];
+  
   public alertInputs = [
     {
       label: 'Solo actividades',
@@ -121,39 +125,41 @@ export class EquipoComponent  implements OnInit {
     return timestamp.toDate();
   }
 
-  seguirEquipo(tipoNotificacion: string) {
-    const user = this.authService.getCurrentUser(); // Obtener el usuario actual
-    const uid = user ? user.uid : null; // Asegúrate de que el usuario existe
+  async seguirEquipo(tipoNotificacion: string) {
+    const user = this.authService.getCurrentUser();
+    const uid = user ? user.uid : null;
   
     if (this.equipo && this.equipo.id && uid) {
-      this.firestoreService.agregarEquipoSeguido(uid, this.equipo.id, tipoNotificacion)
-        .then(() => {
-          console.log('Equipo seguido guardado en la base de datos');
-        })
-        .catch(error => {
-          console.error('Error al seguir el equipo:', error);
-        });
+      try {
+        // Guardar el equipo como seguido en Firestore con la notificación seleccionada
+        await this.firestoreService.agregarEquipoSeguido(uid, this.equipo.id, tipoNotificacion);
+        console.log('Equipo seguido guardado en la base de datos');
+        
+        // Actualizar el estado para que se muestre el mensaje "Ya sigues a este equipo."
+        this.esEquipoSeguido[this.equipo.id] = true;
+      } catch (error) {
+        console.error('Error al seguir el equipo:', error);
+      }
     } else {
       console.error('ID del equipo o UID no están definidos');
     }
   }
-  verificarEquipoSeguido(uid: string | null) {
-    if (this.equipo && this.equipo.id) {
-      if (uid) { // Solo verifica si uid no es null
-        this.firestoreService.verificarEquipoSeguido(uid, this.equipo.id)
-          .then(existe => {
-            this.esEquipoSeguido = existe; // Actualiza la propiedad según el resultado
-          })
-          .catch(error => {
-            console.error('Error al verificar si el equipo está seguido:', error);
-          });
-      } else {
-        console.error('El UID del usuario es null, no se puede verificar el equipo seguido');
+  
+  
+  async verificarEquipoSeguido(uid: string | null) {
+    if (this.equipo && this.equipo.id && uid) {
+      try {
+        const existe = await this.firestoreService.verificarEquipoSeguido(uid, this.equipo.id);
+        this.esEquipoSeguido[this.equipo.id] = existe; // Guarda el estado de seguimiento específico del equipo
+      } catch (error) {
+        console.error('Error al verificar si el equipo está seguido:', error);
       }
     } else {
-      console.error('Equipo o ID del equipo no están definidos');
+      console.error('UID o equipoId no están definidos');
     }
   }
+  
+  
   
   
 

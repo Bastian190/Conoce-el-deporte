@@ -1,5 +1,5 @@
 import { Component, OnInit, NgZone,ChangeDetectorRef  } from '@angular/core';
-import { ToastController } from '@ionic/angular';
+import { AlertController, ToastController } from '@ionic/angular';
 import { AuthService } from '../servicios/auth.service';
 import { FirestoreService } from '../servicios/firestore.service';
 import { Storage } from '@angular/fire/storage';
@@ -25,7 +25,8 @@ export class Misiones implements OnInit {
     private storage: Storage,
     private firestore: Firestore,
     private ngZone: NgZone,
-    private changeDetectorRef: ChangeDetectorRef // Usamos Storage desde AngularFire
+    private changeDetectorRef: ChangeDetectorRef, // Usamos Storage desde AngularFire
+    private alertController: AlertController
   ) {}
 
   getDayOfWeek(): string {
@@ -49,7 +50,7 @@ export class Misiones implements OnInit {
     const currentUser = this.authService.getCurrentUser();
 
     if (!currentUser) {
-        this.mostrarToast('Debes iniciar sesión para ver tu rutina.', 'warning');
+        this.mostrarToast('Alerta','Debes iniciar sesión para ver tu rutina.');
         return; // Salir si no hay usuario
     }
 
@@ -196,10 +197,8 @@ private async guardarEjercicioCompletado(ejercicio: any, userId: string) {
           puntos: ejercicio.puntos
       });
       localStorage.setItem(`ejerciciosCompletados_${userId}`, JSON.stringify(ejerciciosCompletadosGuardados));
-
-      this.mostrarToast(`Ejercicio ${ejercicio.nombre_ejercicio} completado!`, 'success');
   } catch (error) {
-      // Manejo de errores...
+     
   }
 }
 
@@ -255,11 +254,11 @@ private async guardarEjercicioCompletado(ejercicio: any, userId: string) {
           console.log('Objetivos cargados para hoy:', this.objetivos);
         })
         .catch(error => {
-          this.mostrarToast('Error al cargar los objetivos.', 'danger');
+          this.mostrarToast('Error','Error al cargar los objetivos.');
           console.error('Error al cargar los objetivos:', error);
         });
     } else {
-      this.mostrarToast('Debes iniciar sesión para ver tus objetivos.', 'warning');
+      this.mostrarToast('Alerta','Debes iniciar sesión para ver tus objetivos.');
     }
   }
 
@@ -267,7 +266,7 @@ private async guardarEjercicioCompletado(ejercicio: any, userId: string) {
   marcarObjetivoComoFinalizado(objetivoId: string): Promise<void> {
     const currentUser = this.authService.getCurrentUser();
     if (!currentUser) {
-      this.mostrarToast('Debes iniciar sesión para finalizar un objetivo.', 'warning');
+      this.mostrarToast('Alerta','Debes iniciar sesión para finalizar un objetivo.');
       return Promise.resolve(); // Retorna un Promise<void> si no hay un usuario actual
     }
   
@@ -318,7 +317,7 @@ private async guardarEjercicioCompletado(ejercicio: any, userId: string) {
             // Llama a la función para reemplazar el objetivo completado en la lista
             this.reemplazarObjetivo(objetivoId, rutinaId);
             // Mostrar el mensaje de éxito
-            this.mostrarToast('¡Objetivo completado!', 'success');
+            this.mostrarToast('¡Felicitaciones!','¡Haz completado el Objetivo!');
           });
       } else {
         console.log('Objetivo no encontrado.');
@@ -327,7 +326,7 @@ private async guardarEjercicioCompletado(ejercicio: any, userId: string) {
     })
     .catch((error) => {
       console.error('Error al marcar el objetivo como finalizado:', error);
-      this.mostrarToast('Error al completar el objetivo.', 'danger');
+      this.mostrarToast('Error','Error al completar el objetivo.');
     });
   }
   
@@ -359,15 +358,15 @@ private async guardarEjercicioCompletado(ejercicio: any, userId: string) {
   }
   
   
-
-  async mostrarToast(message: string, color: string = 'warning') {
-    const toast = await this.toastController.create({
+  async mostrarToast(header: string, message: string) {
+    const alert = await this.alertController.create({
+      header,
       message,
-      duration: 2000,
-      color
+      buttons: ['OK']
     });
-    toast.present();
+    await alert.present();
   }
+
   async completarEjercicio(ejercicio: any) {
     const currentUser = this.authService.getCurrentUser();
   
@@ -425,7 +424,7 @@ private async guardarEjercicioCompletado(ejercicio: any, userId: string) {
         this.guardarEjerciciosEnLocalStorage();
       }
     } else {
-      this.mostrarToast('Debes iniciar sesión para completar un ejercicio.', 'warning');
+      this.mostrarToast('Alerta','Debes iniciar sesión para completar un ejercicio.');
     }
   }
   
@@ -442,19 +441,16 @@ private async guardarEjercicioCompletado(ejercicio: any, userId: string) {
   
   
   
-  
   async mostrarPuntosToast(puntos: number) {
-    const message = `¡Genial! Se te han asignado ${puntos} puntos.`;
-    const toast = await this.toastController.create({
-        message,
-        duration: 3000,
-        position: 'middle', // Cambiado para que aparezca en el medio
-        color: 'success',
-        cssClass: 'custom-toast' // Clase CSS personalizada
+    const message = `¡Genial! Se te han asignado ${puntos} puntos.¡Sigue asi!`;
+    const alert = await this.alertController.create({
+      header: 'Puntos Asignados',
+      message,
+      buttons: ['OK'],
+      cssClass: 'custom-alert' // Clase CSS personalizada, si deseas aplicar estilos
     });
-    toast.present();
-}
-
+    await alert.present();
+  }
 
   
 }

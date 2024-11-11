@@ -62,14 +62,16 @@
 
   </ion-card>
   <!-- Notificaciones -->
-  <ion-card id="notificaciones"*ngIf="!authService.esAdministrador()">
+  <ion-card id="notificaciones" *ngIf="!authService.esAdministrador()">
     <ion-card-header>
       <ion-card-title>Agrega a tus favoritos</ion-card-title>
     </ion-card-header>
     <ion-card-content>
       ¡Síguelos para estar actualizado!
     </ion-card-content>
-    <ng-container *ngIf="!esEquipoSeguido">
+    
+    <!-- Verifica el estado del equipo específico con esEquipoSeguido[equipo.id] -->
+    <ng-container *ngIf="!esEquipoSeguido[equipo.id]">
       <ion-button shape="round" id="present-alert">Seguir</ion-button>
       <ion-alert
         trigger="present-alert"
@@ -78,8 +80,10 @@
         [inputs]="alertInputs"
       ></ion-alert>
     </ng-container>
-    <ng-container *ngIf="esEquipoSeguido">
+  
+    <ng-container *ngIf="esEquipoSeguido[equipo.id]">
       <ion-card-content>Ya sigues a este equipo.</ion-card-content>
     </ng-container>
   </ion-card>
+  
 </ion-content>

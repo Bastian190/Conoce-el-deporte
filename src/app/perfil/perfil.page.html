@@ -19,7 +19,7 @@
       <h2>{{ usuarioNombre }}</h2>  <!-- Nombre del usuario -->
       <p>{{ usuarioEdad }} años</p>  <!-- Edad calculada del usuario -->
       <p>Equipo ({{ usuarioEquipo }})</p>  <!-- Equipo del usuario -->
-      <div *ngIf="mostrarCorreo">
+      <div *ngIf="mostrarCorreo" >
         <p>{{ usuarioCorreo }}</p>  <!-- Correo del usuario -->
         <ion-button (click)="copyEmailToClipboard()">Copiar Correo</ion-button>  <!-- Botón para copiar el correo -->
       </div>
@@ -27,13 +27,13 @@
   </div>
   <!-- Toggle switch -->
   <ion-item lines="none" class="toggle-container">
-    <ion-label>Mostrar Correo</ion-label>
+    <ion-label>Mostrar Correo a Equipos</ion-label>
     <ion-toggle slot="end" [(ngModel)]="mostrarCorreo"></ion-toggle>
   </ion-item>
 
   <!-- Título de equipos que te gustan -->
-  <h3 class="liked-teams-title">Equipos que te gustan</h3>
-
+  <h3  *ngIf="!authService.esAdministrador()" class="liked-teams-title">Equipos que te gustan</h3>
+  <h3  *ngIf="authService.esAdministrador()" class="liked-teams-title">Perfiles que siguen a tus equipos</h3>
   <!-- Contenedor de equipos -->
   <ion-grid>
     <ion-row>
@@ -52,9 +52,9 @@
     </ion-row>
   </ion-grid>
   <ion-card *ngIf="authService.esAdministrador()">
-   <ion-button [routerLink]="['/tabs/modificarEquipo']">Modifica tus equipos</ion-button>
-   <ion-button [routerLink]="['/tabs/AgregarLogrosPartidos']">Agrega logros o partidos</ion-button>
+   <ion-button  shape="round" expand="full" [routerLink]="['/tabs/modificarEquipo']">Modifica tus equipos</ion-button>
+   <ion-button  shape="round" expand="full" [routerLink]="['/tabs/AgregarLogrosPartidos']">Agrega logros o partidos</ion-button>
 
-   <ion-button [routerLink]="['/tabs/Notificaciones']">Enviar notificación</ion-button>
+   <ion-button  shape="round" expand="full" [routerLink]="['/tabs/Notificaciones']">Enviar notificación</ion-button>
   </ion-card>
 </ion-content>
