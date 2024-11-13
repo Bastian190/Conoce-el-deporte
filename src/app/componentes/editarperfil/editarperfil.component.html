@@ -13,11 +13,21 @@
       <ion-card-title>Información Personal</ion-card-title>
     </ion-card-header>
     <ion-card-content>
+      <!-- Si hay foto de perfil, muestra la imagen; si no, muestra el ícono -->
+      <div class="profile-container">
         <img *ngIf="fotoPerfil" [src]="fotoPerfil" class="responsive-icon" />
-        <ion-icon name="person-circle-outline" class="default-icon"></ion-icon>
-        <input label= "Foto de perfil"type="file" accept="image/*"  (change)="cargarNuevaFoto($event)" />
-        <ion-button (click)="actualizarFotoPerfil()">Actualizar Foto de Perfil</ion-button>
+        <ion-icon *ngIf="!fotoPerfil" name="person-circle-outline" class="default-icon"></ion-icon>
+      </div>
+      
+      <!-- Input para cargar la nueva foto -->
+      <input label="Foto de perfil" type="file" accept="image/*" (change)="cargarNuevaFoto($event)" />
+      
+      <!-- Botón para actualizar la foto -->
+      <ion-button id="boto" (click)="actualizarFotoPerfil()">Actualizar Foto de Perfil</ion-button>
     </ion-card-content>
+    
+    
+    
     <ion-card-content>
       <ion-item>
         <ion-label>Tu correo</ion-label>
