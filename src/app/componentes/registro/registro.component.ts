@@ -47,22 +47,6 @@ export class RegistroComponent implements OnInit {
       passwordRepeat: ['', [Validators.required, Validators.minLength(6)]]
     });
   }
-  async obtenerTokenFCM() {
-    const messaging = getMessaging(); // Inicializa el mensajería
-    try {
-      const currentToken = await getToken(messaging, { vapidKey: 'TU_CLAVE_VAPID' });
-      if (currentToken) {
-        console.log('Token de FCM obtenido:', currentToken);
-        return currentToken;
-      } else {
-        console.log('No se pudo obtener el token de FCM. Asegúrate de que se hayan otorgado los permisos de notificación.');
-        return null; // Retorna null si no se obtiene el token
-      }
-    } catch (error) {
-      console.error('Error al obtener el token de FCM:', error);
-      return null; // Maneja el error y retorna null
-    }
-  }
   
 
   async registrar() {
@@ -103,24 +87,13 @@ export class RegistroComponent implements OnInit {
       const currentUser = auth.currentUser;
   
       if (currentUser) {
-        // Obtén el token FCM para notificaciones
-        const fcmToken = await this.obtenerTokenFCM();
-        
-        if (fcmToken) {
-          // Almacena el token en Firestore
-          const userDocRef = doc(this.firestore, `usuarios/${currentUser.uid}`);
-          await updateDoc(userDocRef, { fcmToken: fcmToken });
-          console.log('Token de FCM guardado en Firestore');
-        }
   
-        // Envía el correo de verificación
         await sendEmailVerification(currentUser);
         this.mostrarToast('Registro exitoso, verifica tu correo electrónico antes de iniciar sesión.', 'success');
         await this.notificacionService.initPushNotifications();
-        // Esperar a que el correo esté verificado
+        
         await this.esperarVerificacionCorreo(currentUser);
   
-        // Navegación a la página de registro de rutina
         this.router.navigate(['registroRutina']);
       } else {
         this.mostrarToast('Error: No se pudo obtener el usuario autenticado.');
@@ -227,6 +200,6 @@ export class RegistroComponent implements OnInit {
   }
 
   irAPaginaDestino1() {
-    this.router.navigate(['login']); // Cambia 'login' por la ruta correcta de tu página de inicio de sesión
+    this.router.navigate(['login']); 
   }
 }

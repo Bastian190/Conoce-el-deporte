@@ -15,9 +15,11 @@
             <ion-button fill="clear" shape="round" class="profile-button" (click)="fileInput.click()">
               <img *ngIf="fotoPerfil" [src]="fotoPerfil" class="responsive-icon" />
               <ion-icon name="person-circle-outline" class="default-icon"></ion-icon>
-              <input type="file" accept="image/*" style="display:none;" (change)="cargarFoto($event)" #fileInput />
+              <input label= "Foto de perfil"type="file" accept="image/*" style="display:none;" (change)="cargarFoto($event)" #fileInput />
             </ion-button>
+            
           </div>
+          <ion-label id="titulo2">Foto de perfil</ion-label>
           <form [formGroup]="registroForm" (ngSubmit)="registrar()">
 
             <ion-item>

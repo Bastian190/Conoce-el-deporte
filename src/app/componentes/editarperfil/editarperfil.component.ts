@@ -6,8 +6,10 @@ import { FirestoreService } from '../../servicios/firestore.service';
 import { AuthService } from 'src/app/servicios/auth.service';
 import { User, getAuth, updateEmail, updatePassword, sendEmailVerification, signInWithEmailAndPassword,  EmailAuthProvider } from 'firebase/auth';
 import { Usuario } from '../../modelos/equipos.models';
-import { FirebaseError } from 'firebase/app';
+import { FirebaseApp, FirebaseError, getApp, initializeApp } from 'firebase/app';
 import { getFirestore, doc, updateDoc } from 'firebase/firestore';
+import { getStorage, ref, uploadBytes, getDownloadURL, FirebaseStorage } from 'firebase/storage';
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'app-editarperfil',
@@ -27,9 +29,11 @@ export class EditarperfilComponent implements OnInit {
   isEditingPassword: boolean = false;
   currentPassword: string = '';
   newPassword: string = '';
-
   message: string = '';
  messageType: 'success' | 'error' = 'success';
+ fotoPerfil: string | ArrayBuffer | null = null;
+ nuevaFotoPerfil: File | null = null; // Variable para almacenar la foto seleccionada
+ storage: FirebaseStorage;
 
   constructor(
     private cdr: ChangeDetectorRef,
@@ -39,8 +43,18 @@ export class EditarperfilComponent implements OnInit {
     public toastController: ToastController,
     private router: Router,
     private firestoreService: FirestoreService,
-    private authService: AuthService
-  ) {}
+    private authService: AuthService,
+    
+  ) {
+    let app: FirebaseApp;
+    try {
+      app = getApp(); // Intenta obtener la instancia por defecto de Firebase
+    } catch (e) {
+      // Si no existe, inicializa Firebase
+      app = initializeApp(environment.firebase);
+    }
+    this.storage = getStorage(app);
+    }
 
   ngOnInit() {
     this.authService.user$.subscribe(userId => {
@@ -242,5 +256,63 @@ async saveAltura() {
 
 toggleEditPassword() {
   this.isEditingPassword = !this.isEditingPassword;
+}
+cargarNuevaFoto(event: Event) {
+  const input = event.target as HTMLInputElement;
+  if (input.files && input.files.length > 0) {
+    this.nuevaFotoPerfil = input.files[0];
+  }
+}
+
+async subirFotoPerfil(file: File): Promise<string | undefined> {
+  try {
+    const filePath = `fotos_perfil/${new Date().getTime()}_${file.name}`;
+    const storageRef = ref(this.storage, filePath);
+    await uploadBytes(storageRef, file);
+    return await getDownloadURL(storageRef);
+  } catch (error: any) {
+    console.error('Error al subir la foto de perfil:', error.message || error);
+    return undefined;
+  }
+}
+
+async actualizarFotoPerfil() {
+  if (this.nuevaFotoPerfil) {
+    try {
+      // Subir la nueva foto al Storage y obtener la URL
+      const nuevaUrlFoto = await this.subirFotoPerfil(this.nuevaFotoPerfil);
+      
+      if (nuevaUrlFoto) {
+        console.log('Foto de perfil actualizada:', nuevaUrlFoto);
+        this.mostrarAlerta('Atención','Se ha actualizado la foto de perfil.')
+        // Obtener el uid del usuario actual
+        const user = getAuth().currentUser;
+        if (user) {
+          const usuarioRef = doc(getFirestore(), 'usuarios', user.uid); // Referencia al documento del usuario
+
+          // Actualizar el campo fotoPerfil en Firestore con la nueva URL
+          await updateDoc(usuarioRef, {
+            fotoPerfil: nuevaUrlFoto
+          });
+
+          console.log('Foto de perfil actualizada en Firestore');
+        }
+      } else {
+        console.error('Error al obtener la URL de la foto de perfil');
+      }
+    } catch (error) {
+      console.error('Error al actualizar la foto de perfil:', error);
+    }
+  } else {
+    console.error('No se ha seleccionado una nueva foto de perfil');
+  }
+}
+async mostrarAlerta(header: string, message: string, buttons: string[] = ['OK']) {
+  const alert = await this.alertController.create({
+    header,
+    message,
+    buttons,
+  });
+  await alert.present();
 }
 }
