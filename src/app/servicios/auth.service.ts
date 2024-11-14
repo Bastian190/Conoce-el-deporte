@@ -8,6 +8,8 @@ import { Router } from '@angular/router';
 import { BehaviorSubject, Observable, of } from 'rxjs';
 import { NotificacionService } from './notificaciones-service.service';
 import { PushNotifications } from '@capacitor/push-notifications';
+import { collection, onSnapshot } from 'firebase/firestore';
+import { DocumentReference, DocumentSnapshot } from 'firebase-admin/firestore';
 
 @Injectable({
   providedIn: 'root'
@@ -139,6 +141,8 @@ export class AuthService {
     const user = this.auth.currentUser;
     return user ? user.uid : null;
   }
+
+  
 }
 export { Auth };
 

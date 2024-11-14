@@ -8,29 +8,34 @@
 </ion-header>
 
 <ion-content>
-  <form (ngSubmit)="enviarNotificacion()">
-    <div>
-      <label for="equipo">Seleccionar Equipo:</label>
-      <select [(ngModel)]="equipoSeleccionado" name="equipo" required (change)="onEquipoChange(equipoSeleccionado)">
-        <option *ngFor="let equipo of equipos" [value]="equipo.id">{{ equipo.nombre_fantasia }}</option>
-      </select>
-    </div>
+  <ion-title></ion-title>
+  <ion-card>
+    <form (ngSubmit)="enviarNotificacion()">
+      <div id="div">
+        <label for="equipo" id="label">Seleccionar Equipo:</label>
+        <select id="selec" [(ngModel)]="equipoSeleccionado" name="equipo" required (change)="onEquipoChange(equipoSeleccionado)">
+          <option id="opcion" *ngFor="let equipo of equipos" [value]="equipo.id">{{ equipo.nombre_fantasia }}</option>
+        </select>
+      </div>
+    
+      <div id="div">
+        <label for="tipo" id="label">Tipo de Notificación:</label>
+        <select id="selec" [(ngModel)]="tipoNotificacion" name="tipo" required>
+          <option id="opcion" value="partidos">Partidos</option>
+          <option id="opcion" value="actividades">Actividades</option>
+          <option id="opcion" value="ambos">Ambos</option>
+        </select>
+      </div>
+    
+      <div id="div">
+        <label for="mensaje" id="label">Notificación:</label>
+        <textarea id="area" [(ngModel)]="mensajeNotificacion" name="mensaje" required></textarea>
+      </div>
+    
+      <ion-button id="boton" shape="round" expand="full" type="submit">Enviar Notificación</ion-button>
+    </form>
+
+  </ion-card>
   
-    <div>
-      <label for="tipo">Tipo de Notificación:</label>
-      <select [(ngModel)]="tipoNotificacion" name="tipo" required>
-        <option value="partidos">Partidos</option>
-        <option value="actividades">Actividades</option>
-        <option value="ambos">Ambos</option>
-      </select>
-    </div>
-  
-    <div>
-      <label for="mensaje">Mensaje:</label>
-      <textarea [(ngModel)]="mensajeNotificacion" name="mensaje" required></textarea>
-    </div>
-  
-    <button type="submit">Enviar Notificación</button>
-  </form>
   
 </ion-content>

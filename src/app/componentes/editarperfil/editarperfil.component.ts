@@ -257,10 +257,14 @@ async saveAltura() {
 toggleEditPassword() {
   this.isEditingPassword = !this.isEditingPassword;
 }
-cargarNuevaFoto(event: Event) {
-  const input = event.target as HTMLInputElement;
-  if (input.files && input.files.length > 0) {
-    this.nuevaFotoPerfil = input.files[0];
+cargarNuevaFoto(event: any) {
+  const file = event.target.files[0];
+  if (file) {
+    const reader = new FileReader();
+    reader.onload = (e: any) => {
+      this.fotoPerfil = e.target.result;
+    };
+    reader.readAsDataURL(file);
   }
 }
 
@@ -315,4 +319,5 @@ async mostrarAlerta(header: string, message: string, buttons: string[] = ['OK'])
   });
   await alert.present();
 }
+
 }

@@ -1,0 +1,32 @@
+ion-card {
+    --box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
+    border-radius: 12px;
+    margin-bottom: 20px; /* Espacio entre las tarjetas */
+  }
+#boton{
+    margin: 20px;
+    margin-bottom: 20px;
+}
+#label {
+    font-size:large;
+    margin: 10px;
+    color: white;
+    align-items: center;
+  }
+
+#div{
+    margin-bottom: 20px;
+}
+#area{
+    display: block;
+    margin-bottom: 20px; 
+    width: 100%;
+}
+#opcion{
+    color: white;
+}
+#selec{
+    width: 100%;
+    margin-bottom: 30px; 
+    display: block;
+}

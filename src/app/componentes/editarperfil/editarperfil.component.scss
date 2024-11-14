@@ -1,6 +1,6 @@
 .custom-input {
   text-align: center;       // Centra el texto dentro del input
-  font-size: 1.2em;        // Aumenta el tamaño de la fuente
+  font-size: 0.9em;        // Aumenta el tamaño de la fuente
   --padding-start: 0;      // Elimina el padding del inicio (opcional)
   --padding-end: 0;        // Elimina el padding del final (opcional)
   margin-bottom: 10px;
@@ -17,4 +17,41 @@ ion-card {
   border-radius: 12px;
   margin-bottom: 20px; /* Espacio entre las tarjetas */
 }
+
+
+
+/*/* Estilo para la imagen de perfil */
+.responsive-icon {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-bottom: 10px; /* Espacio entre la imagen y el ícono o botón */
+  margin-left: 33%;
+}
+
+/* Estilo para el ícono de usuario */
+.default-icon {
+  font-size: 80px;
+  color: #999;
+  margin-bottom: 10px; /* Espacio entre el ícono y los elementos debajo */
+  margin-left: 35%;
+}
+
+/* Estilo para el input de archivo (lo hace invisible) */
+input[type="file"] {
+  display: block; /* Muestra el input */
+  margin: 10px 0; /* Espaciado entre el input y los demás elementos */
+  padding: 5px;
+}
+
+/* Estilo para el botón de actualizar */
+#boto {
+  margin-top: 10px; /* Espacio entre el input y el botón */
+  padding: 10px;
+ 
+  color: white;
+  width: 100%; /* Asegura que el botón ocupe todo el ancho disponible */
+}
+
 
