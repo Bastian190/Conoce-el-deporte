@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="gcm_defaultSenderId" translatable="false">654408239881</string>
+    <string name="google_api_key" translatable="false">AIzaSyB7IBXj2WL1LPa5ldB8S17xElJHdmpklag</string>
+    <string name="google_app_id" translatable="false">1:654408239881:android:6b928f4fccf8307a2121d8</string>
+    <string name="google_crash_reporting_api_key" translatable="false">AIzaSyB7IBXj2WL1LPa5ldB8S17xElJHdmpklag</string>
+    <string name="google_storage_bucket" translatable="false">conoce-eldeporte.appspot.com</string>
+    <string name="project_id" translatable="false">conoce-eldeporte</string>
+</resources>
