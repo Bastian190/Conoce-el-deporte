@@ -10,7 +10,7 @@ export const environment = {
     projectId: "conoce-eldeporte",
     storageBucket: "conoce-eldeporte.appspot.com",
     messagingSenderId: "654408239881",
-    appId: "1:654408239881:web:2e6e71367c8955372121d8",
+    appId: "1:654408239881:android:6b928f4fccf8307a2121d8",
     measurementId: "G-CL7JHWEBVW"
   }
 };

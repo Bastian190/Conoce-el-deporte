@@ -1,0 +1,88 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-button slot="start" fill="clear" (click)="irAPaginaDestino()">
+      <ion-icon id="back" name="arrow-back"></ion-icon>
+    </ion-button>
+    <ion-title id="titulo">Edita tu equipo</ion-title>
+  </ion-toolbar>
+</ion-header>
+<ion-content id="contenido">
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title>Selecciona el equipo que quieras editar</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+        <ion-list>
+          <ion-item *ngFor="let equipo of equipos">
+            <ion-label>{{ equipo.nombre_fantasia }}</ion-label>
+            <ion-checkbox [(ngModel)]="equipo.selected" (ionChange)="seleccionarEquipo(equipo)"></ion-checkbox>
+          </ion-item>
+        </ion-list>
+    </ion-card-content>
+  </ion-card>
+  <ion-card>
+    <ion-list>
+      <ion-item>
+        <ion-select id="campo" [(ngModel)]="campoSeleccionado" placeholder="Selecciona un campo a editar">
+          <div>Selecciona el campo que deseas editar <ion-text color="danger">(Requerido)</ion-text></div>
+          <ion-select-option value="descripcion">Descripción</ion-select-option>
+          <ion-select-option value="ubicacion">Lugar</ion-select-option>
+          <ion-select-option value="partidos">Partidos</ion-select-option>
+          <ion-select-option value="logros">Logros</ion-select-option>
+        </ion-select>
+      </ion-item>
+    </ion-list>
+  </ion-card>
+  
+    <!-- Selección de Logro cuando el campo seleccionado es 'logros' -->
+  <ion-card>
+    <ion-item *ngIf="campoSeleccionado === 'logros'">
+      <ion-select (ionChange)="seleccionarLogro($event.detail.value)" placeholder="Selecciona un logro">
+          <!-- Cada opción representa un logro y asigna su ID al modelo -->
+          <ion-select-option *ngFor="let logro of logros" [value]="logro.id">
+              {{ logro.logro }} <!-- Muestra el nombre del logro, ajusta si es otro campo de nombre -->
+          </ion-select-option>
+      </ion-select>
+    </ion-item>
+  
+    <!-- Selección del Campo a Editar en el Logro -->
+    <ion-item *ngIf="campoSeleccionado === 'logros'">
+      <ion-select [(ngModel)]="campoSeleccionado2" placeholder="Selecciona un campo a editar">
+          <ion-label>Selecciona qué quieres editar</ion-label>
+          <ion-select-option value="logro">Logro</ion-select-option>
+          <ion-select-option value="fecha">Fecha</ion-select-option>
+      </ion-select>
+    </ion-item>
+    <ion-item *ngIf="campoSeleccionado === 'partidos'">
+      <ion-select (ionChange)="seleccionarPartido($event.detail.value)" placeholder="Selecciona un partido">
+          <!-- Cada opción representa un logro y asigna su ID al modelo -->
+          <ion-select-option *ngFor="let partido of partidos" [value]="partido.id">
+            {{ partido.fecha_partido.toDate() | date: 'dd/MM/yyyy' }} <!-- Muestra el nombre del logro, ajusta si es otro campo de nombre -->
+          </ion-select-option>
+      </ion-select>
+    </ion-item>
+  
+    <!-- Selección del Campo a Editar en el Logro -->
+    <ion-item *ngIf="campoSeleccionado === 'partidos'">
+      <ion-select [(ngModel)]="campoSeleccionado2" placeholder="Selecciona un campo a editar">
+          <ion-label>Selecciona qué quieres editar</ion-label>
+          <ion-select-option value="contrincante">Contrincante</ion-select-option>
+          <ion-select-option value="fecha">Fecha</ion-select-option>
+          <ion-select-option value="resultado">Resultado</ion-select-option>
+          <ion-select-option value="ubicacion">Ubicación</ion-select-option>
+      </ion-select>
+    </ion-item>
+  </ion-card>
+  
+
+  <!-- Campo para Escribir el Nuevo Valor -->
+   <ion-card>
+    <ion-item lines="full">
+      <ion-label id="nuevo" position="stacked">Escribe el nuevo valor</ion-label>
+      <ion-input type="text" [(ngModel)]="nuevoValor" minlength="3" maxlength="200"></ion-input>
+    </ion-item>
+    <ion-button id="boton" expand="full" shape="round" (click)="editarEquipo()">Editar</ion-button>
+   </ion-card>
+
+  
+</ion-content>

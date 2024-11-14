@@ -1,84 +1,89 @@
 <ion-header [translucent]="true">
   <ion-toolbar>
-      <ion-title id="titulo" >Ver más</ion-title>
     <ion-button slot="start" fill="clear" (click)="irAPaginaDestino()">
-      <ion-icon id="back" show-clear-button="always" name="arrow-back"></ion-icon>
+      <ion-icon id="back" name="arrow-back"></ion-icon>
     </ion-button>
-    
+    <ion-title id="titulo">Ver más</ion-title>
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true" class="ion-padding"  *ngIf="equipo">
+<ion-content [fullscreen]="true" class="ion-padding" *ngIf="equipo">
   <ion-card>
-    <img alt="Silhouette of mountains" src="https://ionicframework.com/docs/img/demos/card-media.png" />
+    <img alt="Silhouette of mountains" src="https://ionicframework.com/docs/img/demos/card-media.png" class="card-image"/>
     <ion-card-header>
       <ion-card-title>{{ equipo.nombre_fantasia }}</ion-card-title>
       <ion-card-subtitle>{{ equipo.ubicacion }}</ion-card-subtitle>
     </ion-card-header>
-  
     <ion-card-content>
       {{ equipo.descripcion }}
     </ion-card-content>
-    <div *ngIf="logros && logros.length > 0">
-      <ion-card-header>
-      <ion-car-title>Logros</ion-car-title>
-      </ion-card-header>
-      <ion-card-content  *ngFor="let logro of logros">
-        {{ logro.logro }}: {{logro.fecha ? (logro.fecha.toDate() | date) : 'Fecha no disponible'}}
-      </ion-card-content>
-    </div>
-    <div *ngIf="partidos && partidos.length > 0">
-      <ion-card-header>
-        <ion-car-title>Tabla de partidos</ion-car-title>
-      </ion-card-header>
-      <ion-card-content  >
-        <ion-item *ngFor="let partido of partidos">
-        <table class="table">
-          <thead>
-            <tr>
-              <th>Equipo contrario</th>
 
-              <th>Resultado encuentro</th>
-
-              <th>ubicacion</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>{{ partido.contrincante }}</td>
-              <td>{{ partido.resultado }}</td>
-              <td>{{ partido.ubicacion }}</td>
-            </tr>
-            <tr>
-              <td>Equipo 2</td>
-              <td>3/0</td>
-              <td><ion-icon name="close-circle-outline"></ion-icon></td>
-            </tr>
-            <!-- Más filas de equipos -->
-          </tbody>
-        </table>
-      </ion-item>
+    <!-- Logros -->
+    <div *ngIf="logros && logros.length > 0" class="section">
+      <ion-card-header>
+        <ion-card-title>Logros</ion-card-title>
+      </ion-card-header>
+      <ion-card-content *ngFor="let logro of logros">
+        {{ logro.logro }}: {{ logro.fecha ? (logro.fecha | date:'shortDate') : 'Fecha no disponible' }}
       </ion-card-content>
     </div>
     
-  </ion-card>
-  <ion-card>
-    <ion-card-header>
-      <ion-card-title>Agregar equipo</ion-card-title>
-      <ion-card-subtitle>Agrega este equipo a tus me gusta</ion-card-subtitle>
-    </ion-card-header>
-  
-    <ion-card-content>
-    ¿Te interesa este equipo?
-    </ion-card-content>
+    
+    
 
-    <ion-button id="present-alert" fill="clear">Si</ion-button>
+    <!-- Tabla de partidos -->
+    <div *ngIf="partidos && partidos.length > 0" class="section">
+      <ion-card-header>
+        <ion-card-title>Tabla de partidos</ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <ion-item>
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Equipo contrario</th>
+                <th>Resultado encuentro</th>
+                <th>Ubicación</th>
+              </tr>
+            </thead>
+            <tbody *ngFor="let partido of partidos">
+              <tr>
+                <td>{{ partido.contrincante }}</td>
+                <td>{{ partido.resultado }}</td>
+                <td>{{ partido.ubicacion }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </ion-item>
+      </ion-card-content>
+    </div>
+  </ion-card>
+  <ion-card *ngIf="authService.esAdministrador()">
+
+  </ion-card>
+  <!-- Notificaciones -->
+  <ion-card id="notificaciones" *ngIf="!authService.esAdministrador()">
+    <ion-card-header>
+      <ion-card-title>Agrega a tus favoritos</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      ¡Síguelos para estar actualizado!
+    </ion-card-content>
+    
+    <!-- Verifica el estado del equipo específico con esEquipoSeguido[equipo.id] -->
+    <ng-container *ngIf="!esEquipoSeguido[equipo.id]">
+      <ion-button shape="round" id="present-alert">Seguir</ion-button>
       <ion-alert
         trigger="present-alert"
-        header="Selecciona las opciones de notificacion"
+        header="¿Qué tipo de notificaciones quieres recibir?"
         [buttons]="alertButtons"
         [inputs]="alertInputs"
       ></ion-alert>
-    <ion-button fill="clear">No</ion-button>
+    </ng-container>
+  
+    <ng-container *ngIf="esEquipoSeguido[equipo.id]">
+      <ion-card-content>Ya sigues a este equipo.</ion-card-content>
+    </ng-container>
   </ion-card>
+  
 </ion-content>

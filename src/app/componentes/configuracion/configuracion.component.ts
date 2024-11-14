@@ -1,9 +1,11 @@
 import { Component, OnInit } from '@angular/core';
-import { NavController } from '@ionic/angular';
+import { NavController, ToastController } from '@ionic/angular';
 import { ModalController } from '@ionic/angular';
 import { EditarrutinaComponent } from '../editarrutina/editarrutina.component';
 import { EditarperfilComponent } from '../editarperfil/editarperfil.component';
 import { NavigationExtras, Router } from '@angular/router';
+import { AuthService } from '../../servicios/auth.service'; // Asegúrate de que la ruta es correcta
+
 @Component({
   selector: 'app-configuracion',
   templateUrl: './configuracion.component.html',
@@ -11,7 +13,7 @@ import { NavigationExtras, Router } from '@angular/router';
 })
 export class ConfiguracionComponent  implements OnInit {
 
-  constructor(private  navCtrl: NavController, private modalController: ModalController,private router:Router) { }
+  constructor(private  navCtrl: NavController, private modalController: ModalController,private router:Router,private authService: AuthService,private toastController: ToastController) { }
   irAPaginaDestino() {
     console.log("entra")
     this.router.navigate(['/tabs/perfil']);
@@ -25,10 +27,19 @@ export class ConfiguracionComponent  implements OnInit {
     console.log("entra")
     this.router.navigate(['/tabs/editarrutina']);
   }
-  login() {
-    console.log("entra")
-    this.router.navigate(['/login']);
+  cerrarSesion() {
+    this.authService.signOut();
+    this.presentToast() // Llama al método de cierre de sesión
   }
+  async presentToast() {
+    const toast = await this.toastController.create({
+      message: 'Sesión cerrada.',
+      duration: 2000,
+      position: 'bottom',
+    });
+    await toast.present();
+  }
+  
   ngOnInit() {}
 
 }

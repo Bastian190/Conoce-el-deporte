@@ -12,12 +12,14 @@
       <ion-col size="12">
         <ion-card id="contenido">
           <div class="profile-container">
-            <ion-button fill="clear" shape="round" class="profile-button">
-              <img class="responsive-icon" />
-              <ion-icon  name="person-circle-outline" class="default-icon"></ion-icon>
-              <input type="file" accept="image/*" style="display:none;" />
+            <ion-button fill="clear" shape="round" class="profile-button" (click)="fileInput.click()">
+              <img *ngIf="fotoPerfil" [src]="fotoPerfil" class="responsive-icon" />
+              <ion-icon name="person-circle-outline" class="default-icon"></ion-icon>
+              <input label= "Foto de perfil"type="file" accept="image/*" style="display:none;" (change)="cargarFoto($event)" #fileInput />
             </ion-button>
+            
           </div>
+          <ion-label id="titulo2">Foto de perfil</ion-label>
           <form [formGroup]="registroForm" (ngSubmit)="registrar()">
 
             <ion-item>
@@ -25,15 +27,14 @@
               <ion-input formControlName="name" type="text"></ion-input>
             </ion-item>
 
-            <ion-item>
-              <ion-label position="stacked">Correo*</ion-label>
-              <ion-input formControlName="correo" type="text"></ion-input>
-            </ion-item>
-        
-
             <ion-item >
               <ion-label position="stacked" inert>Apellido*</ion-label>
               <ion-input formControlName="lastname" type="text"></ion-input>
+            </ion-item>
+
+            <ion-item>
+              <ion-label position="stacked">Correo*</ion-label>
+              <ion-input formControlName="correo" type="text"></ion-input>
             </ion-item>
 
             <ion-item >
@@ -48,7 +49,7 @@
         
             <ion-item>
               <ion-label position="stacked">Fecha de Nacimiento*</ion-label>
-              <ion-input formControlName="date" type="date"></ion-input>
+              <ion-input formControlName="date" type="date" ></ion-input>
             </ion-item>
         
             <ion-item>

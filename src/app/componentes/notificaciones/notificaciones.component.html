@@ -1,0 +1,41 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-button slot="start" fill="clear" (click)="irAPaginaDestino()">
+      <ion-icon id="back" name="arrow-back"></ion-icon>
+    </ion-button>
+    <ion-title id="titulo">Notificaciones</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-title></ion-title>
+  <ion-card>
+    <form (ngSubmit)="enviarNotificacion()">
+      <div id="div">
+        <label for="equipo" id="label">Seleccionar Equipo:</label>
+        <select id="selec" [(ngModel)]="equipoSeleccionado" name="equipo" required (change)="onEquipoChange(equipoSeleccionado)">
+          <option id="opcion" *ngFor="let equipo of equipos" [value]="equipo.id">{{ equipo.nombre_fantasia }}</option>
+        </select>
+      </div>
+    
+      <div id="div">
+        <label for="tipo" id="label">Tipo de Notificación:</label>
+        <select id="selec" [(ngModel)]="tipoNotificacion" name="tipo" required>
+          <option id="opcion" value="partidos">Partidos</option>
+          <option id="opcion" value="actividades">Actividades</option>
+          <option id="opcion" value="ambos">Ambos</option>
+        </select>
+      </div>
+    
+      <div id="div">
+        <label for="mensaje" id="label">Notificación:</label>
+        <textarea id="area" [(ngModel)]="mensajeNotificacion" name="mensaje" required></textarea>
+      </div>
+    
+      <ion-button id="boton" shape="round" expand="full" type="submit">Enviar Notificación</ion-button>
+    </form>
+
+  </ion-card>
+  
+  
+</ion-content>

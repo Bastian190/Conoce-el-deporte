@@ -11,53 +11,78 @@
 
 <ion-content>
   <!-- Contenedor del perfil del usuario -->
-  <div class="profile-container">
+   <div class="profile-container">
     <ion-avatar class="user-avatar">
-      <img src="https://www.w3schools.com/howto/img_avatar.png" alt="Avatar">
+      <img [src]="usuarioFotoPerfil" alt="Avatar"> <!-- Foto de perfil dinámica -->
     </ion-avatar>
     <div class="user-info">
-      <h2>Pepito</h2>
-      <p>22 años</p>
-      <p>Equipo (Sin equipo)</p>
-      <p>correoejemplo.com</p>
+      <h2>{{ usuarioNombre }}</h2>  <!-- Nombre del usuario -->
+      <p>{{ usuarioEdad }} años</p>  <!-- Edad calculada del usuario -->
+      <p>Equipo ({{ usuarioEquipo }})</p>  <!-- Equipo del usuario -->
     </div>
   </div>
   <!-- Toggle switch -->
-  <ion-item lines="none" class="toggle-container">
-    <ion-label>Interesado en pertenecer a un equipo</ion-label>
-    <ion-toggle slot="end" [enableOnOffLabels]="true"></ion-toggle>
+  <ion-item *ngIf="!authService.esAdministrador()" lines="none" class="toggle-container">
+    <ion-label>Mostrar Correo a Equipos</ion-label>
+    <ion-toggle slot="end" [(ngModel)]="mostrarCorreo" (ionChange)="guardarPreferenciaCorreo()"></ion-toggle>
   </ion-item>
 
   <!-- Título de equipos que te gustan -->
-  <h3 class="liked-teams-title">Equipos que te gustan</h3>
+  <h3  *ngIf="!authService.esAdministrador()" class="liked-teams-title">Equipos que te gustan</h3>
+  <h3  *ngIf="authService.esAdministrador()" class="liked-teams-title">Perfiles que siguen a tus equipos</h3>
 
+  
+      <div *ngIf="authService.esAdministrador()">
+        <div *ngIf="seguidoresEquipo && seguidoresEquipo.length > 0; else noFollowers">
+            <div *ngFor="let seguidor of seguidoresEquipo">
+                <ion-card >
+                    <ion-card-header > 
+                        <ion-card-title>{{ seguidor.nombre }} {{ seguidor.apellido }}</ion-card-title>
+                    </ion-card-header>
+                    <ion-card-content>
+                     
+                        <p>Sexo: {{ seguidor.sexo }}</p>
+                        <p>Peso: {{ seguidor.peso }} kg</p>
+                        <p>Altura: {{ seguidor.altura }} cm</p>
+                        <p>Puntaje: {{ seguidor.puntos }}</p> <!-- Mostramos el puntaje aquí -->
+                        <div *ngIf="seguidor.mostrarCorreo">
+                            <p>{{ seguidor.correo }}</p> <!-- Correo del usuario -->
+                            <ion-button (click)="copyEmailToClipboard(seguidor.correo)">Copiar Correo</ion-button> <!-- Botón para copiar el correo -->
+                        </div>
+                    </ion-card-content>
+                </ion-card>
+            </div>
+          </div>
+        
+        <ng-template #noFollowers>
+            <p>Este equipo no tiene seguidores.</p>
+        </ng-template>
+      </div>
+
+
+ 
   <!-- Contenedor de equipos -->
-  <div class="teams-container">
-    <div class="team-card">
-      <ion-card>
-        <img src="https://via.placeholder.com/150" alt="Team Image">
-        <ion-card-header>
-          <ion-card-title>Club Lo rojas</ion-card-title>
-        </ion-card-header>
-        <ion-card-content>
-          <p>Futbol soccer</p>
-          <p>Equipo de futbol ubicado en Lo Rojas</p>
-        </ion-card-content>
-      </ion-card>
-    </div>
+  <ion-grid>
+    <ion-row>
+      <ion-col size="6" *ngFor="let equipo of equiposSeguidos"> 
+        <ion-card class="custom-card">
+          <ion-card-header id="contenido">
+            <ion-card-title>{{ equipo.nombre_fantasia }}</ion-card-title> 
+            <ion-card-subtitle>{{ equipo.tipo_deporte }}</ion-card-subtitle> 
+          </ion-card-header>
+          <ion-card-content>
+            <div class="example-button-row"></div>
+            <ion-button class="btn" (click)="dejarDeSeguir(equipo.id)">Dejar de seguir</ion-button>
+          </ion-card-content>
+        </ion-card>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
 
-    <div class="team-card">
-      <ion-card>
-        <img src="https://via.placeholder.com/150" alt="Team Image">
-        <ion-card-header>
-          <ion-card-title>Zorros de La Cruz</ion-card-title>
-        </ion-card-header>
-        <ion-card-content>
-          <p>Futbol Americano</p>
-          <p>Equipo de futbol americano de la cruz</p>
-        </ion-card-content>
-      </ion-card>
-    </div>
-    
-  </div>
+  <ion-card *ngIf="authService.esAdministrador()">
+   <ion-button  shape="round" expand="full" [routerLink]="['/tabs/modificarEquipo']">Modifica tus equipos</ion-button>
+   <ion-button  shape="round" expand="full" [routerLink]="['/tabs/AgregarLogrosPartidos']">Agrega logros o partidos</ion-button>
+
+   <ion-button  shape="round" expand="full" [routerLink]="['/tabs/Notificaciones']">Enviar notificación</ion-button>
+  </ion-card>
 </ion-content>

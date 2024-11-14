@@ -36,7 +36,7 @@
   }
   
   #logo {
-    width: 80px; /* Ajusta el tamaño del logo según sea necesario */
+    width: 50px; /* Ajusta el tamaño del logo según sea necesario */
     height: auto; /* Mantiene la proporción del logo */
     margin-right: 8px; /* Espacio entre el logo y el texto */
     border-radius: 50%;
@@ -44,4 +44,8 @@
   }
 #nombre{
    font-size: 23px; 
+}
+ion-card {
+  --box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
+  border-radius: 12px;
 }

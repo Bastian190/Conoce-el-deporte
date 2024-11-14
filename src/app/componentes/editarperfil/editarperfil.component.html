@@ -1,46 +1,96 @@
 <ion-header>
   <ion-toolbar>
     <ion-button slot="start" fill="clear" (click)="irAPaginaDestino()">
-      <ion-icon id="back" name="arrow-back" ></ion-icon>
+      <ion-icon id="back" name="arrow-back"></ion-icon>
     </ion-button>
     <ion-title id="titulo">Editar perfil</ion-title>
   </ion-toolbar>
 </ion-header>
 
-<ion-content class="ion-padding">
-  <div class="profile-container">
-    <ion-button fill="clear" shape="round" class="profile-button">
-      <img class="responsive-icon" />
-      <ion-icon  name="person-circle-outline" class="default-icon"></ion-icon>
-      <input type="file" accept="image/*" style="display:none;" />
-    </ion-button>
-  </div>
+<ion-content class="contenido">
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title>Información Personal</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <!-- Si hay foto de perfil, muestra la imagen; si no, muestra el ícono -->
+      <div class="profile-container">
+        <img *ngIf="fotoPerfil" [src]="fotoPerfil" class="responsive-icon" />
+        <ion-icon *ngIf="!fotoPerfil" name="person-circle-outline" class="default-icon"></ion-icon>
+      </div>
+      
+      <!-- Input para cargar la nueva foto -->
+      <input label="Foto de perfil" type="file" accept="image/*" (change)="cargarNuevaFoto($event)" />
+      
+      <!-- Botón para actualizar la foto -->
+      <ion-button id="boto" (click)="actualizarFotoPerfil()">Actualizar Foto de Perfil</ion-button>
+    </ion-card-content>
+    
+    
+    
+    <ion-card-content>
+      <ion-item>
+        <ion-label>Tu correo</ion-label>
+        <ion-input class="custom-input" [(ngModel)]="correo" [readonly]="!isEditingCorreo"></ion-input>
+        <ion-button  (click)="toggleEditCorreo()">
+          <ion-icon name="create"></ion-icon>
+        </ion-button>
+      </ion-item>
+      
+      <ion-item *ngIf="isEditingCorreo">
+        <ion-label>Debes ingresar tu contraseña</ion-label>
+        <ion-input [(ngModel)]="currentPassword" type="password" placeholder="Ingresa tu contraseña actual"></ion-input>
+      </ion-item>
+      <ion-button  shape="round" *ngIf="isEditingCorreo" expand="full" (click)="saveCorreo()">Guardar</ion-button>
+      
 
-  <ion-list class="edit-form">
+    </ion-card-content>
+  </ion-card>
 
-    <ion-item>
-      <ion-label position="floating">Correo Electrónico*</ion-label>
-      <ion-input type="email"  [(ngModel)]="correo" ></ion-input>
-    </ion-item>
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title>Datos de Salud</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <ion-item>
+        <ion-label>Tu peso (kg)</ion-label>
+        <ion-input class="custom-input" type="number" [(ngModel)]="peso" [readonly]="!isEditingPeso"></ion-input>
+        <ion-button (click)="toggleEditPeso()">
+          <ion-icon name="create"></ion-icon>
+        </ion-button>
+        <ion-button *ngIf="isEditingPeso" expand="full" (click)="savePeso()">Guardar</ion-button>
+      </ion-item>
+      <ion-item>
+        <ion-label>Tu altura (cm)</ion-label>
+        <ion-input class="custom-input" type="number" [(ngModel)]="altura" [readonly]="!isEditingAltura"></ion-input>
+        <ion-button (click)="toggleEditAltura()">
+          <ion-icon name="create"></ion-icon>
+        </ion-button>
+        <ion-button *ngIf="isEditingAltura" expand="full" (click)="saveAltura()">Guardar</ion-button>
+      </ion-item>
+    </ion-card-content>
+  </ion-card>
 
-    <ion-item>
-      <ion-label position="floating">Peso (kg)</ion-label>
-      <ion-input type="number"  [(ngModel)]="peso" ></ion-input>
-    </ion-item>
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title>Cambio de Contraseña</ion-card-title>
+    </ion-card-header>
+    <ion-button  shape="round" class="cont" *ngIf="!isEditingPassword" expand="full" (click)="toggleEditPassword()">Cambiar Contraseña</ion-button>
 
-    <ion-item>
-      <ion-label position="floating">Altura (cm)</ion-label>
-      <ion-input type="number" [(ngModel)]="altura" ></ion-input>
-    </ion-item>
-    <ion-item>
-      <ion-label position="floating">Nueva contraseña*</ion-label>
-      <ion-input type= "password" [(ngModel)]="password" ></ion-input>
-    </ion-item>
-    <ion-item>
-      <ion-label position="floating">Confirmar contraseña*</ion-label>
-      <ion-input type= "password" [(ngModel)]="password2" ></ion-input>
-    </ion-item>
-
-  </ion-list>
-  <ion-button expand="full" type="button" class="submit-button" (click)="todosperfil($event)">Guardar Cambios</ion-button>
+<!-- Formulario de Cambio de Contraseña (visible solo si isEditingPassword es true) -->
+  <div class="cont" *ngIf="isEditingPassword">
+  <ion-item>
+    <ion-label class="titu" position="floating">Contraseña Actual</ion-label>
+    <ion-input class="custom-input" [(ngModel)]="currentPassword" type="password" placeholder="Ingresa tu contraseña actual"></ion-input>
+  </ion-item>
+  <ion-item>
+    <ion-label class="titu" position="floating">Nueva Contraseña</ion-label>
+    <ion-input class="custom-input" [(ngModel)]="newPassword" type="password" placeholder="Ingresa tu nueva contraseña"></ion-input>
+  </ion-item>
+  
+  <!-- Botones para Guardar o Cancelar el Cambio de Contraseña -->
+  <ion-button  shape="round" expand="full" (click)="changePassword()" [disabled]="!currentPassword || !newPassword">Guardar Nueva Contraseña</ion-button>
+  <ion-button  shape="round" expand="full" (click)="toggleEditPassword()">Cancelar</ion-button>
+</div>
+  </ion-card>
 </ion-content>
