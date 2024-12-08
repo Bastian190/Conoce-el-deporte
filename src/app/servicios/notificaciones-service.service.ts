@@ -79,6 +79,7 @@ export class NotificacionService {
       const fcmToken = usuarioData['fcmToken'];
       if (fcmToken) {
         tokens.push(fcmToken);
+        console.log(fcmToken)
       }
     }
   
@@ -96,7 +97,8 @@ export class NotificacionService {
           title: title,
           body: mensaje
         },
-      }, { observe: 'response' }));
+      }, { observe: 'response', responseType: 'text' }));
+
   
       // Verificamos si la respuesta es exitosa
       if (response.status === 200) {

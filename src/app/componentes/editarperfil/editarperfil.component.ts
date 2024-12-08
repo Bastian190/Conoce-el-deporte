@@ -30,10 +30,10 @@ export class EditarperfilComponent implements OnInit {
   currentPassword: string = '';
   newPassword: string = '';
   message: string = '';
- messageType: 'success' | 'error' = 'success';
- fotoPerfil: string | ArrayBuffer | null = null;
- nuevaFotoPerfil: File | null = null; // Variable para almacenar la foto seleccionada
- storage: FirebaseStorage;
+  messageType: 'success' | 'error' = 'success';
+  fotoPerfil: string | ArrayBuffer | null = null;
+  nuevaFotoPerfil: File | null = null; // Variable para almacenar la foto seleccionada
+  storage: FirebaseStorage;
 
   constructor(
     private cdr: ChangeDetectorRef,
@@ -257,14 +257,18 @@ async saveAltura() {
 toggleEditPassword() {
   this.isEditingPassword = !this.isEditingPassword;
 }
+
 cargarNuevaFoto(event: any) {
   const file = event.target.files[0];
   if (file) {
+    this.nuevaFotoPerfil = file; // Asigna el archivo seleccionado
     const reader = new FileReader();
     reader.onload = (e: any) => {
-      this.fotoPerfil = e.target.result;
+      this.fotoPerfil = e.target.result; // Asigna la vista previa
     };
     reader.readAsDataURL(file);
+  } else {
+    console.error('No se ha seleccionado un archivo válido');
   }
 }
 
