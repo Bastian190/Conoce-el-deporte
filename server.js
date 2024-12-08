@@ -11,7 +11,7 @@ app.use(cors({
 }));
 
 // Inicializa Firebase Admin con tu archivo de credenciales
-const serviceAccount = require('./conoce-eldeporte-firebase-adminsdk-hn7cw-97d5400561.json');
+const serviceAccount = require('./conoce-eldeporte-firebase-adminsdk-hn7cw-7fb24d9910.json')
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
 });
@@ -62,10 +62,18 @@ app.post('/send-notification', async (req, res) => {
 
     console.log('Notificación enviada:', response);
     res.status(200).send('Notificación enviada');
+    if (response.failureCount > 0) {
+      response.responses.forEach((resp, idx) => {
+        if (!resp.success) {
+          console.error(`Error al enviar a token ${tokens[idx]}:`, resp.error);
+        }
+      });
+    }
   } catch (error) {
     console.error('Error al enviar la notificación:', error);
     res.status(500).send('Error al enviar la notificación');
   }
+  
 });
 
 // Escuchar en el puerto
